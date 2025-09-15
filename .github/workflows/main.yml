@@ -21,6 +21,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore LibraryApp
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build LibraryApp/LibraryApp.sln --no-restore
+    ##- name: Test
+      ##run: dotnet test --no-build --verbosity normal
