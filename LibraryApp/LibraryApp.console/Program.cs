@@ -93,15 +93,3 @@ public class Program
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
