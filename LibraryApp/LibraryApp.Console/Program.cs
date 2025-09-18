@@ -9,6 +9,7 @@ public class Program
     public static void Main()
     {
         Console.WriteLine("Library App!");
+        service.Seed();
 
         bool exit = false;
         while (!exit)
@@ -55,6 +56,9 @@ public class Program
         Console.WriteLine("Goodbye!");
     }
 
+
+    #region HELPERS
+
     static void ShowMenu()
     {
         Console.WriteLine("=== Library Management System ===");
@@ -70,19 +74,25 @@ public class Program
         Console.WriteLine("---------------------------------");
     }
 
-
-    //ACTIONS
-    static void ListItems()
+    static void PrintItems(IEnumerable<LibraryItem> items)
     {
-        if (_items.Count == 0) { Console.WriteLine("No items."); return; }
-        Console.WriteLine("Items:");
+        if (!items.Any()) { Console.WriteLine("No items."); return; }
 
-        foreach (var item in _items)
+        Console.WriteLine("Items:");
+        foreach (var item in items)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
-            // Polymorphism: each derived class presents info differently
             Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
+    }
+
+    #endregion HELPERS
+
+    #region ACTIONS
+
+    static void ListItems()
+    {
+        PrintItems(service.Items);
     }
 
     static void AddBook()
@@ -90,17 +100,17 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var book = new Book(_nextItemId++, title, author, pages);
 
-        _items.Add(book);
+        var book = service.AddBook(title, author, pages);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
 
 
     static void SearchItems()
     {
+        var term = InputHelper.ReadText(">Search term:", true);
 
+        PrintItems(service.FindItems(term));
     }
 
     static void AddMagazine()
@@ -108,10 +118,8 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
 
-        _items.Add(mag);
+        var mag = service.AddMagazine(title, issue, publisher);
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 
@@ -122,7 +130,7 @@ public class Program
     
     static void RegisterMember() 
     {
-        
+
     }
 
     static void BorrowItem() 
@@ -134,4 +142,6 @@ public class Program
     {
         
     }
+
+    #endregion ACTIONS
 }
