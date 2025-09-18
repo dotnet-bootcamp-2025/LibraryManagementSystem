@@ -30,7 +30,7 @@ namespace LibraryApp.Console.Domain
             Pages = Pages <= 0 ? 0 : Pages;
 
         }
-        public override string GetInfo()
+        public override string GetInfo() 
         {
             return $"Book [Id={Id}, Title={Title}, Author={Author}, Pages={Pages}, IsBorrowed={IsBorrowed}]";
         }
