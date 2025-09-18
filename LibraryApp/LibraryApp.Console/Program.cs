@@ -32,6 +32,8 @@ public class Program
                 //case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
+                case 5: MemberList(); break;
+                case 6: RegisterMember(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -51,6 +53,8 @@ public class Program
         Console.WriteLine("2) Search items by title (TBD)");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
+        Console.WriteLine("5) List Member");
+        Console.WriteLine("6) Register Member");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
@@ -90,4 +94,22 @@ public class Program
         _items.Add(mag); 
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
+    static void MemberList()
+    {
+        var members = _service.Members; // from LibraryService
+        if (members.Count == 0) { Console.WriteLine("No members."); return; }
+        Console.WriteLine("Members:");
+        foreach (var member in members)
+        {
+            Console.WriteLine($"{member.Id}: {member.Name}");
+        }
+    }
+
+    static void RegisterMember()
+    {
+        var name = InputHelper.ReadText("Member Name");
+        var member = _service.RegisterMember(name); // from LibraryService
+        Console.WriteLine($"Registered Member: {member.Name} (Id={member.Id})");
+    }
+
 }
