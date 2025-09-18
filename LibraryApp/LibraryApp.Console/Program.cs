@@ -1,8 +1,10 @@
 ﻿using LibraryApp.Console.Domain;
+using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
+    private static readonly LibraryService _service = new();
     public static void Main()
     {
         Console.WriteLine("Library App!");
@@ -66,18 +68,16 @@ public class Program
     // Seed fake data for the demo
     static void Seed()
     {
-        _items.Add(new Book(1, "Clean Code", "Robert C. Martin", 464));
-        _items.Add(new Book(2, "The Pragmatic Programmer", "Andrew Hunt", 352));
-        _items.Add(new Magazine(3, "DotNET Weekly", 120, "DevPub"));
-        _items.Add(new Magazine(4, "Tech Monthly", 58, "TechPress"));
+        _service.Seed();
+        _items.Clear();
+        _items.AddRange(_service.Items);
     }
     static void AddBook()
     {
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var book = new Book(_nextItemId++, title, author, pages);
+        var book = _service.AddBook(title, author, pages); // from LibraryService
         _items.Add(book);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
@@ -86,9 +86,8 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
-        _items.Add(mag);
+        var mag = _service.AddMagazine(title, issue, publisher); // from LibraryService
+        _items.Add(mag); 
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 }
