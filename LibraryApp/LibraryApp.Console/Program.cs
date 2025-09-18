@@ -1,41 +1,137 @@
-﻿Console.WriteLine("Library App!");
+﻿using LibraryApp.Console.Domain;
+using LibraryApp.Console.Services;
+using LibraryApp.Console.Utils;
 
-bool exit = false;
-while (!exit)
+public class Program
 {
-    ShowMenu();
-    var input = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(input))
+    private static readonly LibraryService service = new();
+
+    public static void Main()
     {
-        Console.WriteLine("Invalid input. Please enter a number.");
-        continue;
+        Console.WriteLine("Library App!");
+
+        bool exit = false;
+        while (!exit)
+        {
+            ShowMenu();
+            var input = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                continue;
+            }
+
+            int choice;
+            if (!int.TryParse(input, out choice))
+            {
+                Console.WriteLine("Invalid input. Please enter a valid number.");
+                continue;
+            }
+
+            Console.WriteLine();
+            switch (choice)
+            {
+                case 1: ListItems(); break;
+                case 2: SearchItems(); break;
+                case 3: AddBook(); break;
+                case 4: AddMagazine(); break;
+                case 5: ListMembers(); break;
+                case 6: RegisterMember(); break;
+                case 7: BorrowItem(); break;
+                case 8: ReturnItem(); break;
+                case 0: exit = true; break;
+                default: Console.WriteLine("Unknown option."); break;
+            }
+
+            if (!exit)
+            {
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        Console.WriteLine("Goodbye!");
     }
 
-    int choice;
-    if (!int.TryParse(input, out choice))
+    static void ShowMenu()
     {
-        Console.WriteLine("Invalid input. Please enter a valid number.");
-        continue;
+        Console.WriteLine("=== Library Management System ===");
+        Console.WriteLine("1) List all items");
+        Console.WriteLine("2) Search items by title (TBD)");
+        Console.WriteLine("3) Add Book");
+        Console.WriteLine("4) Add Magazine");
+        Console.WriteLine("5) List Members");
+        Console.WriteLine("6) Register Member");
+        Console.WriteLine("7) Borrow Item");
+        Console.WriteLine("8) Return Item");
+        Console.WriteLine("0) Exit");
+        Console.WriteLine("---------------------------------");
     }
 
-    Console.WriteLine();
-    switch (choice)
+
+    //ACTIONS
+    static void ListItems()
     {
-        case 1: ListItems(); break;
-        default: Console.WriteLine("Unknown option."); break;
+        if (_items.Count == 0) { Console.WriteLine("No items."); return; }
+        Console.WriteLine("Items:");
+
+        foreach (var item in _items)
+        {
+            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+            // Polymorphism: each derived class presents info differently
+            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+        }
     }
-}
 
-Console.WriteLine("Goodbye!");
+    static void AddBook()
+    {
+        var title = InputHelper.ReadText("Title");
+        var author = InputHelper.ReadText("Author");
+        var pages = InputHelper.ReadInt("Pages (0 if unknown)");
+        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
+        var book = new Book(_nextItemId++, title, author, pages);
 
-static void ShowMenu()
-{
-    Console.WriteLine("=== Library Management System ===");
-    Console.WriteLine("1) List all items");
-    Console.WriteLine("---------------------------------");
-}
+        _items.Add(book);
+        Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
+    }
 
-static void ListItems()
-{
-    Console.WriteLine("=== NO items ===");
+
+    static void SearchItems()
+    {
+
+    }
+
+    static void AddMagazine()
+    {
+        var title = InputHelper.ReadText("Title");
+        var issue = InputHelper.ReadInt("Issue number");
+        var publisher = InputHelper.ReadText("Publisher");
+        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
+        var mag = new Magazine(_nextItemId++, title, issue, publisher);
+
+        _items.Add(mag);
+        Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
+    }
+
+    static void ListMembers() 
+    {
+
+    }
+    
+    static void RegisterMember() 
+    {
+        
+    }
+
+    static void BorrowItem() 
+    {
+        
+    }
+
+    static void ReturnItem() 
+    {
+        
+    }
 }
