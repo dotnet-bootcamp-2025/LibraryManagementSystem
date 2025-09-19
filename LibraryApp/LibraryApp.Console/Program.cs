@@ -31,12 +31,12 @@ public class Program
             switch (choice)
             {
                 case 1: ListItems(); break;
-                //case 2: SearchItems(); break; //por implementar
+                case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
                 case 5: RegisterMember(); break;
                 case 6: BorrowItem(); break;
-                //case 7: ReturnItem(); break;
+                case 7: ReturnItem(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -56,7 +56,7 @@ public class Program
     {
         Console.WriteLine("=== Library Management System ===");
         Console.WriteLine("1) List all items");
-        Console.WriteLine("2) Search items by title (TBD)");
+        Console.WriteLine("2) Search items by title");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
         Console.WriteLine("5) Register Member");
@@ -78,7 +78,7 @@ public class Program
         }
     }
     // Seed fake data for the demo
-    static void SeedDemo()//pendiente
+    static void SeedDemo()
     { //se eliminan numeros id al marcar error
         _service.AddBook("Clean Code", "Robert C. Martin", 464);
         _service.AddBook("The Pragmatic Programmer", "Andrew Hunt", 352);
@@ -86,6 +86,20 @@ public class Program
         _service.AddMagazine("Tech Monthly", 58, "TechPress");
         _service.RegisterMember("Bob");
     }
+    
+    static void SearchItems()
+    { 
+        var term = InputHelper.ReadText("Search term");
+        if (term is null) return;
+        var results = _service.FindItems(term).ToList();
+        Console.WriteLine();
+        Console.WriteLine($"Search results for \"{term}\":");
+        foreach (var result in results)
+        {
+            Console.WriteLine(result.GetInfo());
+        }
+    }
+    
     static void AddBook()
     {
         var title = InputHelper.ReadText("Title");
@@ -117,11 +131,28 @@ public class Program
     
     static void BorrowItem()
     {
-        var memberId = InputHelper.ReadText("Member Id");
-        var itemId = InputHelper.ReadText("Item Id");
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
         
-    //    var ok = _service.BorrowItem(memberId, itemId, out string message);
-     //   Console.WriteLine($"Added: {member.Name} (Id={member.Id})");
+        if(!_service.BorrowItem(memberId, itemId, out string message))
+        {
+            Console.WriteLine($"Cannot borrow item: {message}");
+            return;
+        }
+        Console.WriteLine($"Borrowed: {message}");
+    }
+    
+    static void ReturnItem()
+    {
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
+
+        if (!_service.ReturnItem(memberId,itemId, out string message))
+        {
+            Console.WriteLine($"Item to return invalid: {message}");
+            return;
+        }
+        Console.WriteLine($"Returned: {message}");
     }
 }
 
