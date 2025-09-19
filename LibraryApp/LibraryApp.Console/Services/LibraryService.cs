@@ -1,6 +1,8 @@
 ﻿using LibraryApp.Console.Domain;
 using LibraryApp.ConsoleApp.Domain;
 
+namespace LibraryApp.Console.Services;
+
 public sealed class LibraryService
 {
     private readonly List<LibraryItem> _items = new();
@@ -16,6 +18,7 @@ public sealed class LibraryService
         AddBook("The Pragmatic Programmer", "Andrew Hunt", 352);
         AddMagazine("DotNET Weekly", 120, "DevPub");
         AddMagazine("Tech Monthly", 58, "TechPress");
+
         RegisterMember("Alice");
         RegisterMember("Bob");
     }
