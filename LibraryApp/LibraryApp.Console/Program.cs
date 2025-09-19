@@ -8,7 +8,7 @@ public class Program
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        Seed();
+        _service.Seed();
         bool exit = false;
         while (!exit)
         {
@@ -29,11 +29,13 @@ public class Program
             switch (choice)
             {
                 case 1: ListItems(); break;
-                //case 2: SearchItems(); break;
+                case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
                 case 5: MemberList(); break;
                 case 6: RegisterMember(); break;
+                case 7: BorrowItem(); break;
+                case 8: ReturnItem(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -55,26 +57,34 @@ public class Program
         Console.WriteLine("4) Add Magazine");
         Console.WriteLine("5) List Member");
         Console.WriteLine("6) Register Member");
+        Console.WriteLine("7) Borrow Item");
+        Console.WriteLine("8) Return Item");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
     static void ListItems()
     {
-        if (_items.Count == 0) { Console.WriteLine("No items."); return; }
+        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in _items)
+        foreach (var item in _service.Items)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
             // Polymorphism: each derived class presents info differently
             Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
     }
-    // Seed fake data for the demo
-    static void Seed()
+    
+    static void SearchItems()
     {
-        _service.Seed();
-        _items.Clear();
-        _items.AddRange(_service.Items);
+        var term = InputHelper.ReadText("Search term (part of title)");
+        var results = _service.FindItems(term); // from LibraryService
+        if (!results.Any()) { Console.WriteLine("No items found."); return; }
+        Console.WriteLine("Search Results:");
+        foreach (var item in results)
+        {
+            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+        }
     }
     static void AddBook()
     {
@@ -82,7 +92,6 @@ public class Program
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
         var book = _service.AddBook(title, author, pages); // from LibraryService
-        _items.Add(book);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()
@@ -91,7 +100,6 @@ public class Program
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
         var mag = _service.AddMagazine(title, issue, publisher); // from LibraryService
-        _items.Add(mag); 
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
     static void MemberList()
@@ -110,6 +118,34 @@ public class Program
         var name = InputHelper.ReadText("Member Name");
         var member = _service.RegisterMember(name); // from LibraryService
         Console.WriteLine($"Registered Member: {member.Name} (Id={member.Id})");
+    }
+
+    static void BorrowItem()
+    {
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
+        if (_service.BorrowItem(memberId, itemId, out var message)) // from LibraryService
+        {
+            Console.WriteLine("Success: " + message);
+        }
+        else
+        {
+            Console.WriteLine("Error: " + message);
+        }
+    }
+
+    static void ReturnItem()
+    {
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
+        if (_service.ReturnItem(memberId, itemId, out var message)) // from LibraryService
+        {
+            Console.WriteLine("Success: " + message);
+        }
+        else
+        {
+            Console.WriteLine("Error: " + message);
+        }
     }
 
 }
