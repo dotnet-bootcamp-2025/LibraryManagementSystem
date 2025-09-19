@@ -34,9 +34,10 @@ public class Program
                 case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
-                case 5: RegisterMember(); break;
-                case 6: BorrowItem(); break;
-                case 7: ReturnItem(); break;
+                case 5: ListMembers(); break;
+                case 6: RegisterMember(); break;
+                case 7: BorrowItem(); break;
+                case 8: ReturnItem(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -59,9 +60,10 @@ public class Program
         Console.WriteLine("2) Search items by title");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
-        Console.WriteLine("5) Register Member");
-        Console.WriteLine("6) Borrow Item");
-        Console.WriteLine("7) Return Item");
+        Console.WriteLine("5) List Members");
+        Console.WriteLine("6) Register Member");
+        Console.WriteLine("7) Borrow Item");
+        Console.WriteLine("8) Return Item");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
@@ -84,7 +86,8 @@ public class Program
         _service.AddBook("The Pragmatic Programmer", "Andrew Hunt", 352);
         _service.AddMagazine("DotNET Weekly", 120, "DevPub");
         _service.AddMagazine("Tech Monthly", 58, "TechPress");
-        _service.RegisterMember("Bob");
+        _service.RegisterMember("Anna");
+        _service.RegisterMember("James");
     }
     
     static void SearchItems()
@@ -120,6 +123,21 @@ public class Program
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
     
+    static void ListMembers()
+    {//var items instead of _items 
+        var members = _service.Members;
+        if (members.Count == 0) { Console.WriteLine("No members."); return; }
+        Console.WriteLine($"Members:{members.Count}");
+        Console.WriteLine("ID\tName\tLoans");
+        Console.WriteLine("-------------------------");
+
+        foreach (var member in members)
+        {
+            var loans = member.BorrowedItems; 
+            var status = loans.Any() ? $"LOANS: {loans.Count()}" : "NO BORROWED ITEMS PENDING TO RETURN";
+            Console.WriteLine($"{member.Id}\t{member.Name}\t5{status}");
+        }
+    }
     static void RegisterMember()
     {
         var name = InputHelper.ReadText("Name");
