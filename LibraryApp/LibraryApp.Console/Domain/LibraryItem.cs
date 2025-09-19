@@ -13,7 +13,6 @@ namespace LibraryApp.Console.Domain
         public bool IsBorrowed { get; private set; }
 
         //Parameterized constructor (requiered fields)
-
         protected LibraryItem(int id, string title)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");

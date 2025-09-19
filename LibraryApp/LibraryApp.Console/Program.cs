@@ -1,16 +1,17 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 
 using LibraryApp.Console.Domain;
-using System;
-
-
+using LibraryApp.Console.Utils;
+using LibraryApp.Console.Services;
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
+    private static readonly LibraryService _service = new();
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        Seed();
+        _service.Seed();
+        
         bool exit = false;
         while (!exit)
         {
@@ -31,9 +32,13 @@ public class Program
             switch (choice)
             {
                 case 1: ListItems(); break;
-                //case 2: SearchItems(); break;
+                case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
+                case 5: ListMembers(); break;
+                case 6: RegisterMember(); break;
+                case 7: BorrowItem(); break;
+                case 8: ReturnItem(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -50,39 +55,34 @@ public class Program
     {
         Console.WriteLine("=== Library Management System ===");
         Console.WriteLine("1) List all items");
-        Console.WriteLine("2) Search items by title (TBD)");
+        Console.WriteLine("2) Search items by title");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
+        Console.WriteLine("5) List Members");
+        Console.WriteLine("6) Register Member");
+        Console.WriteLine("7) Borrow Item");
+        Console.WriteLine("8) Return Item");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
     static void ListItems()
     {
-        if (_items.Count == 0) { Console.WriteLine("No items."); return; }
+        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in _items)
+        foreach (var item in _service.Items)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
             // Polymorphism: each derived class presents info differently
             Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
     }
-    // Seed fake data for the demo
-    static void Seed()
-    {
-        _items.Add(new Book(1, "Clean Code", "Robert C. Martin", 464));
-        _items.Add(new Book(2, "The Pragmatic Programmer", "Andrew Hunt", 352));
-        _items.Add(new Magazine(3, "DotNET Weekly", 120, "DevPub"));
-        _items.Add(new Magazine(4, "Tech Monthly", 58, "TechPress"));
-    }
     static void AddBook()
     {
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var book = new Book(_nextItemId++, title, author, pages);
-        _items.Add(book);
+
+        var book = _service.AddBook(title, author, pages);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()
@@ -90,10 +90,67 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
-        _items.Add(mag);
+
+        var mag = _service.AddMagazine(title, issue, publisher);
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
-}
 
+    private static void RegisterMember()
+    {
+        var name= InputHelper.ReadText("Member Name");
+        var member = _service.RegisterMember(name);
+    }
+
+    static void ListMembers()
+    {
+        if (_service.Members.Count == 0) { Console.WriteLine("No members."); return; }
+        Console.WriteLine("Members:");
+        foreach (var member in _service.Members)
+        {
+            Console.WriteLine(member.ToString());
+        }
+    }
+    static void BorrowItem()
+    {
+        var memberId = InputHelper.ReadInt("Member ID");
+        var itemId = InputHelper.ReadInt("Item ID");
+        if (_service.BorrowItem(memberId, itemId, out var message))
+        {
+            Console.WriteLine("Item borrowed successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"Failed to borrow item: {message}");
+        }
+    }
+
+    static void ReturnItem()
+    {
+        var memberId = InputHelper.ReadInt("Member ID");
+        var itemId = InputHelper.ReadInt("Item ID");
+        if (_service.ReturnItem(memberId, itemId, out var message))
+        {
+            Console.WriteLine("Item returned successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"Failed to return item: {message}");
+        }
+    }
+    static void SearchItems()
+    {
+        var term = InputHelper.ReadText("Search term (title)", allowEmpty: true);
+        var results = _service.FindItems(term);
+        if (!results.Any())
+        {
+            Console.WriteLine("No items found.");
+            return;
+        }
+        Console.WriteLine("Search Results:");
+        foreach (var item in results)
+        {
+            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+        }
+    }
+}

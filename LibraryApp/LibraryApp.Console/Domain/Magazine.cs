@@ -22,8 +22,7 @@ namespace LibraryApp.Console.Domain
         }   
 
         public override string GetInfo()
-        
-            => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
+           => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
         
     }
 }
