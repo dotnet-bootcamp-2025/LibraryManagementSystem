@@ -86,6 +86,17 @@ public class Program
         }
     }
 
+    static void PrintMembers(IEnumerable<Member> members)
+    {
+        if (!members.Any()) { Console.WriteLine("No members."); return; }
+
+        Console.WriteLine("Members:");
+        foreach (var member in members)
+        {
+            Console.WriteLine($"{member.Id}: {member.Name}");
+        }
+    }
+
     #endregion HELPERS
 
     #region ACTIONS
@@ -105,10 +116,9 @@ public class Program
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
 
-
     static void SearchItems()
     {
-        var term = InputHelper.ReadText(">Search term:", true);
+        var term = InputHelper.ReadText("Search term", true);
 
         PrintItems(service.FindItems(term));
     }
@@ -125,22 +135,41 @@ public class Program
 
     static void ListMembers() 
     {
-
+        PrintMembers(service.Members);
     }
     
     static void RegisterMember() 
     {
+        var name = InputHelper.ReadText("New member name");
 
+        var member = service.RegisterMember(name);
+        Console.WriteLine($"Registered: {member.Name} (Id={member.Id})");
     }
 
     static void BorrowItem() 
     {
-        
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
+        var message = string.Empty;
+
+        var result = service.BorrowItem(memberId, itemId, out message);
+
+        if (!result) Console.WriteLine("Sorry, an error has occurred:");
+
+        Console.WriteLine(message);
     }
 
     static void ReturnItem() 
     {
-        
+        var memberId = InputHelper.ReadInt("Member Id");
+        var itemId = InputHelper.ReadInt("Item Id");
+        var message = string.Empty;
+
+        var result = service.ReturnItem(memberId, itemId, out message);
+
+        if (!result) Console.WriteLine("Sorry, an error has occurred:");
+
+        Console.WriteLine(message);
     }
 
     #endregion ACTIONS
