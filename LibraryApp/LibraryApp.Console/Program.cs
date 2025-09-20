@@ -36,10 +36,8 @@ public class Program
                 case 4: AddMagazine(); break;
                 case 5: ListMembers(); break;
                 case 6: RegisterMember(); break;
-                case 7: //BorrowItem();
-                        break;
-                case 8: //ReturnItem();
-                        break;
+                case 7: BorrowItem(); break;
+                case 8: ReturnItem(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -61,6 +59,8 @@ public class Program
         Console.WriteLine("4) Add Magazine");
         Console.WriteLine("5) List Members");
         Console.WriteLine("6) Add Member");
+        Console.WriteLine("7) Borrow item");
+        Console.WriteLine("8) Return item");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
@@ -117,5 +117,31 @@ public class Program
         var term = InputHelper.ReadText("Search term");
         Console.WriteLine($"Search results for \"{term}\":");
         InputHelper.PrintList(_service.FindItems(term));
+    }
+
+    private static void BorrowItem()
+    {
+        ListMembers();
+        var idMember = InputHelper.ReadInt("Member id");
+        ListItems();
+        var idItem = InputHelper.ReadInt("Item id");
+        string resultMessage;
+
+        _service.BorrowItem(idMember, idItem, out resultMessage);
+
+        Console.WriteLine($"{resultMessage}");
+    }
+
+    private static void ReturnItem()
+    {
+        ListMembers();
+        var idMember = InputHelper.ReadInt("Member id");
+        ListItems();
+        var idItem = InputHelper.ReadInt("Item id");
+        string resultMessage;
+
+        _service.ReturnItem(idMember, idItem, out resultMessage);
+
+        Console.WriteLine($"{resultMessage}");
     }
 }
