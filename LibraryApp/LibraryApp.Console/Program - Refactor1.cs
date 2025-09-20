@@ -1,6 +1,5 @@
-﻿// Refactor incluyendo Case 5 y 6
-
-using LibraryApp.Console.Domain;
+﻿// Refactor para usar los métodos del LibraryService, para cubrir las opciones del Switch Case 1,2,3,4,7 y 8
+/*using LibraryApp.Console.Domain;
 using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
 
@@ -31,8 +30,6 @@ public class Program
                 case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
-                case 5: RegisterMember(); break;
-                case 6: ListMembers(); break;
                 case 7: BorrowItem(); break;
                 case 8: ReturnItem(); break;
                 case 0: exit = true; break;
@@ -57,8 +54,6 @@ public class Program
         Console.WriteLine("2) Search items by title");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
-        Console.WriteLine("5) Register Member");
-        Console.WriteLine("6) List Members");
         Console.WriteLine("7) Borrow Item");
         Console.WriteLine("8) Return Item");
         Console.WriteLine("0) Exit");
@@ -110,23 +105,6 @@ public class Program
         Console.WriteLine($"Added: {mag.GetInfo()}");
     }
 
-    static void RegisterMember()
-    {
-        var name = InputHelper.ReadText("Member name");
-        var member = _service.RegisterMember(name);
-        Console.WriteLine($"✅ Registered member: {member}");
-    }
-
-    static void ListMembers()
-    {
-        if (_service.Members.Count == 0) { Console.WriteLine("No members registered."); return; }
-        Console.WriteLine("Members:");
-        foreach (var member in _service.Members)
-        {
-            Console.WriteLine(member.ToString());
-        }
-    }
-
     static void BorrowItem()
     {
         var memberId = InputHelper.ReadInt("Enter member Id");
@@ -148,4 +126,7 @@ public class Program
         else
             Console.WriteLine($"❌ {message}");
     }
-}
+}*/
+
+
+
