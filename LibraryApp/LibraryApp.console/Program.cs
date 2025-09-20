@@ -77,7 +77,7 @@ public class Program
     static void SearchItems()
     {
         var query = InputHelper.ReadText("Enter title to search");
-        var results = _items.Where(i => i.Title.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+        var results = _service.Items.Where(i => i.Title.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
         if (results.Count == 0)
         {
             Console.WriteLine("No items found.");
@@ -121,13 +121,13 @@ public class Program
 
     static void ListMembers()
     {
-        if(_members.Count == 0) { Console.WriteLine("No members."); return; }
+        if(_service.Members.Count == 0) { Console.WriteLine("No members."); return; }
         Console.WriteLine("Members:");
-        foreach (var member in _members)
+        foreach (var member in _service.Members)
         {
             var status = member.BorrowedItems.Count > 0 ? "HAS BORROWED ITEMS" : "NO BORROWED ITEMS";
             // Polymorphism: each derived class presents info differently
-            Console.WriteLine($"{member.Id}: {member.BorrowItem} [{status}]");
+            Console.WriteLine($"{member.Id}: {member.Name} [{status}]");
         }
     }
 
@@ -153,7 +153,7 @@ public class Program
         var memberId = InputHelper.ReadInt("Member ID");
         var itemId = InputHelper.ReadInt("Item ID");
         var member = new Member(memberId, "Demo Member"); // In a real app, fetch from storage
-        var item = _items.FirstOrDefault(i => i.Id == itemId);
+        var item = _service.Items.FirstOrDefault(i => i.Id == itemId);
         if (item is null)
         {
             Console.WriteLine("Item not found.");
@@ -175,7 +175,7 @@ public class Program
         var memberId = InputHelper.ReadInt("Member ID");
         var itemId = InputHelper.ReadInt("Item ID");
         var member = new Member(memberId, "Demo Member"); // In a real app, fetch from storage
-        var item = _items.FirstOrDefault(i => i.Id == itemId);
+        var item = _service.Items.FirstOrDefault(i => i.Id == itemId);
         if (item is null)
         {
             Console.WriteLine("Item not found.");

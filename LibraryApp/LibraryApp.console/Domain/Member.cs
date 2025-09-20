@@ -26,5 +26,5 @@ public sealed class Member
     }
     public override string ToString() => $"{Id} - {Name} (Borrowed: {_borrowed.Count})";
 
-   
+    
 }
