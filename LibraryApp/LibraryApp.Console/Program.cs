@@ -72,9 +72,8 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var book = new Book(_nextItemId++, title, author, pages);
-        _items.Add(book);
+
+        var book = _service.AddBook(title, author, pages);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()
@@ -82,9 +81,9 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
-        _items.Add(mag);
+
+        //var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
+        var mag = _service.AddMagazine(title, issue, publisher);
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 }
