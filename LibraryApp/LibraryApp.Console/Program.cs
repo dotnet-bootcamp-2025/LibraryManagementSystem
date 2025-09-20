@@ -31,9 +31,15 @@ public class Program
             switch (choice)
             {
                 case 1: ListItems(); break;
-                //case 2: SearchItems(); break;
+                case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
+                case 5: ListMembers(); break;
+                case 6: RegisterMember(); break;
+                case 7: //BorrowItem();
+                        break;
+                case 8: //ReturnItem();
+                        break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -53,6 +59,8 @@ public class Program
         Console.WriteLine("2) Search items by title (TBD)");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
+        Console.WriteLine("5) List Members");
+        Console.WriteLine("6) Add Member");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
@@ -85,5 +93,29 @@ public class Program
         //var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
         var mag = _service.AddMagazine(title, issue, publisher);
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
+    }
+
+    private static void RegisterMember()
+    {
+        var name = InputHelper.ReadText("Member name");
+        var member = _service.RegisterMember(name);
+        Console.WriteLine($"Registered: {member}");
+    }
+
+    private static void ListMembers()
+    {
+        if (_service.Members.Count == 0) { Console.WriteLine("No members."); return; }
+        Console.WriteLine("Members: ");
+        foreach (var member in _service.Members)
+        {
+            Console.WriteLine($"{member.Name} (Borrowed: { member.BorrowedItems.Count })");
+        }
+    }
+
+    private static void SearchItems()
+    {
+        var term = InputHelper.ReadText("Search term");
+        Console.WriteLine($"Search results for \"{term}\":");
+        InputHelper.PrintList(_service.FindItems(term));
     }
 }

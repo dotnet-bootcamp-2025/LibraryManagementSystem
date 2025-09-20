@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibraryApp.Console.Domain;
+using System;
 
 namespace LibraryApp.ConsoleApp.Utils;
 
@@ -22,6 +23,23 @@ public static class InputHelper
             var input = System.Console.ReadLine() ?? "";
             if (allowEmpty || !string.IsNullOrWhiteSpace(input)) return input.Trim();
             System.Console.WriteLine("Value required. Try again.");
+        }
+    }
+
+    public static void PrintList(IEnumerable<LibraryItem> items)
+    {
+        var any = false;
+
+        foreach (var item in items)
+        {
+            any = true;
+            var title = item.Title;
+            System.Console.WriteLine($"{item.Id} {item.Title} (IsBorrowed: {item.IsBorrowed})");
+        }
+
+        if (!any)
+        {
+            System.Console.WriteLine("No items");
         }
     }
 }
