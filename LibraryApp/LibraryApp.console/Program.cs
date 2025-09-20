@@ -112,7 +112,7 @@ public class Program
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 
-    static void RegiterMember()
+    private static void RegiterMember()
     {
         var name = InputHelper.ReadText("Member Name");
         var member = _service.RegisterMember(name);
