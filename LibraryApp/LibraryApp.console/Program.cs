@@ -148,47 +148,78 @@ public class Program
         }
     }
 
+   
     static void BorrowItem()
     {
-        var memberId = InputHelper.ReadInt("Member ID");
-        var itemId = InputHelper.ReadInt("Item ID");
-        var member = new Member(memberId, "Demo Member"); // In a real app, fetch from storage
-        var item = _service.Items.FirstOrDefault(i => i.Id == itemId);
-        if (item is null)
+        // 1. Pedir los datos al usuario.
+        Console.WriteLine("=== Borrow Item ===");
+        Console.Write("Enter Member ID: ");
+        var memberIdString = Console.ReadLine();
+        Console.Write("Enter Item ID: ");
+        var itemIdString = Console.ReadLine();
+
+        // 2. Validar y convertir la entrada.
+        if (!int.TryParse(memberIdString, out var memberId))
         {
-            Console.WriteLine("Item not found.");
+            Console.WriteLine("Invalid Member ID. Please enter a valid number.");
             return;
         }
-        try
+
+        if (!int.TryParse(itemIdString, out var itemId))
         {
-            member.BorrowItem(item);
-            Console.WriteLine($"'{item.Title}' borrowed by {member.Name}.");
+            Console.WriteLine("Invalid Item ID. Please enter a valid number.");
+            return;
         }
-        catch (Exception ex)
+
+        // 3. Llamar al servicio.
+        string message;
+        var success = _service.BorrowItem(memberId, itemId, out message);
+
+        // 4. Mostrar el resultado al usuario.
+        if (success)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Success: {message}");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {message}");
         }
     }
 
     static void ReturnItem()
     {
-        var memberId = InputHelper.ReadInt("Member ID");
-        var itemId = InputHelper.ReadInt("Item ID");
-        var member = new Member(memberId, "Demo Member"); // In a real app, fetch from storage
-        var item = _service.Items.FirstOrDefault(i => i.Id == itemId);
-        if (item is null)
+        // 1. Get input from the user.
+        Console.WriteLine("=== Return Item ===");
+        Console.Write("Enter Member ID: ");
+        var memberIdString = Console.ReadLine();
+        Console.Write("Enter Item ID: ");
+        var itemIdString = Console.ReadLine();
+
+        // 2. Validate and convert the input.
+        if (!int.TryParse(memberIdString, out var memberId))
         {
-            Console.WriteLine("Item not found.");
+            Console.WriteLine("Invalid Member ID. Please enter a valid number.");
             return;
         }
-        try
+
+        if (!int.TryParse(itemIdString, out var itemId))
         {
-            member.ReturnItem(item);
-            Console.WriteLine($"'{item.Title}' returned by {member.Name}.");
+            Console.WriteLine("Invalid Item ID. Please enter a valid number.");
+            return;
         }
-        catch (Exception ex)
+
+        // 3. Call the service to perform the return operation.
+        string message;
+        var success = _service.ReturnItem(memberId, itemId, out message);
+
+        // 4. Print the result to the console.
+        if (success)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Success: {message}");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {message}");
         }
     }
 }
