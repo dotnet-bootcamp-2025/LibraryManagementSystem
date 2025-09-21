@@ -1,12 +1,14 @@
 ﻿using LibraryApp.Console.Domain;
+using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
+    private static readonly LibraryService _service = new();
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        Seed();
+        _service.Seed();
         bool exit = false;
         while (!exit)
         {
@@ -49,28 +51,23 @@ public class Program
         Console.WriteLine("2) Search items by title (TBD)");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
+        //Console.WriteLine("List members");
+        //Console.Write("tbd");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
     static void ListItems()
     {
-        if (_items.Count == 0) { Console.WriteLine("No items."); return; }
+        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in _items)
+        foreach (var item in _service.Items)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
             // Polymorphism: each derived class presents info differently
             Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
     }
-    // Seed fake data for the demo
-    static void Seed()
-    {
-        _items.Add(new Book(1, "Clean Code", "Robert C. Martin", 464));
-        _items.Add(new Book(2, "The Pragmatic Programmer", "Andrew Hunt", 352));
-        _items.Add(new Magazine(3, "DotNET Weekly", 120, "DevPub"));
-        _items.Add(new Magazine(4, "Tech Monthly", 58, "TechPress"));
-    }
+
     static void AddBook()
     {
         var title = InputHelper.ReadText("Title");
