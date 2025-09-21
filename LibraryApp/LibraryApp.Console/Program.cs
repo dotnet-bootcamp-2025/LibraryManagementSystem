@@ -29,9 +29,11 @@ public class Program
             switch (choice)
             {
                 case 1: ListItems(); break;
-                //case 2: SearchItems(); break;
+                case 2: SearchItems(); break;
                 case 3: AddBook(); break;
                 case 4: AddMagazine(); break;
+                case 5: ListMembers(); break;
+                case 6: RegisterMember(); break;
                 case 0: exit = true; break;
                 default: Console.WriteLine("Unknown option."); break;
             }
@@ -48,11 +50,11 @@ public class Program
     {
         Console.WriteLine("=== Library Management System ===");
         Console.WriteLine("1) List all items");
-        Console.WriteLine("2) Search items by title (TBD)");
+        Console.WriteLine("2) Search items by title");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
-        //Console.WriteLine("List members");
-        //Console.Write("tbd");
+        Console.WriteLine("5) List members");
+        Console.WriteLine("6) Register member");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
@@ -73,9 +75,9 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var book = new Book(_nextItemId++, title, author, pages);
-        _items.Add(book);
+
+        var book = _service.AddBook(title, author, pages);
+
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()
@@ -83,9 +85,53 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
-        _items.Add(mag);
+
+        var mag = _service.AddMagazine(title, issue, publisher);
+
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
+    }
+
+    private static void SearchItems()
+    {
+        var titleToSearch = InputHelper.ReadText("Enter the title to search");
+        bool foundSomething = false; //variable para saber si encontramos algo
+
+        Console.WriteLine("\nSearching...");
+
+        foreach (var item in _service.Items)
+        {
+            if (item.Title.ToLower() == titleToSearch.ToLower())
+            {
+                var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+                Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+                foundSomething = true;
+            }
+        }
+
+        if (!foundSomething) // Aquí revisamos si la variable es falsa
+        {
+            Console.WriteLine("No items found with that title.");
+        }
+    }
+
+    public static void ListMembers()
+    {
+        if (_service.Members.Count == 0)
+        {
+            Console.WriteLine("No members registered.");
+            return;
+        }
+        Console.WriteLine("Members:");
+        foreach (var member in _service.Members)
+        {
+            Console.WriteLine(member);
+        }
+    }
+
+    private static void RegisterMember()
+    {
+        var name = InputHelper.ReadText("Member name");
+        var member = _service.RegisterMember(name);
+        Console.WriteLine($"Registered {member}");
     }
 }
