@@ -7,7 +7,7 @@ public class Program
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        Seed();
+        _service.Seed();
         bool exit = false;
         while (!exit)
         {
@@ -61,12 +61,7 @@ public class Program
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
-    // -1) Seed
-    // Seed fake data for the demo
-    static void Seed()
-    {
-        _service.Seed();
-    }
+
     // 1) ListItems
     static void ListItems()
     {
@@ -85,7 +80,9 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
+
         var book = _service.AddBook(title, author, pages);
+        
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     // 4) AddMagazine
@@ -94,7 +91,9 @@ public class Program
         var title = InputHelper.ReadText("Title");
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
+
         var mag = _service.AddMagazine(title, issue, publisher);
+        
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
     // 5) ListMembers
@@ -112,8 +111,10 @@ public class Program
     // 6) RegisterMember
     static void RegisterMember()
     {
-        var name = InputHelper.ReadText("Name");
-        _service.RegisterMember(name);
+        var name = InputHelper.ReadText("Member Name");
+        var member = _service.RegisterMember(name);
+    
+        Console.WriteLine($"Registered: {member}");
     }
     // 7) BorrowItem
     static void BorrowItem()
