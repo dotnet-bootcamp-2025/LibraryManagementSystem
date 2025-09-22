@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Console.Domain
 {
-    internal class Magazine : LibraryItem
+    public sealed class Magazine : LibraryItem
     {
         public int IssueNumber { get; }
         public string Publisher { get; }
