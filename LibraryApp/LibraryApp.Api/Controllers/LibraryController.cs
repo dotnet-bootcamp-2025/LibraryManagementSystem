@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Console.Services;
+using LibraryApp.Console.Domain;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -16,20 +18,17 @@ namespace LibraryApp.Api.Controllers
             _service.Seed();
             var items = _service;
             return Ok(items);
-
-
-
-            /*Add POST to add a new book
+        }
+            //Add POST to add a new book
 
             [HttpPost("book")]
-            public IActionResult AddBook([FromBody] Book book)
+        public IActionResult AddBook([FromBody] Book book)
             {
-                if (book == null)
-                    return BadRequest("Book data is required.");
+                var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
 
-                _service.AddBook(book);
-                return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);*/
+                return Ok(addedBook);
 
+            
         }
     }
 }
