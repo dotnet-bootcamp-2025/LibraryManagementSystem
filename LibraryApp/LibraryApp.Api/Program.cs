@@ -1,3 +1,4 @@
+using LibraryApp.Console.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -11,6 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Register LibraryService as a singleton
+// 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddSingleton<ILibraryService,LibraryService>();
 
 var app = builder.Build();
 

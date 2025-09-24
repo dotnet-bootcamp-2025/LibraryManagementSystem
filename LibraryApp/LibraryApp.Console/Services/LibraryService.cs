@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Console.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
