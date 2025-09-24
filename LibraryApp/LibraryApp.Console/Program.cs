@@ -6,7 +6,7 @@ using LibraryApp.Console.Utils;
 
 public class Program
 {
-    private static readonly LibraryService _service = new();
+    private static readonly ILibraryService _service = new LibraryService();
 
     public static void Main()
     {

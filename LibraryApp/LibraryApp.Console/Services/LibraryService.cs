@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.Console.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
@@ -36,6 +36,7 @@ namespace LibraryApp.Console.Services
             var mag = new Magazine(_nextItemId++, title, issueNumber, publisher);
             _items.Add(mag);
             return mag;
+       
         }
         public Member RegisterMember(string name)
         {
@@ -49,6 +50,11 @@ namespace LibraryApp.Console.Services
             term = term.Trim().ToLowerInvariant();
             return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
         }
+        public IEnumerable<LibraryItem> GetItems()
+        {
+            return _items;
+        }
+
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);
