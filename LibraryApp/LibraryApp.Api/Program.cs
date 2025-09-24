@@ -3,6 +3,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using LibraryApp.Console.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register LibraryService as singleton
+// 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddSingleton < ILibraryService, LibraryService>();
 
 var app = builder.Build();
 
