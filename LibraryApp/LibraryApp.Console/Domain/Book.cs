@@ -18,3 +18,5 @@ public sealed class Book : LibraryItem
         return $"Book [Id={Id}], Title={Title}, Author={Author}, Pages={Pages}, IsBorrowed={IsBorrowed}";
     }
 }
+
+public sealed record BookDto(int Id, string? Title, string? Author, int Pages);
