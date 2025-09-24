@@ -19,4 +19,4 @@ public sealed class Book : LibraryItem
     }
 }
 
-public sealed record BookDto(int Id, string? Title, string? Author, int Pages);
+public sealed record BookDto(string? Title, string? Author, int Pages);

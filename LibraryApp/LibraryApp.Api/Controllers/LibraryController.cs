@@ -7,7 +7,12 @@ namespace LibraryApp.Api.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        private readonly LibraryService _service = new();
+        private readonly ILibraryService _service;
+
+        public LibraryController(ILibraryService service)
+        {
+            _service = service;
+        }
 
         [HttpGet("items")]
         public IActionResult GetSeedData()
