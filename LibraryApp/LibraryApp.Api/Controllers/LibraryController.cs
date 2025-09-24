@@ -1,4 +1,5 @@
-﻿using LibraryApp.Console.Services;
+﻿using LibraryApp.Console.Domain;
+using LibraryApp.Console.Services;
 using Microsoft.AspNetCore.Mvc; 
 
 namespace LibraryApp.Api.Controllers
@@ -21,6 +22,11 @@ namespace LibraryApp.Api.Controllers
         }
 
         //add POST to add a new book
-
+        [HttpPost("AddBook")]
+        public IActionResult AddBook([FromBody] Book newBook)
+        {
+            _service.AddBook(newBook.Title, newBook.Author, newBook.Pages);
+            return Ok(newBook);
+        }
     }
 }
