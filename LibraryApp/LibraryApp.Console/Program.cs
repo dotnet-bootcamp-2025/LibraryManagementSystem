@@ -4,7 +4,6 @@ using LibraryApp.Console.Utils;
 
 public class Program
 {
-    private static readonly List<LibraryItem> _items = new();
     private static readonly LibraryService _service = new();
 
     public static void Main()
@@ -62,6 +61,7 @@ public class Program
         Console.WriteLine("2) Search items by title (TBD)");
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
+        Console.WriteLine("5) List members (TBD)");
         Console.WriteLine("6) Register member");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
@@ -97,9 +97,7 @@ public class Program
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
 
-        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
-        var mag = new Magazine(_nextItemId++, title, issue, publisher);
-        _items.Add(mag);
+        var mag = _service.AddMagazine(title, issue, publisher);
 
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
