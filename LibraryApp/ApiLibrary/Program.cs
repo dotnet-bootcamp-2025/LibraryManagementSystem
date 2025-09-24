@@ -1,3 +1,5 @@
+using LibraryApp.Console.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +9,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// register library service as a singleton
+// 3 lyfecycle singleton (toda la vida de la app en runtime)
+// scoped (solo a lo largo de un contexto, porejemplo un request que va a ejecutar este controlador),
+// transient (solo por la transaccion)
+builder.Services.AddSingleton<ILibraryService, LibraryService>();
+
 
 var app = builder.Build();
 

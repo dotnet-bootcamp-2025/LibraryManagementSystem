@@ -1,4 +1,4 @@
-namespace APIApp
+namespace ApiLibrary
 {
     public class WeatherForecast
     {
