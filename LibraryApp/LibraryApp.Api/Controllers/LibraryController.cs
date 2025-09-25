@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LibraryApp.Console.Services;
+//using LibraryApp.Console.Services;
+//using LibraryApp.Console.Domain;
+using LibraryApp.Domain;
+using LibraryApp.Services;
 
 namespace LibraryApp.Api.Controllers
 {
-    //Add DTO class for creating a book
-    public class BookCreateDto
-    {
-        public string Title { get; set; } = string.Empty;
-        public string Author { get; set; } = string.Empty;
-        public int Pages { get; set; }
-    }
     public class LibraryController : ControllerBase
     {
-        //private static readonly LibraryService _service = new();
+        //OLD private static readonly LibraryService _service = new();
         private readonly ILibraryService _service;
 
         public LibraryController(ILibraryService LibraryService )
@@ -33,14 +29,14 @@ namespace LibraryApp.Api.Controllers
         // Homework:
         // Add Post to add a new book
         [HttpPost("items/books")]
-        public IActionResult AddBook([FromBody] BookCreateDto dto)
+        public IActionResult AddBook([FromBody] Book book)
         {
 
-            if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Author) || dto.Pages < 0)
+            if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author) || book.Pages < 0)
                 return BadRequest("Invalid book data.");
 
-            var book = _service.AddBook(dto.Title, dto.Author, dto.Pages);
-            return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
     }
 }
