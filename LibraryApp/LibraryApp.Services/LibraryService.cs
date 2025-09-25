@@ -2,8 +2,6 @@ using LibraryApp.Domain;
 
 namespace LibraryApp.Services;
 
-
-//agregar en switch las 2 opciones faltantes 
 public sealed class LibraryService : ILibraryService
 {
     private readonly List<LibraryItem> _items = new();

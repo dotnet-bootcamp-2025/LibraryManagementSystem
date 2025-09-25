@@ -28,10 +28,18 @@ public class LibraryController : ControllerBase
         return Ok(items);
     }
 
-    [HttpPost("books")]
-    public IActionResult AddBook([FromBody] Book book)
+    [HttpGet("members")]
+    public IActionResult GetMembers()
     {
-        if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+        _service.Seed();
+        var members = _service.Members;
+        return Ok(members);
+    }
+
+    [HttpPost("books")]
+    public IActionResult AddBook([FromBody] BookReq book)
+    {
+        if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
         {
             return BadRequest("Invalid book data.");
         }
@@ -63,7 +71,7 @@ public class LibraryController : ControllerBase
     }
 
     [HttpGet("searchItems")]
-    public IActionResult SearchItems([FromQuery] string term)
+    public IActionResult SearchItems([FromQuery] string? term)
     {
         if (term == null || string.IsNullOrWhiteSpace(term))
         {
@@ -73,5 +81,19 @@ public class LibraryController : ControllerBase
         var searchRes = _service.FindItems(term).ToList();
         return Ok(searchRes);
     }
-    
+    //
+    // [HttpPut("borrows")]
+    // public IActionResult BorrowItem([FromQuery] int memberId, int itemId, out string message)
+    // {
+    //     if (itemId == null || memberId == null)
+    //     {
+    //         return BadRequest("Invalid item data.");
+    //     }
+    //     var borrowedItems = _service.BorrowItem()
+    // }
+
 }
+
+public record BookReq(string Title, string Author, int Pages);
+public record Magazine(string Title, string Publisher, int IssueNumber);
+public record Member(string Name);
