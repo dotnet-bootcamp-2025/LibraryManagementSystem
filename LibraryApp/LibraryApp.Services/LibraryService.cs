@@ -1,7 +1,7 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.ConsoleApp.Domain;
+﻿using System;
+using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services;
+namespace LibraryApp.Services;
 
 public sealed class LibraryService : ILibraryService
 {
@@ -70,6 +70,7 @@ public sealed class LibraryService : ILibraryService
         var item = _items.FirstOrDefault(i => i.Id == itemId);
         if (member is null) { message = "Member not found."; return false; }
         if (item is null) { message = "Item not found."; return false; }
+
         try
         {
             member.ReturnItem(item);

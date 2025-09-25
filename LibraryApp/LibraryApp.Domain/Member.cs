@@ -1,4 +1,4 @@
-﻿using LibraryApp.Console.Domain;
+﻿namespace LibraryApp.Domain;
 
 public sealed class Member
 {

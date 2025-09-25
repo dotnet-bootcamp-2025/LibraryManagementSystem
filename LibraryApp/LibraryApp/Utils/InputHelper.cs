@@ -1,4 +1,4 @@
-﻿using LibraryApp.Console.Domain;
+﻿using LibraryApp.Domain;
 using System;
 
 namespace LibraryApp.ConsoleApp.Utils;

@@ -1,6 +1,4 @@
-﻿using LibraryApp.Console.Domain;
-
-namespace LibraryApp.ConsoleApp.Domain;
+﻿namespace LibraryApp.Domain;
 
 public sealed class Magazine : LibraryItem
 {
