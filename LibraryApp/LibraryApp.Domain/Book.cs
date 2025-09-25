@@ -1,4 +1,6 @@
-﻿namespace LibraryApp.Domain
+﻿using System.Text.Json.Serialization;
+
+namespace LibraryApp.Domain
 {
     public sealed class Book : LibraryItem
     {
@@ -7,6 +9,7 @@
 
         public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
 
+        [JsonConstructor]
         public Book(int id, string title, string author, int pages) : base(id, title)
         {
             Author = string.IsNullOrWhiteSpace(title) ? "Unknown" : author.Trim();
@@ -18,7 +21,4 @@
             return $"Book [Id={Id}], Title={Title}, Author={Author}, Pages={Pages}, IsBorrowed={IsBorrowed}";
         }
     }
-
-    public sealed record BookDto(string? Title, string? Author, int Pages);
-
 }
