@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using LibraryApp.Console.Domain;
-//refactorizar program.cs para que traten de invocar este servicio.
-//tip :Una variable nueva de tipo services _service = new();
-
-//ractorizar como el switch para utilizar este servicio
 
 namespace LibraryApp.Console.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();

@@ -3,9 +3,7 @@ using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
 public class Program
 {
-  //private static readonly List<LibraryItem> _items = new();
-  private static readonly LibraryService libraryService = new();
-    //aqui el _services = new()
+  private static readonly ILibraryService libraryService = new LibraryService();
     public static void Main()
     {
         Console.WriteLine("Library App!");

@@ -8,8 +8,8 @@ namespace LibraryApp.Console.Domain
 {
     public sealed class Magazine : LibraryItem
     {
-        public int IssueNumber { get; }
-        public string Publisher { get; }
+        public int IssueNumber { get; set; }
+        public string Publisher { get; set; }
         public Magazine(int id, string title, int issueNumber, string publisher)
             : base(id, title)
         {
