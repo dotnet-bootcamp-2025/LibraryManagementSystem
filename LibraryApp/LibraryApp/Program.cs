@@ -1,15 +1,15 @@
 ﻿using LibraryApp.Domain;
 using LibraryApp.ConsoleApp.Utils;
-using LibraryApp.Services;
+using ApiLibrary.Controllers;
 
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
-    private static readonly LibraryService _service = new();
+    private static readonly LibraryController _service;
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        _service.Seed();
+        //_service.Seed();
         bool exit = false;
         while (!exit)
         {
@@ -65,22 +65,27 @@ public class Program
     }
     static void ListItems()
     {
-        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
+        var libraryItems = _service.GetItems() as IReadOnlyList<LibraryItem>;
+
+        if (libraryItems.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in _service.Items)
+        foreach (var item in libraryItems)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
             // Polymorphism: each derived class presents info differently
             Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
     }
+
     static void AddBook()
     {
         var title = InputHelper.ReadText("Title");
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
 
-        var book = _service.AddBook(title, author, pages);
+        Book newBook = new Book(0, title, author, pages);
+
+        var book = _service.AddBook(newBook);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()

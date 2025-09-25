@@ -8,25 +8,27 @@ namespace ApiLibrary.Controllers
     {
         private readonly ILibraryService _service;
 
-        private ILogger logger;
-
-        public LibraryController(ILibraryService libraryService, ILogger logger)
+        public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
-            this.logger = logger;
+            _service.Seed();
         }
 
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            _service.Seed();
             var items = _service.Items;
 
             return Ok(items);
         }
 
-        // add post ot adda a new book
-        // tarea hacer que el library app jale con las 
+        [HttpGet("items")]
+        public IActionResult GetMembers()
+        {
+            var members = _service.Members;
+
+            return Ok(members);
+        }
 
         [HttpPost("item")]
         public IActionResult AddBook([FromBody] Book book)
@@ -39,5 +41,43 @@ namespace ApiLibrary.Controllers
 
             return CreatedAtAction(nameof(GetItems), new {  id = addBook.Id, addBook});
         }
+
+        [HttpPost("item")]
+        public IActionResult AddMagazzine([FromBody] Magazine magazzine)
+        {
+            if (magazzine == null || string.IsNullOrWhiteSpace(magazzine.Title) || string.IsNullOrWhiteSpace(magazzine.Publisher) || magazzine.IssueNumber <= 0)
+            {
+                return BadRequest("Invalid magazzine data");
+            }
+
+            var addMagazzine = _service.AddMagazine(magazzine.Title, magazzine.IssueNumber, magazzine.Publisher);
+
+            return CreatedAtAction(nameof(GetItems), new { id = addMagazzine.Id, addMagazzine });
+        }
+
+        [HttpPost("item")]
+        public IActionResult AddMember([FromBody] Member member)
+        {
+            if (member == null || string.IsNullOrWhiteSpace(member.Name))
+            {
+                return BadRequest("Invalid member data");
+            }
+
+            var addMember = _service.RegisterMember(member.Name);
+
+            return CreatedAtAction(nameof(GetMembers), new { id = addMember.Id, addMember });
+        }
+
+        [HttpPost("items")]
+        public IActionResult BorrowItem(int memberId, int itemId)
+        {
+            if (memberId <= 0 || itemId <= 0)
+            {
+
+            }
+
+            return Ok();
+        }
+
     }
 }

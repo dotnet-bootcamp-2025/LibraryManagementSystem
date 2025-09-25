@@ -15,7 +15,7 @@ public abstract class LibraryItem
 
     protected LibraryItem(int id, string title)
     {
-        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be psitive");
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive");
         Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required.") : title.Trim();
 
         Id = id;
