@@ -24,9 +24,7 @@ namespace LibraryApp.Api.Controllers
         }
 
         // Homework: Add POST to add a new book
-
         [HttpPost("books")]
-
         public IActionResult AddBook([FromBody] Book bookDto)
         {
             if (bookDto == null || string.IsNullOrWhiteSpace(bookDto.Title) || string.IsNullOrWhiteSpace(bookDto.Author))
@@ -38,6 +36,52 @@ namespace LibraryApp.Api.Controllers
         }
 
         // TODO : Add more endpoints for magazines, members, borrowing and returning items
+
+        // Add POST to add a new magazine
+        [HttpPost("magazines")]
+        public IActionResult AddMagazine([FromBody] Magazine magDto)
+        {
+            if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
+            {
+                return BadRequest("Invalid magazine data.");
+            }
+            var mag = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
+            return CreatedAtAction(nameof(GetItems), new { id = mag.Id }, mag);
+        }
+
+        // Add POST to register a new member
+        [HttpPost("members")]
+        public IActionResult RegisterMember([FromBody] Member memberDto)
+        {
+            if (memberDto == null || string.IsNullOrWhiteSpace(memberDto.Name))
+            {
+                return BadRequest("Invalid member data.");
+            }
+            var member = _service.RegisterMember(memberDto.Name);
+            return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
+        }
+
+        // Add PATCH to borrow an item
+        [HttpPatch("borrow")]
+        public IActionResult BorrowItem(int memberId, int itemId)
+        {
+            if (_service.BorrowItem(memberId, itemId, out string message))
+            {
+                return Ok(message);
+            }
+            return BadRequest(message);
+        }
+
+        // Add PATCH to return an item
+        [HttpPatch("return")]
+        public IActionResult ReturnItem(int memberId, int itemId)
+        {
+            if (_service.ReturnItem(memberId, itemId, out string message))
+            {
+                return Ok(message);
+            }
+            return BadRequest(message);
+        }
 
     }
 }
