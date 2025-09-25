@@ -1,4 +1,4 @@
-namespace LibraryApp.Console.Domain;
+namespace LibraryApp.Domain;
 
 public class Book : LibraryItem
 {
@@ -17,7 +17,7 @@ public class Book : LibraryItem
     public string Author { get;  }
     public int Pages { get; }
     
-   //constructor generated when we put LibraryItem
+    //constructor generated when we put LibraryItem
    
     public override string GetInfo() =>
         $"Book[Id={Id}, Title={Title}, Author={Author}, Pages={Pages}]";

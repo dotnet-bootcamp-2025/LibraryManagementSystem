@@ -1,4 +1,4 @@
-namespace LibraryApp.Console.Domain;
+namespace LibraryApp.Domain;
 
 public sealed class Magazine : LibraryItem //sealed es que no puedo heredar una clase a partir de magazine
 {

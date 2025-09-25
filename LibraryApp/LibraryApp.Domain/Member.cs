@@ -1,4 +1,4 @@
-namespace LibraryApp.Console.Domain;
+namespace LibraryApp.Domain;
 
 public sealed class Member
 { //clase para prestar y devolver un libro
