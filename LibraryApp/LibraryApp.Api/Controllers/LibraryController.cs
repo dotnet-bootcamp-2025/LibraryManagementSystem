@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LibraryApp.ConsoleApp;
-using LibraryApp.ConsoleApp.Domain;
+﻿using LibraryApp.Domain;
+using LibraryApp.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -20,5 +20,18 @@ namespace LibraryApp.Api.Controllers
             var items = _service.Items;
             return Ok(items);
         }
+
+        [HttpPost("books")]
+        public IActionResult AddBook([FromBody] Book book)
+        {
+            if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+            {
+                return BadRequest("Invalid book data.");
+            }
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
+        }
+
+        // TODO: Add more endpoints for magazines, members, borrowing, and returning items
     }
 }

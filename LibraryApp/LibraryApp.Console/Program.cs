@@ -1,9 +1,12 @@
 ﻿using LibraryApp.ConsoleApp.Utils;
+using LibraryApp.Domain;
+using LibraryApp.Services;
 
 namespace LibraryApp.ConsoleApp;
 
 public class Program
 {
+    private static readonly List<LibraryItem> _items = new();
     private static readonly LibraryService _service = new();
 
     public static void Main()
