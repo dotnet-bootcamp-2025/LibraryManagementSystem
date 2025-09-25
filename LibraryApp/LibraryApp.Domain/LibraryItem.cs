@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
@@ -13,8 +13,8 @@ namespace LibraryApp.Console.Domain
         public bool IsBorrowed { get; private set; }
 
         // Paraneteruzed cibstryctir (required fields)
-        protected LibraryItem(int id, string title) 
-        { 
+        protected LibraryItem(int id, string title)
+        {
             if (id == 0) throw new ArgumentOutOfRangeException(nameof(id), "It must be positive.");
             Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required") : title.Trim();
             Id = id;

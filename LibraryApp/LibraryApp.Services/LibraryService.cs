@@ -1,7 +1,14 @@
-﻿using LibraryApp.Console.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using LibraryApp.Domain;
 //adaptar el program cs para implementar este servicio
 
-namespace LibraryApp.Console.Services {
+namespace LibraryApp.Services
+{
     public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();

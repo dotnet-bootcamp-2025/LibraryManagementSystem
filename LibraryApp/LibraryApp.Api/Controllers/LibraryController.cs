@@ -1,5 +1,5 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
+﻿using LibraryApp.Domain;
+using LibraryApp.Services;
 using Microsoft.AspNetCore.Mvc; 
 
 namespace LibraryApp.Api.Controllers
@@ -22,11 +22,16 @@ namespace LibraryApp.Api.Controllers
         }
 
         //add POST to add a new book
-        [HttpPost("AddBook")]
-        public IActionResult AddBook([FromBody] Book newBook)
+        [HttpPost("Books")]
+        public IActionResult AddBook([FromBody] Book Book)
         {
-            _service.AddBook(newBook.Title, newBook.Author, newBook.Pages);
-            return Ok(newBook);
+            if (Book == null || string.IsNullOrWhiteSpace(Book.Title) || string.IsNullOrWhiteSpace(Book.Author))
+            {
+                return BadRequest("Invalid book data.");
+            }
+
+            var addedBook=_service.AddBook(Book.Title, Book.Author, Book.Pages);
+            return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
     }
 }

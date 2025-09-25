@@ -1,6 +1,12 @@
-﻿using LibraryApp.Console.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Services
+using LibraryApp.Domain;
+
+namespace LibraryApp.Services
 {
     public interface ILibraryService
     {
