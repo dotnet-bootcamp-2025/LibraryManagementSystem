@@ -39,4 +39,39 @@ public class LibraryController : ControllerBase
         var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
         return CreatedAtAction(nameof(GetItems), new {id=addedBook.Id},addedBook);
     }
+
+    [HttpPost("magazines")]
+    public IActionResult AddMagazine([FromBody] Magazine magazine)
+    {
+        if (magazine == null || string.IsNullOrWhiteSpace(magazine.Title)|| int.IsNegative(magazine.IssueNumber) || string.IsNullOrEmpty(magazine.Publisher))
+        {
+            return BadRequest("Invalid magazine data.");
+        }
+        var addedMagazine = _service.AddMagazine(magazine.Title, magazine.IssueNumber, magazine.Publisher);
+        return CreatedAtAction(nameof(GetItems), new {id=addedMagazine.Id},addedMagazine);
+    }
+
+    [HttpPost("members")]
+    public IActionResult AddMember([FromBody] Member member)
+    {
+        if (member == null || string.IsNullOrWhiteSpace(member.Name))
+        {
+            return BadRequest("Invalid member data.");
+        }
+        var addedMember = _service.RegisterMember(member.Name);
+        return CreatedAtAction(nameof(GetItems), new {id=addedMember.Id},addedMember);
+    }
+
+    [HttpGet("searchItems")]
+    public IActionResult SearchItems([FromQuery] string term)
+    {
+        if (term == null || string.IsNullOrWhiteSpace(term))
+        {
+            return BadRequest("Invalid term data.");
+        }
+
+        var searchRes = _service.FindItems(term).ToList();
+        return Ok(searchRes);
+    }
+    
 }
