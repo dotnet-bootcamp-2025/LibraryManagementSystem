@@ -1,5 +1,8 @@
-﻿using LibraryApp.console.Domain;
-using LibraryApp.console.Services;
+﻿//using LibraryApp.console.Domain;
+//using LibraryApp.console.Services;
+using LibraryApp.Domain;
+using LibraryApp.Services;
+
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();

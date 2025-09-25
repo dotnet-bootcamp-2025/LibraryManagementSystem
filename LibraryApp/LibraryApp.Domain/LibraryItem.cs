@@ -1,6 +1,11 @@
-﻿namespace LibraryApp.console.Domain
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LibraryApp.Domain
 {
-    //abstract nunca se instancia
     public abstract class LibraryItem
     {
         public int Id { get; }

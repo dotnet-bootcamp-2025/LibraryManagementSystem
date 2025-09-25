@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryApp.console\LibraryApp.console.csproj" />
+    <ProjectReference Include="..\LibraryApp.Domain\LibraryApp.Domain.csproj" />
+    <ProjectReference Include="..\LibraryApp.Services\LibraryApp.Services.csproj" />
   </ItemGroup>
 
 </Project>

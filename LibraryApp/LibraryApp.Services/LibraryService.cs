@@ -1,6 +1,6 @@
-﻿using LibraryApp.console.Domain;
+﻿using LibraryApp.Domain;
 
-namespace LibraryApp.console.Services
+namespace LibraryApp.Services
 {
     public sealed class LibraryService : ILibraryService
     {

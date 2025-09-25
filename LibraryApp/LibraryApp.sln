@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.console", "Libra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryApp.Api\LibraryApp.Api.csproj", "{472D6EAD-8C21-4A3A-AA9D-9365B8936F70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{FD5A3B7A-E9B0-4B83-9A9D-B7D75590C63C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{0E97505E-BC24-4EB1-A015-B11B24B93EF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{472D6EAD-8C21-4A3A-AA9D-9365B8936F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{472D6EAD-8C21-4A3A-AA9D-9365B8936F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{472D6EAD-8C21-4A3A-AA9D-9365B8936F70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD5A3B7A-E9B0-4B83-9A9D-B7D75590C63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD5A3B7A-E9B0-4B83-9A9D-B7D75590C63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD5A3B7A-E9B0-4B83-9A9D-B7D75590C63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD5A3B7A-E9B0-4B83-9A9D-B7D75590C63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E97505E-BC24-4EB1-A015-B11B24B93EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E97505E-BC24-4EB1-A015-B11B24B93EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E97505E-BC24-4EB1-A015-B11B24B93EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E97505E-BC24-4EB1-A015-B11B24B93EF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
