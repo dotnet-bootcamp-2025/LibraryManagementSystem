@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using LibraryApp.Console.Services;
-using LibraryApp.Console.Domain;
+using LibraryApp.Domain;
+using LibraryApp.Services;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -15,7 +15,7 @@ namespace LibraryApp.Api.Controllers
         }
 
         [HttpGet("items")]
-        public IActionResult GetSeedData()
+        public IActionResult GetItems()
         {
             _service.Seed();
             var items = _service.Items;
@@ -29,5 +29,19 @@ namespace LibraryApp.Api.Controllers
             var book = _service.AddBook(dto.Title!, dto.Author!, dto.Pages);
             return Ok(book);
         }
+
+
+        //IDEAL APPROACH
+
+        //public IActionResult AddBook([FromBody] Book book)
+        //{
+        //    if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+        //    {
+        //        return BadRequest("Invalid book data");
+        //    }
+
+        //    var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+        //    return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
+        //}
     }
 }
