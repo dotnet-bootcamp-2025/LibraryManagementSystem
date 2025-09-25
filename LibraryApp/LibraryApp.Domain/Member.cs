@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public sealed class Member
     {
@@ -31,6 +31,5 @@ namespace LibraryApp.Console.Domain
             item.Return();
         }
         public override string ToString() => $"{Id} - {Name} (Borrowed: {_borrowed.Count})";
-
     }
 }

@@ -1,12 +1,12 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using LibraryApp.Domain;
+using LibraryApp.Services;
 
 namespace LibraryApp.Api.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        //private readonly LibraryService _service = new();
+        //OLD approach -> private readonly LibraryService _service = new();
         private readonly LibraryService _service;
         
         public LibraryController(LibraryService libraryService)
@@ -36,6 +36,8 @@ namespace LibraryApp.Api.Controllers
             var book = _service.AddBook(bookDto.Title, bookDto.Author, bookDto.Pages);
             return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);
         }
+
+        // TODO : Add more endpoints for magazines, members, borrowing and returning items
 
     }
 }

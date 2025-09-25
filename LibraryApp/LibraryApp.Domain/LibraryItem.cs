@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
@@ -31,6 +31,5 @@ namespace LibraryApp.Console.Domain
         }
         // Polymorphic behavior — each item describes itself
         public abstract string GetInfo();
-
     }
 }

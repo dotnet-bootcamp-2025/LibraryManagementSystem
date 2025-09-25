@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public sealed class Magazine : LibraryItem
     {
@@ -19,10 +20,9 @@ namespace LibraryApp.Console.Domain
         {
             IssueNumber = issueNumber < 0 ? 0 : issueNumber;
             Publisher = string.IsNullOrWhiteSpace(publisher) ? "Unknown Publisher" : publisher.Trim();
-        }   
+        }
 
         public override string GetInfo()
            => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
-        
     }
 }

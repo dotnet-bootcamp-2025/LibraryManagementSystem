@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public class Book : LibraryItem
     {
@@ -19,11 +18,10 @@ namespace LibraryApp.Console.Domain
             Author = string.IsNullOrWhiteSpace(author) ? "Unknown Author" : author.Trim();
             Pages = pages < 0 ? 0 : pages;
 
-        }    
+        }
         public override string GetInfo()
         {
             return $"Book [Id={Id}, Title={Title}, Author={Author}, Pages={Pages}, IsBorrowed={IsBorrowed}]";
         }
-
     }
 }
