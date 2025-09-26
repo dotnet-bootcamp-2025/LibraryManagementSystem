@@ -8,6 +8,8 @@ public sealed class LibraryService : ILibraryService
     private readonly List<Member> _members = new();
     private int _nextItemId = 1;
     private int _nextMemberId = 1;
+    //private readonly object _sync = new(); //change lock for singleton
+    
     public IReadOnlyList<LibraryItem> Items => _items;
 
     public IReadOnlyList<Member> Members => _members;
@@ -24,11 +26,14 @@ public sealed class LibraryService : ILibraryService
     }
 
     public Book AddBook(string title, string author, int pages = 0)
-    {
-        var book = new Book(_nextItemId++, title, author, pages);
-        _items.Add(book);
-        return book;
-    }
+    
+        {
+            //var id = Interlocked.Increment(ref _nextItemId); 
+            var book = new Book(_nextItemId++, title, author, pages);
+            _items.Add(book);
+            return book;
+        }
+    
 
     public Magazine AddMagazine(string title, int issueNumber, string publisher)
     {
@@ -39,11 +44,13 @@ public sealed class LibraryService : ILibraryService
 
     //new parameter to implement
     public Member RegisterMember(string name)
-    {
-        var member = new Member(_nextMemberId++, name);
-        _members.Add(member);
-        return member;
-    }
+        {
+            //var id = Interlocked.Increment(ref _nextMemberId);
+            var member = new Member(_nextMemberId++, name);
+            _members.Add(member);
+            return member;
+        }
+    
 
     public IEnumerable<LibraryItem> FindItems(string? term)
     {

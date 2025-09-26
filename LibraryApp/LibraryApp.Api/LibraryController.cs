@@ -81,19 +81,48 @@ public class LibraryController : ControllerBase
         var searchRes = _service.FindItems(term).ToList();
         return Ok(searchRes);
     }
-    //
-    // [HttpPut("borrows")]
-    // public IActionResult BorrowItem([FromQuery] int memberId, int itemId, out string message)
-    // {
-    //     if (itemId == null || memberId == null)
-    //     {
-    //         return BadRequest("Invalid item data.");
-    //     }
-    //     var borrowedItems = _service.BorrowItem()
-    // }
+
+    [HttpPost("borrow")]
+    public IActionResult AddBorrow([FromBody] BorrowReq borrow)
+    {
+        if (borrow.MemberId <= 0 || borrow.ItemId<=0)
+        {
+            return BadRequest("Invalid borrow data.");
+        }
+        var action = _service.BorrowItem(borrow.MemberId, borrow.ItemId, out var message);
+        
+        if (!action)
+        {
+            if (message == "Member not found.") return NotFound(new { message });
+            if (message == "Item not found.")   return NotFound(new { message });
+            return Conflict(new { message });
+        }
+
+        return Ok(new { message });
+    }
+
+    [HttpPost("return")]
+    public IActionResult ReturnItem([FromBody] ReturnReq returnItem)
+    {
+        if(returnItem.MemberId <= 0 || returnItem.ItemId <= 0)
+            {
+            return BadRequest("Invalid returnItem data.");
+            }
+        var action = _service.ReturnItem(returnItem.MemberId, returnItem.ItemId, out var message);
+        if (!action)
+        {
+            if (message == "Member not found.") return NotFound(new { message });
+            if (message == "Item not found.")   return NotFound(new { message });
+            return Conflict(new { message });
+        }
+        return Ok(new { message });
+        
+    }
 
 }
 
 public record BookReq(string Title, string Author, int Pages);
 public record Magazine(string Title, string Publisher, int IssueNumber);
 public record Member(string Name);
+public record BorrowReq(int MemberId, int ItemId);
+public record ReturnReq(int MemberId, int ItemId);
