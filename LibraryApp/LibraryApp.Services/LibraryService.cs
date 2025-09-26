@@ -32,6 +32,8 @@ namespace LibraryApp.Services
             _items.Add(mag);
             return mag;
         }
+
+        // TODO: is it a GET or POST?
         public Member RegisterMember(string name)
         {
             var member = new Member(_nextMemberId++, name);
