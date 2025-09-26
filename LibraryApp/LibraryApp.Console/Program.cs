@@ -4,6 +4,7 @@ using LibraryApp.Services;
 
 public class Program
 {
+    private static readonly List<LibraryItem> _items = new();
     private static readonly LibraryService _service = new();
     public static void Main()
     {
