@@ -1,5 +1,6 @@
 ﻿using LibraryApp.Domain;
 using LibraryApp.Services;
+using LibraryApp.Services.Records;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controllers
@@ -51,40 +52,41 @@ namespace LibraryApp.Api.Controllers
         #region POST
 
         [HttpPost("books")]
-        public IActionResult AddBook([FromBody] Book book)
+        public IActionResult AddBook([FromBody] BookRecord bookRecord)
         {
-            if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+            if (bookRecord == null || string.IsNullOrWhiteSpace(bookRecord.Title) 
+                || string.IsNullOrWhiteSpace(bookRecord.Author))
             {
                 return BadRequest("Invalid book data.");
             }
 
-            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            var addedBook = _service.AddBook(bookRecord.Title, bookRecord.Author, bookRecord.Pages);
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
 
         [HttpPost("magazines")]
-        public IActionResult AddMagazine([FromBody] Magazine mag)
+        public IActionResult AddMagazine([FromBody] MagazineRecord magRecord)
         {
-            if (mag == null || string.IsNullOrWhiteSpace(mag.Title)
-                || int.IsNegative(mag.IssueNumber)
-                || string.IsNullOrWhiteSpace(mag.Publisher))
+            if (magRecord == null || string.IsNullOrWhiteSpace(magRecord.Title)
+                || int.IsNegative(magRecord.IssueNumber)
+                || string.IsNullOrWhiteSpace(magRecord.Publisher))
             {
                 return BadRequest("Invalid magazine data.");
             }
 
-            var addedMag = _service.AddMagazine(mag.Title, mag.IssueNumber, mag.Publisher);
+            var addedMag = _service.AddMagazine(magRecord.Title, magRecord.IssueNumber, magRecord.Publisher);
             return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
         }
 
         [HttpPost("members")]
-        public IActionResult RegisterMember([FromBody] Member member)
+        public IActionResult RegisterMember([FromBody] MemberRecord memberRecord)
         {
-            if (member == null || string.IsNullOrWhiteSpace(member.Name))
+            if (memberRecord == null || string.IsNullOrWhiteSpace(memberRecord.Name))
             {
                 return BadRequest("Invalid member data.");
             }
 
-            var addedMember = _service.RegisterMember(member.Name);
+            var addedMember = _service.RegisterMember(memberRecord.Name);
             return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
         }
 
