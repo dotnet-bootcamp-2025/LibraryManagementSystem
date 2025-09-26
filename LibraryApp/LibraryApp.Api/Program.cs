@@ -1,3 +1,5 @@
+using LibraryApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +12,7 @@ builder.Services.AddSwaggerGen(); //se instaló la libreria swagger
 
 // Register LibraryService as a singleton
 // 3 lyfecycles: Singleton:en todo el ciclo de vida de la aplicacion, Scoped:por sesion, Transient:en el ciclo del request y recibio una respuesta.-Pregunta de entrevista la diferencia entre los 3
-builder.Services.AddSingleton<LibraryApp.Services.LibraryService>();
+builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 

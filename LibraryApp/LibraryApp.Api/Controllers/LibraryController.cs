@@ -7,11 +7,11 @@ namespace LibraryApp.Api.Controllers
     public class LibraryController : ControllerBase
     {
         //OLD approach -> private readonly LibraryService _service = new();
-        private readonly LibraryService _service;
+        private readonly ILibraryService _service;
         
-        public LibraryController(LibraryService libraryService)
+        public LibraryController(ILibraryService libraryService)
         {
-            _service = libraryService;
+            _service = libraryService;    
         }
 
         // Add GET to list all library items
