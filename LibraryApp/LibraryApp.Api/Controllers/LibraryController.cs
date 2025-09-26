@@ -36,6 +36,12 @@ namespace LibraryApp.Api.Controllers
             return Ok(items);
         }
 
+        [HttpGet("search")]
+        public IActionResult SearchItems([FromQuery] string term)
+        {
+            var results = _service.FindItems(term);
+            return Ok(results);
+        }
 
         // Homework:
         // Add Post to add a new book
@@ -110,6 +116,7 @@ namespace LibraryApp.Api.Controllers
             return BadRequest(message);
         }
 
+        
 
     }
 }
