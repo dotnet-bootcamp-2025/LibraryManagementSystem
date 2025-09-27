@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Console", "Libra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryApp.Api\LibraryApp.Api.csproj", "{6CFB961E-F631-4377-A299-B476806E2CBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{225C7E1A-9D8E-412F-9FF8-767D46E03265}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{51624995-51D0-4D37-A680-51E200B30987}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{6CFB961E-F631-4377-A299-B476806E2CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CFB961E-F631-4377-A299-B476806E2CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CFB961E-F631-4377-A299-B476806E2CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{225C7E1A-9D8E-412F-9FF8-767D46E03265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{225C7E1A-9D8E-412F-9FF8-767D46E03265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{225C7E1A-9D8E-412F-9FF8-767D46E03265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{225C7E1A-9D8E-412F-9FF8-767D46E03265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51624995-51D0-4D37-A680-51E200B30987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51624995-51D0-4D37-A680-51E200B30987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51624995-51D0-4D37-A680-51E200B30987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51624995-51D0-4D37-A680-51E200B30987}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

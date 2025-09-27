@@ -1,11 +1,8 @@
-﻿using LibraryApp.Console.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services
+
+namespace LibraryApp.Services
 {
     public sealed class LibraryService : ILibraryService
     {
@@ -55,6 +52,7 @@ namespace LibraryApp.Console.Services
             return _items;
         }
 
+        // TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);

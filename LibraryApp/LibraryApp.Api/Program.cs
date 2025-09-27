@@ -1,4 +1,4 @@
-
+using LibraryApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 // 3 lifecycles: Singleton, Scoped, Transient
 //builder.Services.AddSingleton ILibraryService, LibraryService();
 
-builder.Services.AddSingleton<LibraryApp.Console.Services.ILibraryService, LibraryApp.Console.Services.LibraryService>();
+builder.Services.AddSingleton<LibraryApp.Services.ILibraryService, LibraryApp.Services.LibraryService>();
 
 var app = builder.Build();
 

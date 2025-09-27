@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -14,7 +14,8 @@
   </ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\LibraryApp.Console\LibraryApp.Console.csproj" />
+		<ProjectReference Include="..\LibraryApp.Domain\LibraryApp.Domain.csproj" />
+		<ProjectReference Include="..\LibraryApp.Services\LibraryApp.Services.csproj" />
 	</ItemGroup>
 
 </Project>

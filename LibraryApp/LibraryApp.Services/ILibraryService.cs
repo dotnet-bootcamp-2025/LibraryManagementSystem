@@ -1,6 +1,7 @@
-﻿using LibraryApp.Console.Domain;
+﻿using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services
+
+namespace LibraryApp.Services
 {
     public interface ILibraryService
     {

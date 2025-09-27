@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public abstract class LibraryItem // la clase que este marcada con esta palabra no se va a instanciar
     {
-        public int Id { get; } 
+        public int Id { get; }
         public string Title { get; }
         public bool IsBorrowed { get; private set; }
 

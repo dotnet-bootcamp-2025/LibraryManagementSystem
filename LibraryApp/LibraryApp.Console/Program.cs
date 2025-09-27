@@ -1,8 +1,12 @@
 ﻿// Refactor incluyendo Case 5 y 6
 
-using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
+//using LibraryApp.Console.Domain;
+//using LibraryApp.Console.Services;
+//using LibraryApp.Console.Utils;
+
+using LibraryApp.Services;
 using LibraryApp.Console.Utils;
+using LibraryApp.Domain;
 
 public class Program
 {
