@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
@@ -15,7 +15,7 @@ namespace LibraryApp.Console.Domain
         // Parameterized constructor (required fields)
         protected LibraryItem(int id, string title)
         {
-            Title = title; 
+            Title = title;
             Id = id;
         }
         public void Borrow()

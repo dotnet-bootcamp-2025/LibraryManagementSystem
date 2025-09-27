@@ -1,14 +1,18 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
+﻿//using LibraryApp.Console.Domain;
+//using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
+using LibraryApp.Services;
+using LibraryApp.Domain;
 public class Program
 {
   private static readonly ILibraryService libraryService = new LibraryService();
     public static void Main()
     {
         Console.WriteLine("Library App!");
+
+        //libraryService = LibraryService;
         libraryService.Seed();
-        //Seed();
+
         bool exit = false;
         while (!exit)
         {
@@ -99,13 +103,14 @@ public class Program
         var itemId = InputHelper.ReadInt("Enter the ID of the item to borrow");
         var memberId = InputHelper.ReadInt("Enter the ID of the member borrowing the item");
 
-        if (libraryService.BorrowItem(memberId, itemId, out string message))
+        try
         {
-            Console.WriteLine($"\nSuccess: {message}");
+            libraryService.BorrowItem(memberId, itemId);
+            Console.WriteLine($"\nSuccess: Item {itemId} borrowed by member {memberId}.");
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine($"\nError: {message}");
+            Console.WriteLine($"\nError: {ex.Message}");
         }
     }
     static void ReturnItem()
@@ -119,13 +124,14 @@ public class Program
             return;
         }
 
-        if (libraryService.ReturnItem(member.Id, itemId, out string message))
+        try
         {
-            Console.WriteLine($"\nSuccess: {message}");
+            libraryService.ReturnItem(member.Id, itemId);
+            Console.WriteLine($"\nSuccess: Item {itemId} returned by member {member.Name}.");
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine($"\nError: {message}");
+            Console.WriteLine($"\nError: {ex.Message}");
         }
     }
     static void ListMembers()

@@ -1,4 +1,4 @@
-using LibraryApp.Console.Services;
+using LibraryApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<ILibraryService, LibraryService>();
+//lify cycle: singleton, scoped and transient
 
 var app = builder.Build();
 
