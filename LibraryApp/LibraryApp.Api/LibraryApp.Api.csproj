@@ -17,8 +17,4 @@
     <ProjectReference Include="..\LibraryApp.Services\LibraryApp.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\" />
-  </ItemGroup>
-
 </Project>

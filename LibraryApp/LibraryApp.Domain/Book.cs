@@ -9,10 +9,11 @@ namespace LibraryApp.Domain
     public class Book : LibraryItem
     {
         public string Author { get; }
-
         public int Pages { get; }
         // Parameterized constructor (required fields + specific fields)
         // Call to base class constructor
+        
+        public Book(int d, string title, string author) : this(d, title, author, 0) { }
         public Book(int id, string title, string author, int pages) : base(id, title)
         {
             Author = string.IsNullOrWhiteSpace(author) ? "Unknown Author" : author.Trim();

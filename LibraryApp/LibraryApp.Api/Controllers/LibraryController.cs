@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Domain;
 using LibraryApp.Services;
+using LibraryApp.Api.Dtos;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -11,21 +12,21 @@ namespace LibraryApp.Api.Controllers
         
         public LibraryController(ILibraryService libraryService)
         {
-            _service = libraryService;    
+            _service = libraryService;
+            _service.Seed(); // Seed data for demonstration
         }
 
         // Add GET to list all library items
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            _service.Seed(); // Seed data for demonstration
             var items = _service.Items;
             return Ok(items);
         }
 
         // Homework: Add POST to add a new book
         [HttpPost("books")]
-        public IActionResult AddBook([FromBody] Book bookDto)
+        public IActionResult AddBook([FromBody] BookDTO bookDto)
         {
             if (bookDto == null || string.IsNullOrWhiteSpace(bookDto.Title) || string.IsNullOrWhiteSpace(bookDto.Author))
             {
@@ -39,7 +40,7 @@ namespace LibraryApp.Api.Controllers
 
         // Add POST to add a new magazine
         [HttpPost("magazines")]
-        public IActionResult AddMagazine([FromBody] Magazine magDto)
+        public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
         {
             if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
             {
@@ -51,12 +52,13 @@ namespace LibraryApp.Api.Controllers
 
         // Add POST to register a new member
         [HttpPost("members")]
-        public IActionResult RegisterMember([FromBody] Member memberDto)
+        public IActionResult RegisterMember([FromBody] MemberDTO memberDto)
         {
-            if (memberDto == null || string.IsNullOrWhiteSpace(memberDto.Name))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid member data.");
+                return BadRequest(ModelState);
             }
+
             var member = _service.RegisterMember(memberDto.Name);
             return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
         }
