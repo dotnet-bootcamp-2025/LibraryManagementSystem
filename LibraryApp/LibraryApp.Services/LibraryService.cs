@@ -51,6 +51,8 @@ namespace LibraryApp.Services
             term = term.Trim().ToLowerInvariant();
             return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
         }
+
+        //TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);

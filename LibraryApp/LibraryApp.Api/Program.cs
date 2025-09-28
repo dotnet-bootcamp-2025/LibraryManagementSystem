@@ -12,7 +12,7 @@ builder.Services.AddOpenApi();
 // register library service as a singleton
 // 3 life-cycles singleton, scoped, transient
 
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 
