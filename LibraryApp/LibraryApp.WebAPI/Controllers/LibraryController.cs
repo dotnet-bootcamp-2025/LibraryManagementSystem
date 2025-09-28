@@ -12,12 +12,12 @@ namespace LibraryApp.WebAPI.Controllers
         public LibraryController(ILibraryService libraryService)
         {
             _libraryService = libraryService;
+           // _libraryService.Seed();
         }
 
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            _libraryService.Seed(); // Seed data for demonstration purposes
             var items = _libraryService.Items;
             return Ok(items);
         }
@@ -25,7 +25,7 @@ namespace LibraryApp.WebAPI.Controllers
         [HttpGet("listMembers")]
         public IActionResult ListMembers()
         {
-            _libraryService.Seed();
+            
             var members = _libraryService.Members;
             return Ok(members);
         }

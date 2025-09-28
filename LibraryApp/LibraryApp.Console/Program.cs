@@ -1,6 +1,4 @@
-﻿//using LibraryApp.Console.Domain;
-//using LibraryApp.Console.Services;
-using LibraryApp.Console.Utils;
+﻿using LibraryApp.Console.Utils;
 using LibraryApp.Services;
 using LibraryApp.Domain;
 public class Program
@@ -9,9 +7,6 @@ public class Program
     public static void Main()
     {
         Console.WriteLine("Library App!");
-
-        //libraryService = LibraryService;
-        libraryService.Seed();
 
         bool exit = false;
         while (!exit)

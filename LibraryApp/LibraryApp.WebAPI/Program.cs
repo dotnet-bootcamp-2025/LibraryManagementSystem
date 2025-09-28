@@ -15,6 +15,12 @@ builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var libraryService = scope.ServiceProvider.GetRequiredService<ILibraryService>();
+
+    libraryService.Seed();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
