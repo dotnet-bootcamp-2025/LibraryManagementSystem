@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Api.Controllers
+﻿namespace LibraryApp.Api.Dtos
 {
     public class AddBookRequest
     {

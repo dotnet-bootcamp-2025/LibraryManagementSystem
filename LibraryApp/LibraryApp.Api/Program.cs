@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 
 //Register LibraryService as a singleton
 //3 life-cycles: Singleton, Scoped, Transient
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 

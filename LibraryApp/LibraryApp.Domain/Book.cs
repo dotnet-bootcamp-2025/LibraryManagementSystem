@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LibraryApp.Domain
@@ -15,11 +16,14 @@ namespace LibraryApp.Domain
         //constructor chaining example
 
         public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
+
+        [JsonConstructor]
         public Book(int id, string title, string author, int pages) : base(id, title)
         {
             Author = string.IsNullOrWhiteSpace(author) ? "Unknow" : author.Trim();
             pages = pages < 0 ? 0 : pages;
         }
+
 
         public override string GetInfo() =>
 
