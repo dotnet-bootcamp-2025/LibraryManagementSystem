@@ -1,6 +1,6 @@
 ﻿public class MagazineDto
 {
-    public string Title { get; set; }
+    public required string Title { get; set; }
     public int IssueNumber { get; set; }
-    public string Publisher { get; set; }
+    public required string Publisher { get; set; }
 }

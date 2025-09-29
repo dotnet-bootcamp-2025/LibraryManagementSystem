@@ -1,4 +1,4 @@
 ﻿public class MemberDto
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }

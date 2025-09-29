@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -13,6 +14,8 @@ namespace LibraryApp.Domain
         public string Name { get; }
         private readonly List<LibraryItem> _borrowed = new();
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
+
+        [JsonConstructor] // Decorador que permite dar soporte a la deserialización
         public Member(int id, string name)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
