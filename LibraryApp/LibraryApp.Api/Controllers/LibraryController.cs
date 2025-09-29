@@ -95,15 +95,15 @@ namespace LibraryApp.Api.Controllers
         #region PATCH
 
         [HttpPatch("items/{itemId}/borrow")]
-        public IActionResult BorrowItem(int itemId, [FromBody] int memberId)
+        public IActionResult BorrowItem([FromBody] BorrowItemRecord borrowRecord)
         {
-            if (memberId <= 0 || itemId <= 0)
+            if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
             {
                 return BadRequest("Invalid [member/item] id data.");
             }
 
             var message = string.Empty;
-            var result = _service.BorrowItem(memberId, itemId, out message);
+            var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out message);
 
             if (!result)
             {
@@ -114,15 +114,15 @@ namespace LibraryApp.Api.Controllers
         }
 
         [HttpPatch("items/{itemId}/return")]
-        public IActionResult ReturnItem(int itemId, [FromBody] int memberId)
+        public IActionResult ReturnItem([FromBody] ReturnItemRecord returnRecord)
         {
-            if (memberId <= 0 || itemId <= 0)
+            if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
             {
                 return BadRequest("Invalid [member/item] id data.");
             }
 
             var message = string.Empty;
-            var result = _service.ReturnItem(memberId, itemId, out message);
+            var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out message);
 
             if (!result)
             {
