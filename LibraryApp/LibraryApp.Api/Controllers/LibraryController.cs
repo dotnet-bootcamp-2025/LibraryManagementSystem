@@ -96,6 +96,13 @@ namespace LibraryApp.Api.Controllers
             }
         }
 
+        [HttpGet("Find Item")]
+        public IActionResult FindItems(string? term)
+        {
+            var items = _service.FindItems(term);
+            return Ok(items);
+        }
+
         //TODO: add POST to add a new magazine, members, borrowing, and returning items
 
 
