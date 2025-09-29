@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 // 3 lyfecycle singleton (toda la vida de la app en runtime)
 // scoped (solo a lo largo de un contexto, porejemplo un request que va a ejecutar este controlador),
 // transient (solo por la transaccion)
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 
 var app = builder.Build();

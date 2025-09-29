@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiLibrary\ApiLibrary.csproj" />
     <ProjectReference Include="..\LibraryApp.Domain\LibraryApp.Domain.csproj" />
     <ProjectReference Include="..\LibraryApp.Services\LibraryApp.Services.csproj" />
   </ItemGroup>

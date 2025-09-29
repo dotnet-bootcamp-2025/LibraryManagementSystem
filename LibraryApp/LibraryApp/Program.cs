@@ -5,7 +5,7 @@ using ApiLibrary.Controllers;
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
-    private static readonly LibraryController _service;
+    private static readonly LibraryApp.Services.LibraryService _service;
     public static void Main()
     {
         Console.WriteLine("Library App!");
@@ -65,11 +65,9 @@ public class Program
     }
     static void ListItems()
     {
-        var libraryItems = _service.GetItems() as IReadOnlyList<LibraryItem>;
-
-        if (libraryItems.Count == 0) { Console.WriteLine("No items."); return; }
+        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in libraryItems)
+        foreach (var item in _service.Items)
         {
             var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
             // Polymorphism: each derived class presents info differently
@@ -83,9 +81,7 @@ public class Program
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
 
-        Book newBook = new Book(0, title, author, pages);
-
-        var book = _service.AddBook(newBook);
+        var book = _service.AddBook(title, author, pages);
         Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
     static void AddMagazine()
@@ -94,7 +90,7 @@ public class Program
         var issue = InputHelper.ReadInt("Issue number");
         var publisher = InputHelper.ReadText("Publisher");
 
-        //var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
+        var _nextItemId = _items.Count > 0 ? _items.Max(i => i.Id) : 0;
         var mag = _service.AddMagazine(title, issue, publisher);
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }

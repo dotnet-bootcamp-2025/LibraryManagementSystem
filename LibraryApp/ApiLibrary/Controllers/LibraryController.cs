@@ -1,9 +1,10 @@
 ﻿using LibraryApp.Services;
 using LibraryApp.Domain;
 using Microsoft.AspNetCore.Mvc;
+using ApiLibrary.Dto;
 
-namespace ApiLibrary.Controllers
-{
+namespace ApiLibrary.Controllers;
+
     public class LibraryController : ControllerBase
     {
         private readonly ILibraryService _service;
@@ -22,7 +23,7 @@ namespace ApiLibrary.Controllers
             return Ok(items);
         }
 
-        [HttpGet("items")]
+        [HttpGet("members")]
         public IActionResult GetMembers()
         {
             var members = _service.Members;
@@ -30,8 +31,8 @@ namespace ApiLibrary.Controllers
             return Ok(members);
         }
 
-        [HttpPost("item")]
-        public IActionResult AddBook([FromBody] Book book)
+        [HttpPost("addBook")]
+        public IActionResult AddBook([FromBody] BookDto book)
         {
             if(book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
@@ -42,8 +43,8 @@ namespace ApiLibrary.Controllers
             return CreatedAtAction(nameof(GetItems), new {  id = addBook.Id, addBook});
         }
 
-        [HttpPost("item")]
-        public IActionResult AddMagazzine([FromBody] Magazine magazzine)
+        [HttpPost("addMagazzine")]
+        public IActionResult AddMagazzine([FromBody] MagazzineDto magazzine)
         {
             if (magazzine == null || string.IsNullOrWhiteSpace(magazzine.Title) || string.IsNullOrWhiteSpace(magazzine.Publisher) || magazzine.IssueNumber <= 0)
             {
@@ -55,8 +56,8 @@ namespace ApiLibrary.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addMagazzine.Id, addMagazzine });
         }
 
-        [HttpPost("item")]
-        public IActionResult AddMember([FromBody] Member member)
+        [HttpPost("registerMember")]
+        public IActionResult AddMember([FromBody] MemberDto member)
         {
             if (member == null || string.IsNullOrWhiteSpace(member.Name))
             {
@@ -68,16 +69,35 @@ namespace ApiLibrary.Controllers
             return CreatedAtAction(nameof(GetMembers), new { id = addMember.Id, addMember });
         }
 
-        [HttpPost("items")]
+        [HttpPost("borrowItem")]
         public IActionResult BorrowItem(int memberId, int itemId)
         {
             if (memberId <= 0 || itemId <= 0)
             {
-
+                return BadRequest("Invalid member item / library item identification");
             }
 
-            return Ok();
+            string resultMessage;
+
+            var result = _service.BorrowItem(memberId, itemId, out resultMessage);
+
+            return CreatedAtAction(nameof(GetItems), nameof(GetMembers), resultMessage);
         }
 
+        [HttpPost("returnItem")]
+        public IActionResult ReturnItem(int memberId, int itemId)
+        {
+            if (memberId <= 0 || itemId <= 0)
+            {
+                return BadRequest("Invalid member item / library item identification");
+            }
+
+            string resultMessage;
+
+            var result = _service.ReturnItem(memberId, itemId, out resultMessage);
+
+            return CreatedAtAction(nameof(GetItems), nameof(GetMembers), resultMessage);
+        }
     }
-}
+
+
