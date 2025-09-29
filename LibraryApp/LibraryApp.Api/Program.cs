@@ -21,8 +21,8 @@ builder.Services.AddCors(options =>
 });
 // Register LibraryService as singleton
 // 3 life-cycles: Singleton, Scoped, Transient
-//builder.Services.AddScoped<ILibraryService, LibraryService>();
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+//builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 
