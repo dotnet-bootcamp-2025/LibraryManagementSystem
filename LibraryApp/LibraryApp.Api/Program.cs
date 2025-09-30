@@ -1,3 +1,5 @@
+using LibraryApp.Console.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,16 +8,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
-// Register LibraryService as a singleton
-// Pregunta Entrevista: cuales son los 3 life-cycles con los que puedes inyectar instancias (Singleton, Scoped(se crea instancia a traves de request de contexto), Transient(se crea una instancia y se tira, es la más volatil de los 3))
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+// Register LibraryService as singleton
+// 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+//builder.Services.AddSingleton<ILibraryService, LibraryService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Enable both OpenAPI and Swagger UI
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
