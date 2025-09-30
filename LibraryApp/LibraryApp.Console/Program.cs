@@ -1,4 +1,7 @@
-﻿       public class Program
+﻿using LibraryApp.Console.Services;
+using LibraryApp.Console.Utils;
+
+public class Program
 {
     private static readonly List<LibraryItem> _items = new();
     private static readonly LibraryService _service = new();
