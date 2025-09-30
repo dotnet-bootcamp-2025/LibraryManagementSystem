@@ -1,8 +1,5 @@
-﻿using LibraryApp.Services;
-using LibraryApp.Domain;
+﻿using LibraryApp.Api.DTO;
 using Microsoft.AspNetCore.Mvc;
-
-
 namespace ApiLibrary.Controllers;
 
 public class LibraryController : ControllerBase
@@ -32,7 +29,7 @@ public class LibraryController : ControllerBase
     }
 
     [HttpPost("addBook")]
-    public IActionResult AddBook([FromBody] BookDto book)
+    public IActionResult AddBook([FromBody] BookDTO book)
     {
         if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
         {
@@ -44,7 +41,7 @@ public class LibraryController : ControllerBase
     }
 
     [HttpPost("addMagazzine")]
-    public IActionResult AddMagazzine([FromBody] MagazzineDto magazzine)
+    public IActionResult AddMagazzine([FromBody] MagazineDTO magazzine)
     {
         if (magazzine == null || string.IsNullOrWhiteSpace(magazzine.Title) || string.IsNullOrWhiteSpace(magazzine.Publisher) || magazzine.IssueNumber <= 0)
         {
@@ -57,7 +54,7 @@ public class LibraryController : ControllerBase
     }
 
     [HttpPost("registerMember")]
-    public IActionResult AddMember([FromBody] MemberDto member)
+    public IActionResult AddMember([FromBody] MemberDTO member)
     {
         if (member == null || string.IsNullOrWhiteSpace(member.Name))
         {
