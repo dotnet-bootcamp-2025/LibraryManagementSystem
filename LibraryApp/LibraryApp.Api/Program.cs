@@ -1,4 +1,7 @@
+using LibraryApp.Infrastructure.Data;
 using LibraryApp.Services;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure DbContext
+IServiceCollection serviceCollection = builder.Services.AddDbContext<AppDBContext>(options =>
+options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // Register LibraryService as a singleton
 // 3 lifecycles: Singleton, Scoped, Transient
