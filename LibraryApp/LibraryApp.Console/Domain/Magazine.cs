@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LibraryApp.Console.Domain
+{
+    public sealed class Magazine : LibraryItem
+    {
+        public int IssueNumber { get; }
+        public string Publisher { get; }
+
+
+        // Parameterized constructor (required fields + specific fields)
+        // Call to base class constructor
+
+        public Magazine(int id, string title, int issueNumber, string publisher) : base(id, title)
+        {
+            IssueNumber = issueNumber < 0 ? 0 : issueNumber;
+            Publisher = string.IsNullOrWhiteSpace(publisher) ? "Unknown Publisher" : publisher.Trim();
+        }   
+
+        public override string GetInfo()
+           => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
+        
+    }
+}
