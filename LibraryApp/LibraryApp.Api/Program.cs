@@ -1,4 +1,6 @@
+using LibraryApp.Infrastructure.Data;
 using LibraryApp.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+
+// Configure DbContext with SQL Server
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 // Add CORS services
 builder.Services.AddCors(options =>
 {
