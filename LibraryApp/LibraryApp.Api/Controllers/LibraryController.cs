@@ -13,7 +13,8 @@ namespace LibraryApp.Api.Controllers
         public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
-            _service.Seed(); // Seed data for demonstration
+            Console.WriteLine($"Controller created with server instance: {_service.GetHashCode()}");
+            //_service.Seed();  Seed data for demonstration
         }
 
         // Add GET to list all library items
