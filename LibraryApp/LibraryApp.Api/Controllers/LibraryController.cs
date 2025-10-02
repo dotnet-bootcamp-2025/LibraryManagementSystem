@@ -1,7 +1,7 @@
 ﻿using LibraryApp.Api.Records;
+using LibraryApp.Application.Abstractions;
 using LibraryApp.Domain;
-using LibraryApp.Services;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
 using static LibraryApp.Api.Records.LibraryController;
 using static LibraryApp.Api.Records.MagazineRecord;
 using static LibraryApp.Api.Records.MemberRecord;
@@ -21,6 +21,7 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("items")]
         public IActionResult GetItems()
         {
+            //Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {_service.Items.GetHashCode"); 
             var items = _service.Items;
             return Ok(items);
         }
@@ -64,7 +65,9 @@ namespace LibraryApp.Api.Controllers
 
        [HttpPost("Borrow")]
 
-       public IActionResult BorrowItem(int memberId, int itemId) { 
+       public IActionResult BorrowItem(int memberId, int itemId)
+        { 
+
             if (memberId <= 0 || itemId <= 0)
             {
                 return BadRequest("Invalid member or item ID.");
@@ -99,6 +102,7 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("Find Item")]
         public IActionResult FindItems(string? term)
         {
+
             var items = _service.FindItems(term);
             return Ok(items);
         }

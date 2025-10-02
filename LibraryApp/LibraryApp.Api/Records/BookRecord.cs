@@ -9,7 +9,7 @@
         //    public int Pages { get; set; }
         //}
 
-        // records se hace asi
+        // records se hace asi:
         public record CreateBookRequest(string Title, string Author, int Pages) { }
 
 
