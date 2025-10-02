@@ -1,5 +1,5 @@
 ﻿using LibraryApp.Domain;
-using LibraryApp.Services;
+using LibraryApp.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using LibraryApp.WebAPI.DTOs;
 
@@ -7,37 +7,42 @@ namespace LibraryApp.WebAPI.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        private readonly ILibraryService _libraryService;
+        private readonly ILibraryService _service;
 
         public LibraryController(ILibraryService libraryService)
         {
-            _libraryService = libraryService;
+            _service = libraryService;
            // _libraryService.Seed();
         }
 
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            var items = _libraryService.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - ServiceCollection Instance : {_service.GetHashCode()}, Items Count: {items.Count()}");
             return Ok(items);
         }
 
-        [HttpGet("listMembers")]
-        public IActionResult ListMembers()
-        {
+        //[HttpGet("listMembers")]
+        //public IActionResult ListMembers()
+        //{
             
-            var members = _libraryService.Members;
-            return Ok(members);
-        }
+        //    var members = _service.Members;
+        //    return Ok(members);
+        //}
 
         [HttpPost("book")]
         public IActionResult AddBook([FromBody] BookDto book)
         {
-            if (!ModelState.IsValid)
+            if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
-                return BadRequest(ModelState);
+                return BadRequest("Invalid book data.");
             }
-            var addedBook = _libraryService.AddBook(book.Title, book.Author, book.Pages);
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            items = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
 
@@ -48,7 +53,7 @@ namespace LibraryApp.WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var addedMagazine = _libraryService.AddMagazine(magazine.Title, magazine.IssueNumber, magazine.Publisher);
+            var addedMagazine = _service.AddMagazine(magazine.Title, magazine.IssueNumber, magazine.Publisher);
             return CreatedAtAction(nameof(GetItems), new { id = addedMagazine.Id }, addedMagazine);
         }
 
@@ -59,7 +64,7 @@ namespace LibraryApp.WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var registeredMember = _libraryService.RegisterMember(memberDto.Name);
+            var registeredMember = _service.RegisterMember(memberDto.Name);
             return CreatedAtAction(nameof(GetItems), new { id = registeredMember.Id }, registeredMember);
         }
 
@@ -68,7 +73,7 @@ namespace LibraryApp.WebAPI.Controllers
         {
             try
             {
-                _libraryService.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId);
+                _service.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId);
 
                 return Ok(new { message = "Item borrowed successfully." });
             }
@@ -87,7 +92,7 @@ namespace LibraryApp.WebAPI.Controllers
         {
             try
             {
-                _libraryService.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
+                _service.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
                 return Ok(new { message = "Item returned successfully." });
             }
             catch (KeyNotFoundException ex)

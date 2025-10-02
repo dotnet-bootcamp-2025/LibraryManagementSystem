@@ -13,7 +13,7 @@ namespace LibraryApp.Domain
         public bool IsBorrowed { get; private set; }
 
         // Parameterized constructor (required fields)
-        protected LibraryItem(int id, string title)
+        public LibraryItem(int id, string title)
         {
             Title = title;
             Id = id;

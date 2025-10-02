@@ -1,6 +1,6 @@
 ﻿namespace LibraryApp.Domain.Enums
 {
-    public enum LibaryItemTypeEnum
+    public enum LibraryItemTypeEnum
     {
 
         Book = 1,

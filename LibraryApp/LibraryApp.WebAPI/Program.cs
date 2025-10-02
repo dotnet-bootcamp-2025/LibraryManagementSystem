@@ -1,4 +1,5 @@
-using LibraryApp.Services;
+using LibraryApp.Application.Abstraction;
+using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,17 +16,12 @@ builder.Services.AddOpenApi();
 IServiceCollection serviceCollection = builder.Services.AddDbContext<AppDbContext>( options => 
 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 //lify cycle: singleton, scoped and transient
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var libraryService = scope.ServiceProvider.GetRequiredService<ILibraryService>();
-
-    libraryService.Seed();
-}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
