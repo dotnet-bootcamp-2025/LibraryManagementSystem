@@ -1,5 +1,6 @@
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
-using LibraryApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,8 @@ builder.Services.AddDbContext<AppDbContext>( options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 
 var app = builder.Build();
 
