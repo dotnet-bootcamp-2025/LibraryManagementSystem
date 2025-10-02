@@ -59,53 +59,61 @@ namespace LibraryApp.Application.Services
 
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
-            var searchedItems = _repository.FindItems(term);
+            var searchedEntities = _repository.FindItems(term);
 
-            return searchedItems.Select(MapToDomainModel);
+            return searchedEntities.Select(MapToDomainModel);
         }
 
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
+            var entityMember = _repository.GetMemberById(memberId);
+            var entityItem = _repository.GetItemById(itemId);
 
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
+            if (entityMember is null) { message = "Member not found."; return false; }
+            if (entityItem is null) { message = "Item not found."; return false; }
 
-            //try
-            //{
-            //    member.BorrowItem(item);
-            //    message = $"'{item.Title}' borrowed by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-            throw new NotImplementedException();
+            var member = MapToDomainMember(entityMember);
+            var item = MapToDomainModel(entityItem);
+
+            try
+            {
+                member.BorrowItem(item);
+                _repository.UpdateBorrowedItemStatus(memberId, itemId);
+
+                message = $"'{item.Title}' borrowed by {member.Name}.";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
         public bool ReturnItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
+            var entityMember = _repository.GetMemberById(memberId);
+            var entityItem = _repository.GetItemById(itemId);
 
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
+            if (entityMember is null) { message = "Member not found."; return false; }
+            if (entityItem is null) { message = "Item not found."; return false; }
 
-            //try
-            //{
-            //    member.ReturnItem(item);
-            //    message = $"'{item.Title}' returned by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-            throw new NotImplementedException();
+            var member = MapToDomainMember(entityMember);
+            var item = MapToDomainModel(entityItem);
+
+            try
+            {
+                member.ReturnItem(item);
+                _repository.UpdateReturnedItemStatus(memberId, itemId);
+
+                message = $"'{item.Title}' returned by {member.Name}.";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
         public IEnumerable<LibraryItem> GetAllLibraryItems()
