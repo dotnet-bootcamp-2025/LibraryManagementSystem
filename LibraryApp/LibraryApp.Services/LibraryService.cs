@@ -1,8 +1,15 @@
-﻿using LibraryApp.Console.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using LibraryApp.Domain;
 //adaptar el program cs para implementar este servicio
 
-namespace LibraryApp.Console.Services { 
-    public sealed class LibraryService
+namespace LibraryApp.Services
+{
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
@@ -44,6 +51,8 @@ namespace LibraryApp.Console.Services {
             term = term.Trim().ToLowerInvariant();
             return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
         }
+
+        //TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);
