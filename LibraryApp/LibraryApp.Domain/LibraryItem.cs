@@ -1,9 +1,15 @@
-﻿namespace LibraryApp.Console.Domain
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
         public int Id { get; }
-        public string Title { get; }
+        public string Title { get; set; }
         public bool IsBorrowed { get; private set; }
         // Parameterized constructor (required fields)
         protected LibraryItem(int id, string title)
@@ -25,5 +31,4 @@
         // Polymorphic behavior — each item describes itself
         public abstract string GetInfo();
     }
- }
-
+}

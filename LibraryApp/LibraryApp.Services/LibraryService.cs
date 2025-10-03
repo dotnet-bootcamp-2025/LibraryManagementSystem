@@ -1,13 +1,8 @@
-﻿using LibraryApp.Console.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services
+namespace LibraryApp.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
@@ -37,6 +32,8 @@ namespace LibraryApp.Console.Services
             _items.Add(mag);
             return mag;
         }
+
+        // TODO: is it a GET or POST?
         public Member RegisterMember(string name)
         {
             var member = new Member(_nextMemberId++, name);
@@ -87,3 +84,7 @@ namespace LibraryApp.Console.Services
         }
     }
 }
+        
+    
+
+
