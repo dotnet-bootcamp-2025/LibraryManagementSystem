@@ -26,3 +26,37 @@ GET {{TodoApi_HostAddress}}/api/todoitems
 GET {{TodoApi_HostAddress}}/api/todoitems
 
 ###
+
+POST {{TodoApi_HostAddress}}/api/todoitems
+Content-Type: application/json
+
+{
+  "name": "walk dog",
+  "isComplete": true
+}
+
+###
+
+GET {{TodoApi_HostAddress}}/api/todoitems
+
+###
+
+@id=1
+GET {{TodoApi_HostAddress}}/api/todoitems/{{id}}
+
+###
+
+PUT {{TodoApi_HostAddress}}/api/todoitems/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "feed fish",
+  "isComplete": false
+}
+
+###
+
+DELETE {{TodoApi_HostAddress}}/api/todoitems/1
+
+###

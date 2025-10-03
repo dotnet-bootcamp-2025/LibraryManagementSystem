@@ -1,5 +1,7 @@
-//using LibraryApp.console.Services;
-using LibraryApp.Services;
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
+using LibraryApp.Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +13,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Configure DbContext 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+   
+
 //Register LibraryService as a singleton
 //3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();

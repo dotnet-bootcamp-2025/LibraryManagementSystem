@@ -1,6 +1,6 @@
 ﻿using LibraryApp.Api.Dtos;
+using LibraryApp.Application.Abstractions;
 using LibraryApp.Domain;
-using LibraryApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controllers
@@ -13,7 +13,7 @@ namespace LibraryApp.Api.Controllers
         public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
-            _service.Seed(); // Seed data for demo purposes
+            //_service.Seed(); // Seed data for demo purposes
         }
 
         //add GET to list all library items
@@ -21,7 +21,8 @@ namespace LibraryApp.Api.Controllers
         public IActionResult GetItems()
         {
             
-            var items = _service.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: { items.Count()}");
             return Ok(items);
         }
 
@@ -35,84 +36,91 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest("Title and Author are required.");
             }
 
+            var items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before adding: { items.Count()}");
             // 2. Call the service to add the book.
             var newBook = _service.AddBook(request.Title, request.Author, request.Pages);
+
+            items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Items count after adding: { items.Count()}");
 
             // 3. Return a 201 Created status code with the newly created book.
             // The Url.Action method helps generate the URL for the created resource.
             return CreatedAtAction(nameof(GetItems), new { id = newBook.Id }, newBook);
         }
 
-        [HttpGet("search")]
-        public IActionResult SearchItems([FromQuery] string? term)
-        {
-            // 1. El parámetro 'term' es opcional y viene de la URL (e.g., /library/search?term=clean)
+        //[HttpGet("search")]
+        //public IActionResult SearchItems([FromQuery] string? term)
+        //{
+        //    // 1. El parámetro 'term' es opcional y viene de la URL (e.g., /library/search?term=clean)
 
-            // 2. Llama al método FindItems del servicio.
-            var results = _service.FindItems(term);
+        //    // 2. Llama al método FindItems del servicio.
+        //    var results = _service.FindItems(term);
 
-            // 3. Devuelve los resultados con un código 200 OK.
-            if (results == null || !results.Any())
-            {
-                // Es buena práctica devolver 200 OK con una lista vacía, no 404,
-                // si la búsqueda no encuentra resultados.
-                return Ok(Array.Empty<LibraryItem>());
-            }
+        //    // 3. Devuelve los resultados con un código 200 OK.
+        //    if (results == null || !results.Any())
+        //    {
+        //        // Es buena práctica devolver 200 OK con una lista vacía, no 404,
+        //        // si la búsqueda no encuentra resultados.
+        //        return Ok(Array.Empty<LibraryItem>());
+        //    }
 
-            return Ok(results);
-        }
+        //    return Ok(results);
+        //}
 
-        [HttpPost("add-magazine")]
-        public IActionResult AddMagazine([FromBody] AddMagazineRequest request)
-        {
-            // 1. Validate the request data.
-            if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Publisher))
-            {
-                return BadRequest("Title and Publisher are required.");
-            }
+        //[HttpPost("add-magazine")]
+        //public IActionResult AddMagazine([FromBody] AddMagazineRequest request)
+        //{
+        //    // 1. Validate the request data.
+        //    if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Publisher))
+        //    {
+        //        return BadRequest("Title and Publisher are required.");
+        //    }
 
-            // Basic validation for issue number
-            if (request.IssueNumber <= 0)
-            {
-                return BadRequest("Issue number must be greater than zero.");
-            }
+        //    // Basic validation for issue number
+        //    if (request.IssueNumber <= 0)
+        //    {
+        //        return BadRequest("Issue number must be greater than zero.");
+        //    }
 
-            // 2. Call the service to add the magazine.
-            var newMagazine = _service.AddMagazine(
-                request.Title,
-                request.IssueNumber,
-                request.Publisher
-            );
+        //    // 2. Call the service to add the magazine.
+        //    var newMagazine = _service.AddMagazine(
+        //        request.Title,
+        //        request.IssueNumber,
+        //        request.Publisher
+        //    );
 
-            // 3. Return a 201 Created status code with the new resource details.
-            return CreatedAtAction(nameof(GetItems), new { id = newMagazine.Id }, newMagazine);
-        }
+        //    // 3. Return a 201 Created status code with the new resource details.
+        //    return CreatedAtAction(nameof(GetItems), new { id = newMagazine.Id }, newMagazine);
+        //}
 
-        [HttpGet("members")]
-        public IActionResult GetMembers()
-        {
+        //[HttpGet("members")]
+        //public IActionResult GetMembers()
+        //{
 
-            var members = _service.Members;
-            return Ok(members);
-        }
+        //    var members = _service.Members;
+        //    return Ok(members);
+        //}
 
-        [HttpPost("register-member")]
-        public IActionResult RegisterMember([FromBody] RegisterMemberRequest request)
-        {
-            // 1. Validar la solicitud.
-            if (string.IsNullOrWhiteSpace(request.Name))
-            {
-                return BadRequest("Member name is required.");
-            }
+        //[HttpPost("register-member")]
+        //public IActionResult RegisterMember([FromBody] RegisterMemberRequest request)
+        //{
+        //    // 1. Validar la solicitud.
+        //    if (string.IsNullOrWhiteSpace(request.Name))
+        //    {
+        //        return BadRequest("Member name is required.");
+        //    }
 
-            // 2. Llamar al servicio para registrar al miembro.
-            var newMember = _service.RegisterMember(request.Name.Trim());
+        //    // 2. Llamar al servicio para registrar al miembro.
+        //    var newMember = _service.RegisterMember(request.Name.Trim());
 
-            // 3. Devolver un 201 Created con el nuevo recurso.
-            // Para obtener el recurso creado, podrías usar GetMembers y filtrar, 
-            // pero para esta demo, usamos Created con el objeto.
-            return CreatedAtAction(nameof(GetMembers), new { id = newMember.Id }, newMember);
-        }
+        //    // 3. Devolver un 201 Created con el nuevo recurso.
+        //    // Para obtener el recurso creado, podrías usar GetMembers y filtrar, 
+        //    // pero para esta demo, usamos Created con el objeto.
+        //    return CreatedAtAction(nameof(GetMembers), new { id = newMember.Id }, newMember);
+        //}
 
         [HttpPost("borrow")]
         public IActionResult BorrowItem([FromBody] BorrowItemRequest request)
@@ -148,41 +156,41 @@ namespace LibraryApp.Api.Controllers
             }
         }
 
-        [HttpPost("return")]
-        public IActionResult ReturnItem([FromBody] BorrowItemRequest request)
-        {
-            // 1. Validar si el cuerpo de la solicitud (request) es nulo.
-            if (request is null)
-            {
-                return BadRequest("Both MemberId and ItemId are required.");
-            }
+        //[HttpPost("return")]
+        //public IActionResult ReturnItem([FromBody] BorrowItemRequest request)
+        //{
+        //    // 1. Validar si el cuerpo de la solicitud (request) es nulo.
+        //    if (request is null)
+        //    {
+        //        return BadRequest("Both MemberId and ItemId are required.");
+        //    }
 
-            // 2. Validar que los IDs existan y sean positivos.
-            if (request.MemberId is null ||
-                request.ItemId is null ||
-                request.MemberId <= 0 ||
-                request.ItemId <= 0)
-            {
-                return BadRequest("Both MemberId and ItemId must be positive integers.");
-            }
+        //    // 2. Validar que los IDs existan y sean positivos.
+        //    if (request.MemberId is null ||
+        //        request.ItemId is null ||
+        //        request.MemberId <= 0 ||
+        //        request.ItemId <= 0)
+        //    {
+        //        return BadRequest("Both MemberId and ItemId must be positive integers.");
+        //    }
 
-            // 3. Llamar al servicio para devolver el artículo.
-            string message;
-            // Usamos .Value para convertir de int? a int (seguro después de la validación)
-            var success = _service.ReturnItem(request.MemberId.Value, request.ItemId.Value, out message);
+        //    // 3. Llamar al servicio para devolver el artículo.
+        //    string message;
+        //    // Usamos .Value para convertir de int? a int (seguro después de la validación)
+        //    var success = _service.ReturnItem(request.MemberId.Value, request.ItemId.Value, out message);
 
-            // 4. Devolver la respuesta.
-            if (success)
-            {
-                // 200 OK para una acción de modificación de estado exitosa.
-                return Ok(new { Message = message });
-            }
-            else
-            {
-                // 400 Bad Request si la devolución falla (ej. artículo no estaba prestado).
-                return BadRequest(new { Error = message });
-            }
-        }
+        //    // 4. Devolver la respuesta.
+        //    if (success)
+        //    {
+        //        // 200 OK para una acción de modificación de estado exitosa.
+        //        return Ok(new { Message = message });
+        //    }
+        //    else
+        //    {
+        //        // 400 Bad Request si la devolución falla (ej. artículo no estaba prestado).
+        //        return BadRequest(new { Error = message });
+        //    }
+        //}
 
         //TODO: Add more endpoints for other operations (e.g., add magazine, register member, borrow item, return item).
     }
