@@ -9,6 +9,7 @@ namespace LibraryApp.Application.Abstractions
         bool BorrowItem(int memberId, int itemId, out string message);
         IEnumerable<LibraryItem> FindItems(string? term);
         Member RegisterMember(string name);
+        IEnumerable<Domain.Member> Members { get; }
         bool ReturnItem(int memberId, int itemId, out string message);
         IEnumerable<LibraryItem> GetAllLibraryItems();
 

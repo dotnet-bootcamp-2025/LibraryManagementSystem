@@ -42,9 +42,39 @@ namespace LibraryApp.Infraestructure.Data
             return _context.Members.Find(id);
         }
 
+        public IEnumerable<Domain.Entities.Member> GetAllMembers()
+        {
+            // Accede a la tabla de miembros y devuelve la lista de entidades
+            return _context.Members.ToList();
+        }
+
+        public void AddMember(Domain.Entities.Member member)
+        {
+            _context.Members.Add(member);
+            _context.SaveChanges(); // O manejar SaveChanges() en una unidad de trabajo.
+        }
+
         public void AddBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Add(borrowedItem);
+            _context.SaveChanges();
+        }
+                
+        public Domain.Entities.BorrowedItem? GetBorrowedItem(int memberId, int libraryItemId)
+        {
+            return _context.BorrowedItems
+                .FirstOrDefault(b => b.MemberId == memberId && b.LibraryItemId == libraryItemId);
+        }
+                
+        public void RemoveBorrowedItem(Domain.Entities.BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Remove(borrowedItem);
+            _context.SaveChanges();
+        }
+                
+        public void UpdateLibraryItem(Domain.Entities.LibraryItem libraryItem)
+        {
+            _context.LibraryItems.Update(libraryItem);
             _context.SaveChanges();
         }
     }
