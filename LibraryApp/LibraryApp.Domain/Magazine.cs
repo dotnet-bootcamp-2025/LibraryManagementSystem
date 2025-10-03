@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public sealed class Magazine : LibraryItem
     {
         public int IssueNumber { get; }
         public string Publisher { get; }
+        [JsonConstructor] // Decorador que permite dar soporte a la deserialización
         public Magazine(int id, string title, int issueNumber, string publisher) : base(id, title)
         {
             IssueNumber = issueNumber < 0 ? 0 : issueNumber;

@@ -1,14 +1,13 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.Console.Utils;
+﻿using LibraryApp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Services
+namespace LibraryApp.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
