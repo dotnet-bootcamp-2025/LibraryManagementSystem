@@ -57,19 +57,16 @@ namespace LibraryApp.Infrastructure.Data
         public void AddLibraryItem(LibraryItem libraryItem)
         {
             _context.LibraryItems.Add(libraryItem);
-            _context.SaveChanges();
         }
 
         public void AddMember(Member member)
         {
             _context.Members.Add(member);
-            _context.SaveChanges();
         }
 
         public void AddBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
         }
 
         #endregion ADD DATA
@@ -79,11 +76,14 @@ namespace LibraryApp.Infrastructure.Data
         public void UpdateLibraryItem(LibraryItem libraryItem)
         {
             _context.LibraryItems.Update(libraryItem);
-            _context.SaveChanges();
         }
         public void UpdateBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Update(borrowedItem);
+        }
+
+        public void SaveChanges()
+        {
             _context.SaveChanges();
         }
 

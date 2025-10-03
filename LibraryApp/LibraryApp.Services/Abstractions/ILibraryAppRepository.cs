@@ -10,6 +10,7 @@ namespace LibraryApp.Application.Abstractions
 
         Member? GetMemberById(int memberId);
         LibraryItem? GetItemById (int itemId);
+        BorrowedItem? GetBorrowedItem(int memberId, int itemId);
 
         void AddLibraryItem(LibraryItem libraryItem);
         void AddMember(Member member);
@@ -17,7 +18,6 @@ namespace LibraryApp.Application.Abstractions
 
         void UpdateLibraryItem(LibraryItem libraryItem);
         void UpdateBorrowedItem(BorrowedItem borrowedItem);
-
-        BorrowedItem? GetBorrowedItem(int memberId, int itemId);
+        void SaveChanges();
     }
 }

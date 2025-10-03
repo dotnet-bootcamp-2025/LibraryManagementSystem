@@ -57,6 +57,7 @@ namespace LibraryApp.Application.Services
             };
 
             _repository.AddLibraryItem(bookEntity);
+            _repository.SaveChanges();
 
             return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author);
         }
@@ -73,6 +74,7 @@ namespace LibraryApp.Application.Services
             };
 
             _repository.AddLibraryItem(magEntity);
+            _repository.SaveChanges();
 
             return new Domain.Magazine(magEntity.Id, magEntity.Title, magEntity.IssueNumber ?? 0, magEntity.Publisher);
         }
@@ -85,6 +87,7 @@ namespace LibraryApp.Application.Services
             };
 
             _repository.AddMember(memberEntity);
+            _repository.SaveChanges();
 
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
@@ -114,6 +117,8 @@ namespace LibraryApp.Application.Services
             };
             _repository.AddBorrowedItem(borrowedItem);
 
+            _repository.SaveChanges();
+
             message = $"Item borrowed successfully by {entityMember.Name}.";
             return true;
         }
@@ -127,19 +132,16 @@ namespace LibraryApp.Application.Services
             if (entityItem is null) { message = "Item not found."; return false; }
             if (!entityItem.IsBorrowed) { message = "Item is not currently borrowed."; return false; }
 
+            var borrowedItem = _repository.GetBorrowedItem(entityMember.Id, entityItem.Id);
+            if (borrowedItem is null) { message = "No record of this item being borrowed by this member exists."; return false; }
+
             entityItem.IsBorrowed = false;
             _repository.UpdateLibraryItem(entityItem);
 
-            var borrowedItem = _repository.GetBorrowedItem(entityMember.Id, entityItem.Id);
-
-            if (borrowedItem is null)
-            {
-                message = "No record of this item being borrowed by this member exists.";
-                return false;
-            }
-
             borrowedItem.IsReturned = true;
             _repository.UpdateBorrowedItem(borrowedItem);
+
+            _repository.SaveChanges();
 
             message = $"Item returned successfully by {entityMember.Name}.";
             return true;
