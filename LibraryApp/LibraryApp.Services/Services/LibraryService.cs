@@ -13,6 +13,8 @@ namespace LibraryApp.Application.Services
             _repository = repository;
         }
 
+        #region ADD
+
         public Book AddBook(string title, string author, int pages = 0)
         {
             var bookEntity = new Domain.Entities.LibraryItem
@@ -57,63 +59,20 @@ namespace LibraryApp.Application.Services
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
 
-        public IEnumerable<LibraryItem> FindItems(string? term)
+        #endregion ADD
+
+        #region GET
+
+        public IEnumerable<LibraryItem> FindItems(string term)
         {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                var allEntities = _repository.GetAllLibraryItems();
+                return allEntities.Select(MapToDomainModel);
+            }
+
             var searchedEntities = _repository.FindItems(term);
-
             return searchedEntities.Select(MapToDomainModel);
-        }
-
-        public bool BorrowItem(int memberId, int itemId, out string message)
-        {
-            var entityMember = _repository.GetMemberById(memberId);
-            var entityItem = _repository.GetItemById(itemId);
-
-            if (entityMember is null) { message = "Member not found."; return false; }
-            if (entityItem is null) { message = "Item not found."; return false; }
-
-            var member = MapToDomainMember(entityMember);
-            var item = MapToDomainModel(entityItem);
-
-            try
-            {
-                member.BorrowItem(item);
-                _repository.UpdateBorrowedItemStatus(memberId, itemId);
-
-                message = $"'{item.Title}' borrowed by {member.Name}.";
-                return true;
-            }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
-        }
-
-        public bool ReturnItem(int memberId, int itemId, out string message)
-        {
-            var entityMember = _repository.GetMemberById(memberId);
-            var entityItem = _repository.GetItemById(itemId);
-
-            if (entityMember is null) { message = "Member not found."; return false; }
-            if (entityItem is null) { message = "Item not found."; return false; }
-
-            var member = MapToDomainMember(entityMember);
-            var item = MapToDomainModel(entityItem);
-
-            try
-            {
-                member.ReturnItem(item);
-                _repository.UpdateReturnedItemStatus(memberId, itemId);
-
-                message = $"'{item.Title}' returned by {member.Name}.";
-                return true;
-            }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
         }
 
         public IEnumerable<LibraryItem> GetAllLibraryItems()
@@ -130,12 +89,46 @@ namespace LibraryApp.Application.Services
             return memberEntities.Select(MapToDomainMember);
         }
 
+        #endregion GET
+
+        public bool BorrowItem(int memberId, int itemId, out string message)
+        {
+            var entityMember = _repository.GetMemberById(memberId);
+            var entityItem = _repository.GetItemById(itemId);
+
+            if (entityMember is null) { message = "Member not found."; return false; }
+            if (entityItem is null) { message = "Item not found."; return false; }
+
+            //
+
+            if (entityItem.IsBorrowed) { message = "Item is already borrowed."; return false; }
+
+            entityItem.IsBorrowed = true;
+
+            //
+
+            var member = MapToDomainMember(entityMember);
+            var item = MapToDomainModel(entityItem);
+        }
+
+        public bool ReturnItem(int memberId, int itemId, out string message)
+        {
+            var entityMember = _repository.GetMemberById(memberId);
+            var entityItem = _repository.GetItemById(itemId);
+
+            if (entityMember is null) { message = "Member not found."; return false; }
+            if (entityItem is null) { message = "Item not found."; return false; }
+
+            var member = MapToDomainMember(entityMember);
+            var item = MapToDomainModel(entityItem);
+        }
+
         private LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
             return (LibraryItemTypeEnum)entity.Type switch
             {
-                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? string.Empty, entity.Pages ?? 0),
-                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty),
+                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? string.Empty, entity.Pages ?? 0, entity.IsBorrowed),
+                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty, entity.IsBorrowed),
                 _ => throw new NotImplementedException("Unknown library item type.")
             };
         }

@@ -30,13 +30,11 @@ namespace LibraryApp.Infrastructure.Data
 
         #region GET DATA
 
-        public IEnumerable<LibraryItem> FindItems(string? term)
+        public IEnumerable<LibraryItem> FindItems(string term)
         {
-            if (string.IsNullOrWhiteSpace(term)) return _context.LibraryItems.ToList();
-            term = term.Trim().ToLowerInvariant();
-
             return _context.LibraryItems.
-                Where(i => i.Title.ToLowerInvariant().Contains(term));
+                Where(i => i.Title.ToLower().Contains(term))
+                .ToList();
         }
 
         public IEnumerable<LibraryItem> GetAllLibraryItems()
@@ -65,31 +63,9 @@ namespace LibraryApp.Infrastructure.Data
 
         #region UPDATE STATUS
 
-        public void UpdateBorrowedItemStatus(int memberId, int itemId)
+        public void UpdateLibraryItem(LibraryItem libraryItem)
         {
-            var item = _context.LibraryItems.Find(itemId);
-            item!.IsBorrowed = true;
-
-            var borrowedItem = new BorrowedItem
-            {
-                MemberId = memberId,
-                LibraryItemId = itemId
-            };
-
-            _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
-        }
-
-        public void UpdateReturnedItemStatus(int memberId, int itemId)
-        {
-            var item = _context.LibraryItems.Find(itemId);
-            item!.IsBorrowed = false;
-
-            var borrowedRecord = _context.BorrowedItems.
-                FirstOrDefault(i => i.LibraryItemId == itemId
-                && i.MemberId == memberId);
-
-            _context.BorrowedItems.Remove(borrowedRecord!);
+            _context.LibraryItems.Update(libraryItem);
             _context.SaveChanges();
         }
 

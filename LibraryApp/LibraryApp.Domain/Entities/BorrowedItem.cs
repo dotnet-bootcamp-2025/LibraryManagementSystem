@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int MemberId { get; set; }
         public int LibraryItemId { get; set; }
+        public bool? IsReturned { get; set; }
 
         public Member? Member { get; set; }
         public LibraryItem? LibraryItem { get; set; }

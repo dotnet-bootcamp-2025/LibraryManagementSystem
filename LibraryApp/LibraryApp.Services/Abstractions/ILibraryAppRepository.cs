@@ -6,7 +6,7 @@ namespace LibraryApp.Application.Abstractions
     {
         IEnumerable<LibraryItem> GetAllLibraryItems();
         IEnumerable<Member> GetAllMembers();
-        IEnumerable<LibraryItem> FindItems(string? term);
+        IEnumerable<LibraryItem> FindItems(string term);
 
         Member? GetMemberById(int memberId);
         LibraryItem? GetItemById (int itemId);
@@ -14,7 +14,6 @@ namespace LibraryApp.Application.Abstractions
         void AddLibraryItem(LibraryItem libraryItem);
         void AddMember(Member member);
 
-        void UpdateBorrowedItemStatus(int memberId, int itemId);
-        void UpdateReturnedItemStatus(int memberId, int itemId);
+        void UpdateLibraryItem(LibraryItem libraryItem);
     }
 }

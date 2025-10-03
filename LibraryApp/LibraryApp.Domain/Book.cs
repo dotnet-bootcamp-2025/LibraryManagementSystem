@@ -10,7 +10,7 @@ namespace LibraryApp.Domain
         public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
 
         [JsonConstructor]
-        public Book(int id, string title, string author, int pages) : base(id, title)
+        public Book(int id, string title, string author, int pages, bool isBorrowed = false ) : base(id, title, isBorrowed)
         {
             Author = string.IsNullOrWhiteSpace(title) ? "Unknown" : author.Trim();
             Pages = pages < 0 ? 0 : pages;

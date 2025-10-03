@@ -14,51 +14,25 @@ namespace LibraryApp.Api.Controllers
             _service = service;
         }
 
-        [HttpGet("items")]
-        public IActionResult GetItems()
-        {
-            var items = _service.GetAllLibraryItems();
-            Console.WriteLine();
+        #region GET
 
+        [HttpGet("items")]
+        public IActionResult GetItems([FromQuery] string term = "")
+        {
+            var items = _service.FindItems(term);
             return Ok(items);
         }
 
-        //#region GET
+        [HttpGet("members")]
+        public IActionResult GetMembers()
+        {
+            var items = _service.GetAllMembers();
+            return Ok(items);
+        }
 
-        ////OPTIONAL EXTRA GET RESPONSES
+        #endregion GET
 
-        ////[HttpGet("items")]
-        ////public IActionResult GetItems()
-        ////{
-        ////    var items = _service.Items;
-        ////    return Ok(items);
-        ////}
-
-        ////[HttpGet("items/{term}")]
-        ////public IActionResult GetSearchItems(string term)
-        ////{
-        ////    var items = _service.FindItems(term);
-        ////    return Ok(items);
-        ////}
-
-        ////[HttpGet("items")]
-        ////public IActionResult GetItems([FromQuery] string? term)
-        ////{
-        ////    var items = _service.FindItems(term);
-        ////    return Ok(items);
-        ////}
-
-
-        ////[HttpGet("members")]
-        ////public IActionResult GetMembers()
-        ////{
-        ////    var items = _service.Members;
-        ////    return Ok(items);
-        ////}
-
-        //#endregion GET
-
-        //#region POST
+        #region POST
 
         [HttpPost("books")]
         public IActionResult AddBook([FromBody] BookRecord bookRecord)
@@ -73,74 +47,72 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
 
-        //[HttpPost("magazines")]
-        //public IActionResult AddMagazine([FromBody] MagazineRecord magRecord)
-        //{
-        //    if (magRecord == null || string.IsNullOrWhiteSpace(magRecord.Title)
-        //        || int.IsNegative(magRecord.IssueNumber)
-        //        || string.IsNullOrWhiteSpace(magRecord.Publisher))
-        //    {
-        //        return BadRequest("Invalid magazine data.");
-        //    }
+        [HttpPost("magazines")]
+        public IActionResult AddMagazine([FromBody] MagazineRecord magRecord)
+        {
+            if (magRecord == null || string.IsNullOrWhiteSpace(magRecord.Title)
+                || int.IsNegative(magRecord.IssueNumber)
+                || string.IsNullOrWhiteSpace(magRecord.Publisher))
+            {
+                return BadRequest("Invalid magazine data.");
+            }
 
-        //    var addedMag = _service.AddMagazine(magRecord.Title, magRecord.IssueNumber, magRecord.Publisher);
-        //    return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
-        //}
+            var addedMag = _service.AddMagazine(magRecord.Title, magRecord.IssueNumber, magRecord.Publisher);
+            return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
+        }
 
-        //[HttpPost("members")]
-        //public IActionResult RegisterMember([FromBody] MemberRecord memberRecord)
-        //{
-        //    if (memberRecord == null || string.IsNullOrWhiteSpace(memberRecord.Name))
-        //    {
-        //        return BadRequest("Invalid member data.");
-        //    }
+        [HttpPost("members")]
+        public IActionResult RegisterMember([FromBody] MemberRecord memberRecord)
+        {
+            if (memberRecord == null || string.IsNullOrWhiteSpace(memberRecord.Name))
+            {
+                return BadRequest("Invalid member data.");
+            }
 
-        //    var addedMember = _service.RegisterMember(memberRecord.Name);
-        //    return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
-        //}
+            var addedMember = _service.RegisterMember(memberRecord.Name);
+            return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
+        }
 
-        //#endregion POST
+        #endregion POST
 
-        //#region PATCH
+        #region PATCH
 
-        //[HttpPatch("items/{itemId}/borrow")]
-        //public IActionResult BorrowItem([FromBody] BorrowItemRecord borrowRecord)
-        //{
-        //    if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid [member/item] id data.");
-        //    }
+        [HttpPatch("items/{itemId}/borrow")]
+        public IActionResult BorrowItem([FromBody] BorrowItemRecord borrowRecord)
+        {
+            if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
+            {
+                return BadRequest("Invalid [member/item] id data.");
+            }
 
-        //    var message = string.Empty;
-        //    var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out message);
+            var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out var message);
 
-        //    if (!result)
-        //    {
-        //        return Conflict(message);
-        //    }
+            if (!result)
+            {
+                return Conflict(message);
+            }
 
-        //    return Ok(message);
-        //}
+            return Ok(message);
+        }
 
-        //[HttpPatch("items/{itemId}/return")]
-        //public IActionResult ReturnItem([FromBody] ReturnItemRecord returnRecord)
-        //{
-        //    if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid [member/item] id data.");
-        //    }
+        [HttpPatch("items/{itemId}/return")]
+        public IActionResult ReturnItem([FromBody] ReturnItemRecord returnRecord)
+        {
+            if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
+            {
+                return BadRequest("Invalid [member/item] id data.");
+            }
 
-        //    var message = string.Empty;
-        //    var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out message);
+            var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out var message);
 
-        //    if (!result)
-        //    {
-        //        return Conflict(message);
-        //    }
+            if (!result)
+            {
+                return Conflict(message);
+            }
 
-        //    return Ok(message);
-        //}
+            return Ok(message);
+        }
 
-        //#endregion PATCH
+        #endregion PATCH
     }
 }
