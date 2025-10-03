@@ -13,6 +13,36 @@ namespace LibraryApp.Application.Services
             _repository = repository;
         }
 
+        #region GET
+
+        public IEnumerable<LibraryItem> FindItems(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                var allEntities = _repository.GetAllLibraryItems();
+                return allEntities.Select(MapToDomainModel);
+            }
+
+            var searchedEntities = _repository.FindItems(term);
+            return searchedEntities.Select(MapToDomainModel);
+        }
+
+        public IEnumerable<LibraryItem> GetAllLibraryItems()
+        {
+            var libraryItemsEntities = _repository.GetAllLibraryItems();
+
+            return libraryItemsEntities.Select(MapToDomainModel);
+        }
+
+        public IEnumerable<Member> GetAllMembers()
+        {
+            var memberEntities = _repository.GetAllMembers();
+
+            return memberEntities.Select(MapToDomainMember);
+        }
+
+        #endregion GET
+
         #region ADD
 
         public Book AddBook(string title, string author, int pages = 0)
@@ -61,35 +91,7 @@ namespace LibraryApp.Application.Services
 
         #endregion ADD
 
-        #region GET
-
-        public IEnumerable<LibraryItem> FindItems(string term)
-        {
-            if (string.IsNullOrWhiteSpace(term))
-            {
-                var allEntities = _repository.GetAllLibraryItems();
-                return allEntities.Select(MapToDomainModel);
-            }
-
-            var searchedEntities = _repository.FindItems(term);
-            return searchedEntities.Select(MapToDomainModel);
-        }
-
-        public IEnumerable<LibraryItem> GetAllLibraryItems()
-        {
-            var libraryItemsEntities = _repository.GetAllLibraryItems();
-
-            return libraryItemsEntities.Select(MapToDomainModel);
-        }
-
-        public IEnumerable<Member> GetAllMembers()
-        {
-            var memberEntities = _repository.GetAllMembers();
-
-            return memberEntities.Select(MapToDomainMember);
-        }
-
-        #endregion GET
+        #region BORROW / RETURN
 
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
@@ -99,16 +101,21 @@ namespace LibraryApp.Application.Services
             if (entityMember is null) { message = "Member not found."; return false; }
             if (entityItem is null) { message = "Item not found."; return false; }
 
-            //
-
             if (entityItem.IsBorrowed) { message = "Item is already borrowed."; return false; }
 
             entityItem.IsBorrowed = true;
+            _repository.UpdateLibraryItem(entityItem);
 
-            //
+            var borrowedItem = new Domain.Entities.BorrowedItem
+            {
+                MemberId = entityMember.Id,
+                LibraryItemId = entityItem.Id,
+                IsReturned = false,
+            };
+            _repository.AddBorrowedItem(borrowedItem);
 
-            var member = MapToDomainMember(entityMember);
-            var item = MapToDomainModel(entityItem);
+            message = $"Item borrowed successfully by {entityMember.Name}.";
+            return true;
         }
 
         public bool ReturnItem(int memberId, int itemId, out string message)
@@ -118,10 +125,29 @@ namespace LibraryApp.Application.Services
 
             if (entityMember is null) { message = "Member not found."; return false; }
             if (entityItem is null) { message = "Item not found."; return false; }
+            if (!entityItem.IsBorrowed) { message = "Item is not currently borrowed."; return false; }
 
-            var member = MapToDomainMember(entityMember);
-            var item = MapToDomainModel(entityItem);
+            entityItem.IsBorrowed = false;
+            _repository.UpdateLibraryItem(entityItem);
+
+            var borrowedItem = _repository.GetBorrowedItem(entityMember.Id, entityItem.Id);
+
+            if (borrowedItem is null)
+            {
+                message = "No record of this item being borrowed by this member exists.";
+                return false;
+            }
+
+            borrowedItem.IsReturned = true;
+            _repository.UpdateBorrowedItem(borrowedItem);
+
+            message = $"Item returned successfully by {entityMember.Name}.";
+            return true;
         }
+
+        #endregion BORROW / RETURN
+
+        #region MAPPING
 
         private LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
@@ -137,5 +163,7 @@ namespace LibraryApp.Application.Services
         {
             return new Member(entity.Id, entity.Name);
         }
+
+        #endregion MAPPING
     }
 }

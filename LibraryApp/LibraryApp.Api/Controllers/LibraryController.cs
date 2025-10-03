@@ -73,11 +73,7 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
         }
 
-        #endregion POST
-
-        #region PATCH
-
-        [HttpPatch("items/{itemId}/borrow")]
+        [HttpPost("items/borrow")]
         public IActionResult BorrowItem([FromBody] BorrowItemRecord borrowRecord)
         {
             if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
@@ -95,7 +91,7 @@ namespace LibraryApp.Api.Controllers
             return Ok(message);
         }
 
-        [HttpPatch("items/{itemId}/return")]
+        [HttpPost("items/return")]
         public IActionResult ReturnItem([FromBody] ReturnItemRecord returnRecord)
         {
             if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
@@ -113,6 +109,6 @@ namespace LibraryApp.Api.Controllers
             return Ok(message);
         }
 
-        #endregion PATCH
+        #endregion POST
     }
 }

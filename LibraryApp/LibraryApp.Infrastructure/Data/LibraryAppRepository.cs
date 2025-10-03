@@ -13,21 +13,6 @@ namespace LibraryApp.Infrastructure.Data
             _context = context;
         }
 
-        #region ADD DATA
-        public void AddLibraryItem(LibraryItem libraryItem)
-        {
-            _context.LibraryItems.Add(libraryItem);
-            _context.SaveChanges();
-        }
-
-        public void AddMember(Member member)
-        {
-            _context.Members.Add(member);
-            _context.SaveChanges();
-        }
-
-        #endregion ADD DATA
-
         #region GET DATA
 
         public IEnumerable<LibraryItem> FindItems(string term)
@@ -47,6 +32,12 @@ namespace LibraryApp.Infrastructure.Data
             return _context.Members.ToList();
         }
 
+        public BorrowedItem? GetBorrowedItem(int memberId, int itemId)
+        {
+            return _context.BorrowedItems.
+                FirstOrDefault(b => b.MemberId == memberId && b.LibraryItemId == itemId);
+        }
+
         public LibraryItem? GetItemById(int itemId)
         {
             return _context.LibraryItems.
@@ -61,11 +52,38 @@ namespace LibraryApp.Infrastructure.Data
 
         #endregion GET DATA
 
+        #region ADD DATA
+
+        public void AddLibraryItem(LibraryItem libraryItem)
+        {
+            _context.LibraryItems.Add(libraryItem);
+            _context.SaveChanges();
+        }
+
+        public void AddMember(Member member)
+        {
+            _context.Members.Add(member);
+            _context.SaveChanges();
+        }
+
+        public void AddBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Add(borrowedItem);
+            _context.SaveChanges();
+        }
+
+        #endregion ADD DATA
+
         #region UPDATE STATUS
 
         public void UpdateLibraryItem(LibraryItem libraryItem)
         {
             _context.LibraryItems.Update(libraryItem);
+            _context.SaveChanges();
+        }
+        public void UpdateBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Update(borrowedItem);
             _context.SaveChanges();
         }
 

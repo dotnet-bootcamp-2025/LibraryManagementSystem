@@ -13,7 +13,11 @@ namespace LibraryApp.Application.Abstractions
 
         void AddLibraryItem(LibraryItem libraryItem);
         void AddMember(Member member);
+        void AddBorrowedItem(BorrowedItem borrowedItem);
 
         void UpdateLibraryItem(LibraryItem libraryItem);
+        void UpdateBorrowedItem(BorrowedItem borrowedItem);
+
+        BorrowedItem? GetBorrowedItem(int memberId, int itemId);
     }
 }
