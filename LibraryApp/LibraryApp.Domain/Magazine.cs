@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public sealed class Magazine : LibraryItem
     {
@@ -20,3 +20,4 @@ namespace LibraryApp.Console.Domain
             => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
     }
 }
+

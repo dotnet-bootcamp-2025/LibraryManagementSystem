@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LibraryApp.Console.Domain;
-//refactorizar program.cs para que traten de invocar este servicio.
-//tip :Una variable nueva de tipo services _service = new();
+﻿using LibraryApp.Domain;
 
-//ractorizar como el switch para utilizar este servicio
-
-namespace LibraryApp.Console.Services
+namespace LibraryApp.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
@@ -53,41 +44,40 @@ namespace LibraryApp.Console.Services
             term = term.Trim().ToLowerInvariant();
             return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
         }
-        public bool BorrowItem(int memberId, int itemId, out string message)
+        public bool BorrowItem(int memberId, int itemId)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);
             var item = _items.FirstOrDefault(i => i.Id == itemId);
-            if (member is null) { message = "Member not found."; return false; }
-            if (item is null) { message = "Item not found."; return false; }
-            try
+
+            if (member is null)
             {
-                member.BorrowItem(item);
-                message = $"'{item.Title}' borrowed by {member.Name}.";
-                return true;
+                throw new KeyNotFoundException("Member not found.");
             }
-            catch (Exception ex)
+            if (item is null)
             {
-                message = ex.Message;
-                return false;
+                throw new KeyNotFoundException("Item not found.");
             }
+
+            member.BorrowItem(item);
+            return true;
         }
-        public bool ReturnItem(int memberId, int itemId, out string message)
+        public bool ReturnItem(int memberId, int itemId)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);
             var item = _items.FirstOrDefault(i => i.Id == itemId);
-            if (member is null) { message = "Member not found."; return false; }
-            if (item is null) { message = "Item not found."; return false; }
-            try
+
+            if (member is null)
             {
-                member.ReturnItem(item);
-                message = $"'{item.Title}' returned by {member.Name}.";
-                return true;
+                throw new KeyNotFoundException("Member not found.");
             }
-            catch (Exception ex)
+            if (item is null)
             {
-                message = ex.Message;
-                return false;
+                throw new KeyNotFoundException("Item not found.");
             }
+
+            member.ReturnItem(item);
+            return true;
+        
         }
     }
 }
