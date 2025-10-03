@@ -1,13 +1,10 @@
-﻿using LibraryApp.Console.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services
+
+namespace LibraryApp.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();
@@ -36,6 +33,7 @@ namespace LibraryApp.Console.Services
             var mag = new Magazine(_nextItemId++, title, issueNumber, publisher);
             _items.Add(mag);
             return mag;
+       
         }
         public Member RegisterMember(string name)
         {
@@ -49,6 +47,12 @@ namespace LibraryApp.Console.Services
             term = term.Trim().ToLowerInvariant();
             return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
         }
+        public IEnumerable<LibraryItem> GetItems()
+        {
+            return _items;
+        }
+
+        // TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _members.FirstOrDefault(m => m.Id == memberId);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Console.Domain
+namespace LibraryApp.Domain
 {
     public sealed class Member
     {
@@ -19,7 +19,7 @@ namespace LibraryApp.Console.Domain
             Id = id;
         }
 
-       // validación para prestar el libro
+        // validación para prestar el libro
         public void BorrowItem(LibraryItem item)
         {
             if (item is null) throw new ArgumentNullException(nameof(item));

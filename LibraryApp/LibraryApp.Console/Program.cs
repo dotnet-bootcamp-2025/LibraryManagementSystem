@@ -1,12 +1,16 @@
 ﻿// Refactor incluyendo Case 5 y 6
 
-using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
+//using LibraryApp.Console.Domain;
+//using LibraryApp.Console.Services;
+//using LibraryApp.Console.Utils;
+
+using LibraryApp.Services;
 using LibraryApp.Console.Utils;
+using LibraryApp.Domain;
 
 public class Program
 {
-    private static readonly LibraryService _service = new();
+    private static readonly ILibraryService _service = new LibraryService();
 
     public static void Main()
     {
