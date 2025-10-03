@@ -1,20 +1,16 @@
 ﻿using LibraryApp.Domain;
 
-namespace LibraryApp.Services
+namespace LibraryApp.Application.Abstractions
 {
     public interface ILibraryService
     {
-        IReadOnlyList<LibraryItem> Items { get; }
-        IReadOnlyList<Member> Members { get; }
 
         Book AddBook(string title, string author, int pages = 0);
         Magazine AddMagazine(string title, int issueNumber, string publisher);
         bool BorrowItem(int memberId, int itemId, out string message);
         IEnumerable<LibraryItem> FindItems(string? term);
-        IReadOnlyList<LibraryItem> listAll();
         Member RegisterMember(string name);
         bool ReturnItem(int memberId, int itemId, out string message);
-        IEnumerable<LibraryItem> search(string term);
-        void Seed();
+        IEnumerable<LibraryItem> GetAllLibraryItems();
     }
 }

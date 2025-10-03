@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Domain;
-using LibraryApp.Services;
 using LibraryApp.Api.Dtos;
+using LibraryApp.Application.Abstractions;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -21,7 +21,8 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            var items = _service.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GetItems called, returning{_service.GetHashCode()}, {items.Count()} items.");
             return Ok(items);
         }
 
@@ -33,58 +34,65 @@ namespace LibraryApp.Api.Controllers
             {
                 return BadRequest("Invalid book data.");
             }
+            var item = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"AddBook called, current items count: {item.Count()}");
             var book = _service.AddBook(bookDto.Title, bookDto.Author, bookDto.Pages);
+            
+            item= _service.GetAllLibraryItems();
+            
+            Console.WriteLine($"Book added with ID: {book.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);
         }
 
         // TODO : Add more endpoints for magazines, members, borrowing and returning items
 
         // Add POST to add a new magazine
-        [HttpPost("magazines")]
-        public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
-        {
-            if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
-            {
-                return BadRequest("Invalid magazine data.");
-            }
-            var mag = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
-            return CreatedAtAction(nameof(GetItems), new { id = mag.Id }, mag);
-        }
+        //[HttpPost("magazines")]
+        //public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
+        //{
+        //    if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
+        //    {
+        //        return BadRequest("Invalid magazine data.");
+        //    }
+        //    var mag = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
+        //    return CreatedAtAction(nameof(GetItems), new { id = mag.Id }, mag);
+        //}
 
-        // Add POST to register a new member
-        [HttpPost("members")]
-        public IActionResult RegisterMember([FromBody] MemberDTO memberDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// Add POST to register a new member
+        //[HttpPost("members")]
+        //public IActionResult RegisterMember([FromBody] MemberDTO memberDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var member = _service.RegisterMember(memberDto.Name);
-            return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
-        }
+        //    var member = _service.RegisterMember(memberDto.Name);
+        //    return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
+        //}
 
-        // Add PATCH to borrow an item
+        //// Add PATCH to borrow an item
         [HttpPatch("borrow")]
         public IActionResult BorrowItem(int memberId, int itemId)
         {
-            if (_service.BorrowItem(memberId, itemId, out string message))
-            {
+           if (_service.BorrowItem(memberId, itemId, out string message))
+           {
                 return Ok(message);
-            }
-            return BadRequest(message);
+           }
+           return BadRequest(message);
         }
 
-        // Add PATCH to return an item
-        [HttpPatch("return")]
-        public IActionResult ReturnItem(int memberId, int itemId)
-        {
-            if (_service.ReturnItem(memberId, itemId, out string message))
-            {
-                return Ok(message);
-            }
-            return BadRequest(message);
-        }
+        //// Add PATCH to return an item
+        //[HttpPatch("return")]
+        //public IActionResult ReturnItem(int memberId, int itemId)
+        //{
+        //    if (_service.ReturnItem(memberId, itemId, out string message))
+        //    {
+        //        return Ok(message);
+        //    }
+        //    return BadRequest(message);
+        //}
 
     }
 }

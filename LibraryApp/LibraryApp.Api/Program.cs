@@ -1,5 +1,6 @@
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
 using LibraryApp.Infraestructure.Data;
-using LibraryApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,15 +20,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register LibraryService as singleton to maintain state across requests
 // 3 lyfecycles: Singleton:en todo el ciclo de vida de la aplicacion, Scoped:por sesion, Transient:en el ciclo del request y recibio una respuesta.-Pregunta de entrevista la diferencia entre los 3
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();
-//seed data once at startup
-using (var scope = app.Services.CreateScope())
-{
-    var libraryService = scope.ServiceProvider.GetRequiredService<ILibraryService>();
-    libraryService.Seed();
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
