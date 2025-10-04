@@ -1,8 +1,8 @@
-﻿using LibraryApp.Console.Domain;
+﻿using LibraryApp.Domain;
 
-namespace LibraryApp.Console.Services
+namespace LibraryApp.Services
 {
-    public sealed class LibraryService
+    public sealed class LibraryService : ILibraryService
     {
         private readonly List<LibraryItem> _items = new();
         private readonly List<Member> _members = new();

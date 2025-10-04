@@ -1,5 +1,5 @@
-﻿using LibraryApp.Console.Domain;
-using LibraryApp.Console.Services;
+﻿using LibraryApp.Domain;
+using LibraryApp.Services;
 using LibraryApp.Console.Utils;
 
 public class Program

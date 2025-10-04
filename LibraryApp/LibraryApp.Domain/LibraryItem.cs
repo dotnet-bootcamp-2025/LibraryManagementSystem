@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Console.Domain
+﻿namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
