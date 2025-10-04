@@ -6,7 +6,6 @@ namespace LibraryApp.Api.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        //OLD private static readonly LibraryService _service = new();
         private readonly ILibraryService _service;
 
         public LibraryController(ILibraryService LibraryService )
@@ -24,14 +23,6 @@ namespace LibraryApp.Api.Controllers
             Console.WriteLine($"GET - ServiceCollection INSTANCE : {_service.GetHashCode()}, Items Count: {items.Count()}");
             return Ok(items);
         }
-
-        //[HttpGet("search")]
-        //public IActionResult SearchItems([FromQuery] string term)
-        //{
-        //    var results = _service.FindItems(term);
-        //    return Ok(results);
-        //}
-
         //// Homework:
         //// Add Post to add a new book
         [HttpPost("books")]
@@ -65,54 +56,49 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addedMagazine.Id }, addedMagazine);
         }
 
+        [HttpGet("members")]
+        public IActionResult GetAllMembers()
+        {
+            var members = _service.GetAllMembers();
+            return Ok(members);
+        }
 
-        //[HttpGet("members")]
-        //public IActionResult GetMembers()
-        //{
-        //    var members = _service.Members;
-        //    return Ok(members);
-        //}
+        [HttpPost("members")]
+        public IActionResult RegisterMember([FromBody] RegisterMemberDTO member)
+        {
+            if (member == null || string.IsNullOrWhiteSpace(member.Name))
+            {
+                return BadRequest("Invalid member data.");
+            }
+            var newMember = _service.RegisterMember(member.Name);
+            return CreatedAtAction(nameof(GetAllMembers), new { id = newMember.Id }, newMember);
+        }
 
-        //[HttpPost("members")]
-        //public IActionResult RegisterMember([FromBody] RegisterMemberDTO member)
-        //{
-        //    if (member == null || string.IsNullOrWhiteSpace(member.Name))
-        //    {
-        //        return BadRequest("Invalid member data.");
-        //    }
-        //    var newMember = _service.RegisterMember(member.Name);
-        //    return CreatedAtAction(nameof(GetMembers), new { id = newMember.Id }, newMember);
-        //}
+        [HttpPost("borrow")]
+        public IActionResult BorrowItem([FromBody] BorrowDTO dto)
+        {
+            if (dto == null) return BadRequest("Missing data.");
+            var ok = _service.BorrowItem(dto.MemberId, dto.ItemId, out var msg);
+            Console.WriteLine($"POST - Borrow Item successfully. MemberId: {dto.MemberId}, ItemId: {dto.ItemId}");
+            if (ok) return Ok(new { success = ok, message = msg });
+            return BadRequest(new { success = ok, message = msg });
+        }
 
-        //[HttpPost("borrow")]
-        //public IActionResult BorrowItem([FromBody] BorrowDTO borrowRequest)
-        //{
-        //    if (borrowRequest == null || borrowRequest.MemberId <= 0 || borrowRequest.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid borrow request data.");
-        //    }
-        //    if (_service.BorrowItem(borrowRequest.MemberId, borrowRequest.ItemId, out string message))
-        //    {
-        //        return Ok(message);
-        //    }
-        //    return BadRequest(message);
-        //}
+        [HttpPost("return")]
+        public IActionResult ReturnItem([FromBody] ReturnDTO dto)
+        {
+            if (dto == null) return BadRequest("Missing data.");
+            var ok = _service.ReturnItem(dto.MemberId, dto.ItemId, out var msg);
+            Console.WriteLine($"POST - Return Item successfully. MemberId: {dto.MemberId}, ItemId: {dto.ItemId}");
+            if (ok) return Ok(new { success = ok, message = msg });
+            return BadRequest(new { success = ok, message = msg });
+        }
 
-        //[HttpPost("return")]
-        //public IActionResult ReturnItem([FromBody] ReturnDTO returnRequest)
-        //{
-        //    if (returnRequest == null || returnRequest.MemberId <= 0 || returnRequest.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid return request data.");
-        //    }
-        //    if (_service.ReturnItem(returnRequest.MemberId, returnRequest.ItemId, out string message))
-        //    {
-        //        return Ok(message);
-        //    }
-        //    return BadRequest(message);
-        //}
-
-
-
+        [HttpGet("search")]
+        public IActionResult SearchItems([FromQuery] string term)
+        {
+            var results = _service.FindItems(term);
+            return Ok(results);
+        }
     }
 }
