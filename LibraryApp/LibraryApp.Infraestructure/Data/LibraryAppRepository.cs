@@ -53,5 +53,19 @@ namespace LibraryApp.Infraestructure.Data
             _context.BorrowedItems.Add(borrowedItem);
             _context.SaveChanges();
         }
+        public void AddMember(Member member)
+        {
+            _context.Members.Add(member);
+            _context.SaveChanges();
+        }
+        public IEnumerable<Member> GetAllMembers()
+        {
+           return _context.Members.ToList();
+        }
+        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Add(borrowedItem);
+            _context.SaveChanges();
+        }
     }
 }

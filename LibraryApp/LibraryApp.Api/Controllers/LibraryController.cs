@@ -26,6 +26,14 @@ namespace LibraryApp.Api.Controllers
             return Ok(items);
         }
 
+        //Add GET to list all members, this is an extra endpoint
+        [HttpGet("members")]
+        public IActionResult GetMembers()
+        {
+            var members = _service.GetAllMembers();
+            return Ok(members);
+        }
+
         // Homework: Add POST to add a new book
         [HttpPost("books")]
         public IActionResult AddBook([FromBody] BookDTO bookDto)
@@ -48,29 +56,41 @@ namespace LibraryApp.Api.Controllers
         // TODO : Add more endpoints for magazines, members, borrowing and returning items
 
         // Add POST to add a new magazine
-        //[HttpPost("magazines")]
-        //public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
-        //{
-        //    if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
-        //    {
-        //        return BadRequest("Invalid magazine data.");
-        //    }
-        //    var mag = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
-        //    return CreatedAtAction(nameof(GetItems), new { id = mag.Id }, mag);
-        //}
+        [HttpPost("magazines")]
+        public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
+        {
+           if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
+            {
+                return BadRequest("Invalid magazine data.");
+            }
+            
+           var item = _service.GetAllLibraryItems();
+           Console.WriteLine($"AddMagazine called, current items count: {item.Count()}");
+           var magazine = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
+
+           item = _service.GetAllLibraryItems();
+
+           Console.WriteLine($"Magazine added with ID: {magazine.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
+            return CreatedAtAction(nameof(GetItems), new { id = magazine.Id }, magazine);
+        }
 
         //// Add POST to register a new member
-        //[HttpPost("members")]
-        //public IActionResult RegisterMember([FromBody] MemberDTO memberDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        [HttpPost("members")]
+        public IActionResult registermember([FromBody] MemberDTO memberdto)
+        {
+            if (!ModelState.IsValid)
+            {
+            return BadRequest(ModelState);
+            }
+            var item = _service.RegisterMember;
+            Console.WriteLine($"RegisterMember called, current items count: {item.ToString}");
+            var member = _service.RegisterMember(memberdto.Name);
 
-        //    var member = _service.RegisterMember(memberDto.Name);
-        //    return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
-        //}
+            item = _service.RegisterMember;
+
+            Console.WriteLine($"Member added with ID: {member.Id}, new items count: {_service.RegisterMember}");
+            return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
+        }
 
         //// Add PATCH to borrow an item
         [HttpPatch("borrow")]
@@ -83,16 +103,24 @@ namespace LibraryApp.Api.Controllers
            return BadRequest(message);
         }
 
-        //// Add PATCH to return an item
-        //[HttpPatch("return")]
-        //public IActionResult ReturnItem(int memberId, int itemId)
-        //{
-        //    if (_service.ReturnItem(memberId, itemId, out string message))
-        //    {
-        //        return Ok(message);
-        //    }
-        //    return BadRequest(message);
-        //}
+        // Add PATCH to return an item
+        [HttpPatch("return")]
+        public IActionResult ReturnItem(int memberId, int itemId)
+        {
+            if (_service.ReturnItem(memberId, itemId, out string message))
+            {
+                return Ok(message);
+            }
+            return BadRequest(message);
+        }
+
+        //Add GET to search items by term
+        [HttpGet("search")]
+        public IActionResult SearchItems(string bookname)
+        {
+            var items = _service.FindItems(bookname);
+            return Ok(items);
+        }
 
     }
 }

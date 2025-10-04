@@ -34,24 +34,43 @@ namespace LibraryApp.Application.Services
         }
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
-            //var mag = new Magazine(_nextItemId++, title, issueNumber, publisher);
-            //_items.Add(mag);
-            //return mag;
-            throw new NotImplementedException();
+            var magazineEntity = new Domain.Entities.LibraryItem
+            {
+                Title = title,
+                IssueNumber = issueNumber,
+                Publisher = publisher,
+                Type = (int)LibraryItemTypeEnum.Magazine,
+                IsBorrowed = false
+            };
+
+            _repository.AddLibraryItem(magazineEntity);
+            return new Domain.Magazine(magazineEntity.Id, magazineEntity.Title, magazineEntity.IssueNumber ?? 0, magazineEntity.Publisher!);
         }
         public Domain.Member RegisterMember(string name)
         {
-            //var member = new Member(_nextMemberId++, name);
-            //_members.Add(member);
-            //return member;
-            throw new NotImplementedException();
+            var memberEntity = new Domain.Entities.Member
+            {
+                Name = name
+            };
+
+            _repository.AddMember(memberEntity);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
-        public IEnumerable<Domain.LibraryItem> FindItems(string? term)
+        public IEnumerable<Domain.LibraryItem> FindItems(string? bookname)
         {
-            //if (string.IsNullOrWhiteSpace(term)) return _items;
-            //term = term.Trim().ToLowerInvariant();
-            //return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
-            throw new NotImplementedException();
+            Console.WriteLine("FindItems called with the bookname: " + bookname);
+            if (string.IsNullOrWhiteSpace(bookname)) 
+            {
+                var allItems = _repository.GetAllLibraryItems();
+                Console.WriteLine($"Returning all items, count: {allItems.Count()}");
+                return allItems.Select(MapToDomainModel);
+            }
+            var filteredItems = _repository.GetAllLibraryItems()
+                .Where(item => item.Title.Contains(bookname, StringComparison.OrdinalIgnoreCase) ||
+                               (item.Author != null && item.Author.Contains(bookname, StringComparison.OrdinalIgnoreCase)) ||
+                               (item.Publisher != null && item.Publisher.Contains(bookname, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+            return filteredItems.Select(MapToDomainModel);
         }
         // TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
@@ -85,22 +104,34 @@ namespace LibraryApp.Application.Services
         }
         public bool ReturnItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
-            //try
-            //{
-            //    member.ReturnItem(item);
-            //    message = $"'{item.Title}' returned by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-            throw new NotImplementedException();
+            var memberEntity = _repository.GetMemberById(memberId);
+
+            if (memberEntity is null)
+            {
+                message = "Member not found.";
+                return false;
+            }
+
+            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
+            
+            if (libraryItemEntity is null)
+            {
+                message = "Item not found.";
+                return false;
+            }
+
+            if (!libraryItemEntity.IsBorrowed)
+            {
+                message = $"'{libraryItemEntity.Title}' is not currently borrowed.";
+                return false;
+            }
+            libraryItemEntity.IsBorrowed = false;
+
+            _repository.UpdateLibraryItem(libraryItemEntity);
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+
+            message = $"'{libraryItemEntity.Title}' returned by {memberEntity.Name}.";
+            return true;
         }
 
         public IEnumerable<Domain.LibraryItem> GetAllLibraryItems()
@@ -118,5 +149,17 @@ namespace LibraryApp.Application.Services
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
         }
+
+        public IEnumerable<Domain.Member> GetAllMembers()
+        {
+            var memberEntities = _repository.GetAllMembers();
+            return memberEntities.Select(MapToDomainModelMember);
+        }
+
+        private Domain.Member MapToDomainModelMember(Domain.Entities.Member entity2)
+        {
+            return new Domain.Member(entity2.Id, entity2.Name);
+        }
+
     }
 }
