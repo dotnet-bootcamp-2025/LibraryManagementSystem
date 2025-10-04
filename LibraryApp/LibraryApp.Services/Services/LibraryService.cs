@@ -41,10 +41,12 @@ namespace LibraryApp.Application.Services
         }
         public Member RegisterMember(string name)
         {
-            //var member = new Member(_nextMemberId++, name);
-            //_members.Add(member);
-            //return member;
-            throw new NotImplementedException();
+            var memberEntity = new Domain.Entities.Member
+            {
+                Name = name
+            };
+            _repository.AddMember(memberEntity);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
@@ -53,26 +55,34 @@ namespace LibraryApp.Application.Services
             //return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
             throw new NotImplementedException();
         }
-        // TODO: Is it a GET or a POST?
-        public bool BorrowItem(int memberId, int itemId)
+
+        public bool BorrowItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
-            //try
-            //{
-            //    member.BorrowItem(item);
-            //    message = $"'{item.Title}' borrowed by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-            throw new NotImplementedException();
+            var member = _repository.GetMemberById(memberId);
+            if (member is null)
+            {
+                message = "Member not found.";
+                return false;
+            }
+            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
+            if (libraryItemEntity is null)
+            {
+                message = "Item not found.";
+                return false;
+            }
+            if (libraryItemEntity.IsBorrowed)
+            {
+                message = $"'{libraryItemEntity.Title}' is already borrowed.";
+                return false;
+            }
+            libraryItemEntity.IsBorrowed = true;
+            _repository.UpdateLibraryItem(libraryItemEntity);
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+            message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
+            return true;
         }
+
+
         public bool ReturnItem(int memberId, int itemId)
         {
             //var member = _members.FirstOrDefault(m => m.Id == memberId);
@@ -102,14 +112,24 @@ namespace LibraryApp.Application.Services
 
         private Domain.LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
-            return (LibraryItemTypeEnum)entity.Type switch
+
+            Domain.LibraryItem domainItem = (LibraryItemTypeEnum)entity.Type switch
             {
-                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? string.Empty, entity.Pages ?? 0),
-                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty),
+                LibraryItemTypeEnum.Book => new Book(
+                    entity.Id, entity.Title, 
+                    entity.Author ?? 
+                    string.Empty, 
+                    entity.Pages ?? 0),
+                LibraryItemTypeEnum.Magazine => new Magazine(
+                    entity.Id, 
+                    entity.Title, 
+                    entity.IssueNumber ?? 0, 
+                    entity.Publisher ?? 
+                    string.Empty),
                 _ => throw new NotSupportedException($"Library item type '{entity.Type}' is not supported.")
             };
+            domainItem.IsBorrowed = entity.IsBorrowed;
+            return domainItem;
         }
-
     }
-
 }

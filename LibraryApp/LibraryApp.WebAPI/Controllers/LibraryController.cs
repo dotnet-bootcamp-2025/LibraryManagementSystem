@@ -12,7 +12,7 @@ namespace LibraryApp.WebAPI.Controllers
         public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
-           // _libraryService.Seed();
+            // _libraryService.Seed();
         }
 
         [HttpGet("items")]
@@ -26,7 +26,7 @@ namespace LibraryApp.WebAPI.Controllers
         //[HttpGet("listMembers")]
         //public IActionResult ListMembers()
         //{
-            
+
         //    var members = _service.Members;
         //    return Ok(members);
         //}
@@ -71,20 +71,11 @@ namespace LibraryApp.WebAPI.Controllers
         [HttpPost("borrowItem")]
         public IActionResult BorrowItem([FromBody] BorrowDto borrowDetails)
         {
-            try
-            {
-                _service.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId);
-
-                return Ok(new { message = "Item borrowed successfully." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (borrowDetails == null) return BadRequest("Missing data.");
+            var ok = _service.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId, out var msg);
+            Console.WriteLine($"POST - Borrow Item successfully. MemberId: {borrowDetails.MemberId}, ItemId: {borrowDetails.ItemId}");
+            if (ok) return Ok(new { success = ok, message = msg });
+            return BadRequest(new { success = ok, message = msg });
         }
 
         [HttpPut("returnItem")]

@@ -10,7 +10,7 @@ namespace LibraryApp.Domain
     {
         public int Id { get; }
         public string Title { get; set; }
-        public bool IsBorrowed { get; private set; }
+        public bool IsBorrowed { get; set; }
 
         // Parameterized constructor (required fields)
         public LibraryItem(int id, string title)
@@ -28,6 +28,6 @@ namespace LibraryApp.Domain
             if (!IsBorrowed) throw new InvalidOperationException("Item is not borrowed.");
             IsBorrowed = false;
         }
-        public abstract string GetInfo();  //forsando a las clases hijas a implementar este metodo
+        public abstract string GetInfo();
     }
 }
