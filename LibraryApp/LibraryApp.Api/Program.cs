@@ -1,7 +1,8 @@
 //using LibraryApp.Console.Services;
-using LibraryApp.Services;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
+using LibraryApp.Application.Abstraction;
+using LibraryApp.Application.Services;
+using LibraryApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +15,18 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+//Configue DbContext
+builder.Services.AddDbContext<AppDbContext>( options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+    );
+
+
+
 //Register LibraryService as a singleton
 // 3 life-cycles: Singleton, Scoped, Transient
-builder.Services.AddSingleton<ILibraryService,LibraryService>();
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
+builder.Services.AddScoped<ILibraryService,LibraryService>();
 
 var app = builder.Build();
 
