@@ -4,18 +4,18 @@
 //using LibraryApp.Console.Services;
 //using LibraryApp.Console.Utils;
 
-using LibraryApp.Services;
 using LibraryApp.Console.Utils;
 using LibraryApp.Domain;
+using LibraryApp.Application.Abstractions;
 
 public class Program
 {
-    private static readonly ILibraryService _service = new LibraryService();
+    //private static readonly ILibraryService _service = new LibraryService();
 
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        _service.Seed(); // inicializa con datos de ejemplo
+        //_service.Seed(); // inicializa con datos de ejemplo
 
         bool exit = false;
         while (!exit)
@@ -71,27 +71,27 @@ public class Program
 
     static void ListItems()
     {
-        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
+      //  if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
         Console.WriteLine("Items:");
-        foreach (var item in _service.Items)
+      //  foreach (var item in _service.Items)
         {
-            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
-            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+      //      var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+      //      Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         }
     }
 
     static void SearchItems()
     {
         var term = InputHelper.ReadText("Enter search term (empty for all)", allowEmpty: true);
-        var results = _service.FindItems(term);
-        if (!results.Any()) { Console.WriteLine("No results found."); return; }
+     //   var results = _service.FindItems(term);
+        //if (!results.Any()) { Console.WriteLine("No results found."); return; }
 
-        Console.WriteLine("Search results:");
-        foreach (var item in results)
-        {
-            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
-            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
-        }
+        //Console.WriteLine("Search results:");
+        //foreach (var item in results)
+        //{
+        //    var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+        //    Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+        //}
     }
 
     static void AddBook()
@@ -100,56 +100,56 @@ public class Program
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
 
-        var book = _service.AddBook(title, author, pages);
-        Console.WriteLine($"Added: {book.GetInfo()}");
+       // var book = _service.AddBook(title, author, pages);
+       // Console.WriteLine($"Added: {book.GetInfo()}");
     }
 
     static void AddMagazine()
     {
-        var title = InputHelper.ReadText("Title");
-        var issue = InputHelper.ReadInt("Issue number");
-        var publisher = InputHelper.ReadText("Publisher");
+        //var title = InputHelper.ReadText("Title");
+        //var issue = InputHelper.ReadInt("Issue number");
+        //var publisher = InputHelper.ReadText("Publisher");
 
-        var mag = _service.AddMagazine(title, issue, publisher);
-        Console.WriteLine($"Added: {mag.GetInfo()}");
+    //    var mag = _service.AddMagazine(title, issue, publisher);
+    //    Console.WriteLine($"Added: {mag.GetInfo()}");
     }
 
     static void RegisterMember()
     {
-        var name = InputHelper.ReadText("Member name");
-        var member = _service.RegisterMember(name);
-        Console.WriteLine($"✅ Registered member: {member}");
+        //var name = InputHelper.ReadText("Member name");
+        //var member = _service.RegisterMember(name);
+        //Console.WriteLine($"✅ Registered member: {member}");
     }
 
     static void ListMembers()
     {
-        if (_service.Members.Count == 0) { Console.WriteLine("No members registered."); return; }
-        Console.WriteLine("Members:");
-        foreach (var member in _service.Members)
-        {
-            Console.WriteLine(member.ToString());
-        }
+        //if (_service.Members.Count == 0) { Console.WriteLine("No members registered."); return; }
+        //Console.WriteLine("Members:");
+        //foreach (var member in _service.Members)
+        //{
+        //    Console.WriteLine(member.ToString());
+        
     }
 
     static void BorrowItem()
     {
-        var memberId = InputHelper.ReadInt("Enter member Id");
-        var itemId = InputHelper.ReadInt("Enter item Id");
+        //var memberId = InputHelper.ReadInt("Enter member Id");
+        //var itemId = InputHelper.ReadInt("Enter item Id");
 
-        if (_service.BorrowItem(memberId, itemId, out var message))
-            Console.WriteLine($"✅ {message}");
-        else
-            Console.WriteLine($"❌ {message}");
+        //if (_service.BorrowItem(memberId, itemId, out var message))
+        //    Console.WriteLine($"✅ {message}");
+        //else
+        //    Console.WriteLine($"❌ {message}");
     }
 
     static void ReturnItem()
     {
-        var memberId = InputHelper.ReadInt("Enter member Id");
-        var itemId = InputHelper.ReadInt("Enter item Id");
+        //var memberId = InputHelper.ReadInt("Enter member Id");
+        //var itemId = InputHelper.ReadInt("Enter item Id");
 
-        if (_service.ReturnItem(memberId, itemId, out var message))
-            Console.WriteLine($"✅ {message}");
-        else
-            Console.WriteLine($"❌ {message}");
+        //if (_service.ReturnItem(memberId, itemId, out var message))
+        //    Console.WriteLine($"✅ {message}");
+        //else
+        //    Console.WriteLine($"❌ {message}");
     }
 }
