@@ -22,6 +22,10 @@ namespace LibraryApp.Application.Abstraction
 
         void AddBorrowedItem(BorrowedItem borrowedItem);
 
+        void ReturnItem(BorrowedItem borrowedItem);
+
+        IEnumerable<Member> GetAllMembers();
+        void UpdateMember(Member member);
     }
 
 }

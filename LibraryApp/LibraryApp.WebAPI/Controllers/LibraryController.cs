@@ -23,13 +23,12 @@ namespace LibraryApp.WebAPI.Controllers
             return Ok(items);
         }
 
-        //[HttpGet("listMembers")]
-        //public IActionResult ListMembers()
-        //{
-
-        //    var members = _service.Members;
-        //    return Ok(members);
-        //}
+        [HttpGet("listMembers")]
+        public IActionResult ListMembers()
+        {
+            var members = _service.GetAllMembers();
+            return Ok(members);
+        }
 
         [HttpPost("book")]
         public IActionResult AddBook([FromBody] BookDto book)
@@ -81,19 +80,13 @@ namespace LibraryApp.WebAPI.Controllers
         [HttpPut("returnItem")]
         public IActionResult ReturnItem([FromBody] ReturnDto returnDetails)
         {
-            try
-            {
-                _service.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
-                return Ok(new { message = "Item returned successfully." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (returnDetails == null) return BadRequest("Missing data.");
+
+            var ok = _service.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
+
+            if (ok) return Ok(new { success = ok, message = "Item returned successfully." });
+
+            return BadRequest(new { success = ok, message = "Failed to return item. Check member ID and item ID." });
         }
     }
 }

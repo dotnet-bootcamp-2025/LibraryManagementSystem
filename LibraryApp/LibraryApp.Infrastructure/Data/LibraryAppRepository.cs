@@ -1,6 +1,7 @@
 ﻿
 using LibraryApp.Application.Abstraction;
 using LibraryApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infrastructure.Data
 {
@@ -32,7 +33,10 @@ namespace LibraryApp.Infrastructure.Data
 
         public Member? GetMemberById(int id)
         {
-            return _context.Members.Find(id);
+            return _context.Members
+             .Include(m => m.BorrowedItems)
+             .ThenInclude(bi => bi.LibraryItem)
+             .FirstOrDefault(m => m.Id == id);
         }
         public LibraryItem? GetLibraryItemById(int id)
         {
@@ -54,5 +58,19 @@ namespace LibraryApp.Infrastructure.Data
             _context.BorrowedItems.Add(borrowedItem);
             _context.SaveChanges();
         }
+
+        public void ReturnItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Update(borrowedItem);
+            _context.SaveChanges();
+        }
+        public IEnumerable<Member> GetAllMembers()
+        {
+            return _context.Members
+            .Include(member => member.BorrowedItems)
+            .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
+            .ToList();
+        }
     }
 }
+

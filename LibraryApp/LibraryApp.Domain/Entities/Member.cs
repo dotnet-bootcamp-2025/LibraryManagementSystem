@@ -6,6 +6,6 @@ namespace LibraryApp.Domain.Entities
         public int Id { get; set; }
         public required string Name { get; set; }
 
-        public List<BorrowedItem>? BorrowedItems { get; set; }
+        public List<BorrowedItem> BorrowedItems { get; set; } = new();
     }
 }

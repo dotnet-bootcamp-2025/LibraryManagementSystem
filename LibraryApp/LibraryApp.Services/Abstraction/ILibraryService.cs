@@ -12,5 +12,7 @@ namespace LibraryApp.Application.Abstraction
         bool ReturnItem(int memberId, int itemId);
 
         IEnumerable<LibraryItem> GetAllLibraryItems();
+
+        IEnumerable<Member> GetAllMembers();
     }
 }

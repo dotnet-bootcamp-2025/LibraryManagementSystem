@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Domain
 {
@@ -12,11 +13,23 @@ namespace LibraryApp.Domain
         public string Name { get; }
         private readonly List<LibraryItem> _borrowed = new();
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
-        public Member(int id, string name)
+        public Member(int id, string name) : this(id, name, new List<LibraryItem>())
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
             Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
             Id = id;
+        }
+        public Member(int id, string name, List<LibraryItem> borrowedItems)
+        {
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
+            Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
+            Id = id;
+            _borrowed = borrowedItems ?? new List<LibraryItem>();
+        }
+        public void AddBorrowedItem(LibraryItem item)
+        {
+            if (item is null) throw new ArgumentNullException(nameof(item));
+            _borrowed.Add(item);
         }
         public void BorrowItem(LibraryItem item)
         {

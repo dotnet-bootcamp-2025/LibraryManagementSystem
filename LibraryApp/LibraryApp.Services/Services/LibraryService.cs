@@ -85,51 +85,73 @@ namespace LibraryApp.Application.Services
 
         public bool ReturnItem(int memberId, int itemId)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
-            //try
-            //{
-            //    member.ReturnItem(item);
-            //    message = $"'{item.Title}' returned by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-            throw new NotImplementedException();
+            var member = _repository.GetMemberById(memberId);
+            if (member == null)
+                return false;
+
+            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
+            if (libraryItemEntity is null || !libraryItemEntity.IsBorrowed)
+                return false;
+
+            var borrowedItem = member.BorrowedItems?
+                .FirstOrDefault(bi => bi.LibraryItemId == itemId);
+
+            if (borrowedItem == null)
+                return false;
+
+            libraryItemEntity.IsBorrowed = false;
+
+            member.BorrowedItems!.Remove(borrowedItem);
+
+            _repository.UpdateLibraryItem(libraryItemEntity);
+            _repository.UpdateMember(member);
+
+            return true;
         }
     
-        public IEnumerable<Domain.LibraryItem> GetAllLibraryItems()
+        public IEnumerable<LibraryItem> GetAllLibraryItems()
         {
             var libraryItemsEntities = _repository.GetAllLibraryItems();
 
             return libraryItemsEntities.Select(MapToDomainModel);
         }
 
-        private Domain.LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
+        private LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
 
-            Domain.LibraryItem domainItem = (LibraryItemTypeEnum)entity.Type switch
+            LibraryItem domainItem = (LibraryItemTypeEnum)entity.Type switch
             {
                 LibraryItemTypeEnum.Book => new Book(
-                    entity.Id, entity.Title, 
-                    entity.Author ?? 
-                    string.Empty, 
+                    entity.Id, entity.Title,
+                    entity.Author ??
+                    string.Empty,
                     entity.Pages ?? 0),
                 LibraryItemTypeEnum.Magazine => new Magazine(
-                    entity.Id, 
-                    entity.Title, 
-                    entity.IssueNumber ?? 0, 
-                    entity.Publisher ?? 
+                    entity.Id,
+                    entity.Title,
+                    entity.IssueNumber ?? 0,
+                    entity.Publisher ??
                     string.Empty),
                 _ => throw new NotSupportedException($"Library item type '{entity.Type}' is not supported.")
             };
             domainItem.IsBorrowed = entity.IsBorrowed;
             return domainItem;
+        }
+
+        IEnumerable<Member> ILibraryService.GetAllMembers()
+        {
+            var memberEntities = _repository.GetAllMembers();
+
+            return memberEntities.Select(entity => {
+                var borrowedDomainItems = entity.BorrowedItems
+                    .Where(borrowed => borrowed.LibraryItem != null && borrowed.LibraryItem.IsBorrowed)
+                    .GroupBy(borrowed => borrowed.LibraryItem!.Id)
+                    .Select(group => group.First())
+                    .Select(borrowed => MapToDomainModel(borrowed.LibraryItem!))
+                    .ToList();
+
+                return new Member(entity.Id, entity.Name, borrowedDomainItems);
+            });
         }
     }
 }
