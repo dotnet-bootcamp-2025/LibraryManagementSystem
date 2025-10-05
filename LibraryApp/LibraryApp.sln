@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Console", "Libra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryApp.Api\LibraryApp.Api.csproj", "{5A74E60D-C8E6-442D-B345-BAD48785C359}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{B5C64577-4535-4989-8BD7-ACB9804B466E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "LibraryApp.Services\LibraryApp.Application.csproj", "{B5C64577-4535-4989-8BD7-ACB9804B466E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{9D561078-F00A-4F8B-A846-F0C76CE0D71C}"
 EndProject

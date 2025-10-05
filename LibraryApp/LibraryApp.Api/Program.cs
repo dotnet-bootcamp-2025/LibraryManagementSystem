@@ -1,5 +1,6 @@
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
-using LibraryApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,8 +29,8 @@ builder.Services.AddCors(options =>
 });
 // Register LibraryService as singleton
 // 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
-//builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 
