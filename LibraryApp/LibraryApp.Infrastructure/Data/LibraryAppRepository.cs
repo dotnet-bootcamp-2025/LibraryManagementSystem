@@ -35,7 +35,8 @@ namespace LibraryApp.Infrastructure.Data
         public BorrowedItem? GetBorrowedItem(int memberId, int itemId)
         {
             return _context.BorrowedItems.
-                FirstOrDefault(b => b.MemberId == memberId && b.LibraryItemId == itemId);
+                FirstOrDefault(b => b.MemberId == memberId 
+                && b.LibraryItemId == itemId);
         }
 
         public LibraryItem? GetItemById(int itemId)
@@ -71,7 +72,7 @@ namespace LibraryApp.Infrastructure.Data
 
         #endregion ADD DATA
 
-        #region UPDATE STATUS
+        #region UPDATE STATUS / DB
 
         public void UpdateLibraryItem(LibraryItem libraryItem)
         {
@@ -87,6 +88,6 @@ namespace LibraryApp.Infrastructure.Data
             _context.SaveChanges();
         }
 
-        #endregion UPDATE STATUS
+        #endregion UPDATE STATUS / DB
     }
 }

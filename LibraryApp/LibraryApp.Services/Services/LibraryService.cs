@@ -59,7 +59,7 @@ namespace LibraryApp.Application.Services
             _repository.AddLibraryItem(bookEntity);
             _repository.SaveChanges();
 
-            return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author);
+            return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author, bookEntity.Pages ?? 0);
         }
 
         public Magazine AddMagazine(string title, int issueNumber, string publisher)

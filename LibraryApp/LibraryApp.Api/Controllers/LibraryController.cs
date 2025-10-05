@@ -85,10 +85,10 @@ namespace LibraryApp.Api.Controllers
 
             if (!result)
             {
-                return Conflict(message);
+                return Conflict(new { message });
             }
 
-            return Ok(message);
+            return Ok(new { message });
         }
 
         [HttpPost("items/return")]
@@ -103,10 +103,10 @@ namespace LibraryApp.Api.Controllers
 
             if (!result)
             {
-                return Conflict(message);
+                return Conflict(new { message });
             }
 
-            return Ok(message);
+            return Ok(new { message });
         }
 
         #endregion POST
