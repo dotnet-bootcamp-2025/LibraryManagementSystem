@@ -15,9 +15,7 @@ namespace LibraryApp.Domain
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
         public Member(int id, string name) : this(id, name, new List<LibraryItem>())
         {
-            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
-            Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
-            Id = id;
+
         }
         public Member(int id, string name, List<LibraryItem> borrowedItems)
         {

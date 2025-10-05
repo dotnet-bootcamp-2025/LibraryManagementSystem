@@ -34,9 +34,9 @@ namespace LibraryApp.Infrastructure.Data
         public Member? GetMemberById(int id)
         {
             return _context.Members
-             .Include(m => m.BorrowedItems)
-             .ThenInclude(bi => bi.LibraryItem)
-             .FirstOrDefault(m => m.Id == id);
+             .Include(member => member.BorrowedItems)
+             .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
+             .FirstOrDefault(member => member.Id == id);
         }
         public LibraryItem? GetLibraryItemById(int id)
         {
