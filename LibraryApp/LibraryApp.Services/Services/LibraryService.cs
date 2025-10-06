@@ -49,8 +49,10 @@ namespace LibraryApp.Application.Services
         }
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
+            //// Old Implementation
             //var member = _members.FirstOrDefault(m => m.Id == memberId);
             //var item = _items.FirstOrDefault(i => i.Id == itemId);
+
             //if (member is null) { message = "Member not found."; return false; }
             //if (item is null) { message = "Item not found."; return false; }
             //try
@@ -64,7 +66,38 @@ namespace LibraryApp.Application.Services
             //    message = ex.Message;
             //    return false;
             //}
-            throw new NotImplementedException();
+
+            // New implementation
+            var member = _repository.GetMemberById(memberId);
+
+            if (member == null)
+            {
+                message = "Member not found";
+                return false;
+            }
+
+            var libraryItemEntity = _repository.GetLibraryItem(itemId);
+
+            if (libraryItemEntity == null)
+            {
+                message = "Item not found";
+                return false;
+            }
+
+            if (libraryItemEntity.IsBorrowed)
+            {
+                message = $"{libraryItemEntity.Title}' is already borrowed.";
+                return false;
+            }
+
+            libraryItemEntity.IsBorrowed = true;
+
+            _repository.UpdateLibraryItem(libraryItemEntity);
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+
+            message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
+
+            return true;
         }
         public bool ReturnItem(int memberId, int itemId, out string message)
         {

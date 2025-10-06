@@ -101,23 +101,23 @@ namespace LibraryApp.Api.Controllers
 
         // 7) BorrowItem
         // Add POST to borrow an item
-        //[HttpPost("borrow")]
-        //public IActionResult borrowItem([FromBody] BorrowReturnDto itemId)
-        //{
-        //    if (itemId == null || itemId.MemberId <= 0 || itemId.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid borrow data.");
-        //    }
-        //    var success = _service.BorrowItem(itemId.MemberId, itemId.ItemId, out string message);
-        //    if (success)
-        //    {
-        //        return Ok(message);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(message);
-        //    }
-        //}
+        [HttpPost("borrow")]
+        public IActionResult borrowItem([FromBody] BorrowReturnDto itemId)
+        {
+            if (itemId == null || itemId.MemberId <= 0 || itemId.ItemId <= 0)
+            {
+                return BadRequest("Invalid borrow data.");
+            }
+            var success = _service.BorrowItem(itemId.MemberId, itemId.ItemId, out string message);
+            if (success)
+            {
+                return Ok(message);
+            }
+            else
+            {
+                return BadRequest(message);
+            }
+        }
 
         // 8) ReturnItem
         // Add POST to return an item
