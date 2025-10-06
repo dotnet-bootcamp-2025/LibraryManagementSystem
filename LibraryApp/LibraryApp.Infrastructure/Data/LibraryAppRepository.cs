@@ -24,6 +24,12 @@ namespace LibraryApp.Infrastructure.Data
             _context.SaveChanges();
         }
 
+        public void AddMember(Member member)
+        {
+            _context.Members.Add(member);
+            _context.SaveChanges();
+        }
+
         public IEnumerable<LibraryItem> GetAllLibraryItems()
         {
             return _context.LibraryItems.ToList();

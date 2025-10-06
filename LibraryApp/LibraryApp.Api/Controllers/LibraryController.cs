@@ -16,13 +16,6 @@ namespace LibraryApp.Api.Controllers
         // 1) ListItems
         // Add GET to list all library items
         [HttpGet("items")]
-        // My Solution
-        //public IReadOnlyList<LibraryItem> Get()
-        //{
-        //    _service.Seed();
-        //    return _service.Items.ToArray();
-        //}
-        // Mike's Solution
         public IActionResult GetItems()
         {
             var items = _service.GetAllLibraryItems();
@@ -32,18 +25,7 @@ namespace LibraryApp.Api.Controllers
 
         // 3)  AddBook
         // Add POST to add a new book
-        //[HttpPost("book")]
-        //// My Version
-        //public IActionResult PostBook(string title, string author, int pages = 0)
-        //{
-        //    var book = _service.AddBook(title, author, pages);
-        //    return Ok(book);
-        //}
-
-        // Mike's Version
         [HttpPost("books")]
-        //public IActionResult AddBook([FromBody] Book book)
-        //public IActionResult AddBook([FromBody] BookRecord book)
         public IActionResult AddBook([FromBody] BookDto book)
         {
             if (book == null || string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
@@ -98,16 +80,16 @@ namespace LibraryApp.Api.Controllers
 
         // 6) RegisterMember
         // Add POST to register a new member
-        //[HttpPost("member")]
-        //public IActionResult registerMember([FromBody] MemberDto member)
-        //{
-        //    if (member == null || string.IsNullOrEmpty(member.Name))
-        //    {
-        //        return BadRequest("Invalid member data.");
-        //    }
-        //    var addedMember = _service.RegisterMember(member.Name);
-        //    return CreatedAtAction(nameof(GetItems), new { id = addedMember.Id }, addedMember);
-        //}
+        [HttpPost("member")]
+        public IActionResult registerMember([FromBody] MemberDto member)
+        {
+            if (member == null || string.IsNullOrEmpty(member.Name))
+            {
+                return BadRequest("Invalid member data.");
+            }
+            var addedMember = _service.RegisterMember(member.Name);
+            return CreatedAtAction(nameof(GetItems), new { id = addedMember.Id }, addedMember);
+        }
 
         // 7) BorrowItem
         // Add POST to borrow an item
@@ -147,15 +129,6 @@ namespace LibraryApp.Api.Controllers
         //    {
         //        return BadRequest(message);
         //    }
-        //}
-
-        // 0) Seed
-        // Add POST to initialize the library with seed data
-        //[HttpPost("seed")]
-        //public IActionResult initSeed()
-        //{
-        //    _service.Seed();
-        //    return Ok();
         //}
     }
 }

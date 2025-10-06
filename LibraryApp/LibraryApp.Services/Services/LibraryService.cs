@@ -28,12 +28,6 @@ namespace LibraryApp.Application.Services
         }
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
-            //// Old Integration
-            //var mag = new Magazine(_nextItemId++, title, issueNumber, publisher);
-            //_items.Add(mag);
-            //return mag;
-
-            // New integration
             var magEntity = new Domain.Entities.LibraryItem
             {
                 Title = title,
@@ -49,10 +43,14 @@ namespace LibraryApp.Application.Services
         }
         public Member RegisterMember(string name)
         {
-            //var member = new Member(_nextMemberId++, name);
-            //_members.Add(member);
-            //return member;
-            throw new NotImplementedException();
+            var memberEntity = new Domain.Entities.Member
+            {
+                Name = name
+            };
+
+            _repository.AddMember(memberEntity);
+
+            return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
@@ -63,25 +61,6 @@ namespace LibraryApp.Application.Services
         }
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
-            //// Old Implementation
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
-            //try
-            //{
-            //    member.BorrowItem(item);
-            //    message = $"'{item.Title}' borrowed by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-
-            // New implementation
             var member = _repository.GetMemberById(memberId);
 
             if (member == null)
