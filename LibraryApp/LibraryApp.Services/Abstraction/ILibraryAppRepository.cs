@@ -26,6 +26,8 @@ namespace LibraryApp.Application.Abstraction
 
         IEnumerable<Member> GetAllMembers();
         void UpdateMember(Member member);
+
+        IEnumerable<LibraryItem> FindItems(string searchTerm);
     }
 
 }

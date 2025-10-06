@@ -50,10 +50,8 @@ namespace LibraryApp.Application.Services
         }
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
-            //if (string.IsNullOrWhiteSpace(term)) return _items;
-            //term = term.Trim().ToLowerInvariant();
-            //return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
-            throw new NotImplementedException();
+            var items = _repository.FindItems(term!);
+            return items.Select(MapToDomainModel);
         }
 
         public bool BorrowItem(int memberId, int itemId, out string message)
@@ -64,20 +62,28 @@ namespace LibraryApp.Application.Services
                 message = "Member not found.";
                 return false;
             }
+
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
             if (libraryItemEntity is null)
             {
                 message = "Item not found.";
                 return false;
             }
+
             if (libraryItemEntity.IsBorrowed)
             {
                 message = $"'{libraryItemEntity.Title}' is already borrowed.";
                 return false;
             }
+
             libraryItemEntity.IsBorrowed = true;
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem
+            {
+                MemberId = memberId,
+                LibraryItemId = itemId
+            });
+
             message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
             return true;
         }

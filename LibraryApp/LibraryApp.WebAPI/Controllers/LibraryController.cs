@@ -2,6 +2,7 @@
 using LibraryApp.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using LibraryApp.WebAPI.DTOs;
+using LibraryApp.Application.Services;
 
 namespace LibraryApp.WebAPI.Controllers
 {
@@ -20,6 +21,17 @@ namespace LibraryApp.WebAPI.Controllers
         {
             var items = _service.GetAllLibraryItems();
             Console.WriteLine($"GET - ServiceCollection Instance : {_service.GetHashCode()}, Items Count: {items.Count()}");
+            return Ok(items);
+        }
+
+        [HttpGet("findItems")]
+        public IActionResult FindItems([FromQuery] string? term)
+        {
+            var items = _service.FindItems(term);
+
+            if (!items.Any())
+                return NotFound(new { message = $"No items were found that match '{term}'." });
+
             return Ok(items);
         }
 

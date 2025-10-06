@@ -1,5 +1,4 @@
-﻿
-using LibraryApp.Application.Abstraction;
+﻿using LibraryApp.Application.Abstraction;
 using LibraryApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,19 +33,23 @@ namespace LibraryApp.Infrastructure.Data
         public Member? GetMemberById(int id)
         {
             return _context.Members
-             .Include(member => member.BorrowedItems)
-             .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
-             .FirstOrDefault(member => member.Id == id);
+                 .Include(member => member.BorrowedItems)
+                 .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
+                 .FirstOrDefault(member => member.Id == id);
         }
+
         public LibraryItem? GetLibraryItemById(int id)
         {
-            return _context.LibraryItems.Find(id);
+            return _context.LibraryItems
+                .FirstOrDefault(libraryItem => libraryItem.Id == id);
         }
+
         public void UpdateLibraryItem(LibraryItem LibraryItem)
         {
             _context.LibraryItems.Update(LibraryItem);
             _context.SaveChanges();
         }
+
         public void UpdateMember(Member member)
         {
             _context.Members.Update(member);
@@ -64,6 +67,7 @@ namespace LibraryApp.Infrastructure.Data
             _context.BorrowedItems.Update(borrowedItem);
             _context.SaveChanges();
         }
+
         public IEnumerable<Member> GetAllMembers()
         {
             return _context.Members
@@ -71,6 +75,16 @@ namespace LibraryApp.Infrastructure.Data
             .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
             .ToList();
         }
+
+        public IEnumerable<LibraryItem> FindItems(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+                return _context.LibraryItems.ToList();
+
+            term = term.Trim();
+            return _context.LibraryItems
+                .Where(i => EF.Functions.Like(i.Title, $"%{term}%"))
+                .ToList();
+        }
     }
 }
-
