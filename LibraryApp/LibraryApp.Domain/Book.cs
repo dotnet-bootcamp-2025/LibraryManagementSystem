@@ -13,10 +13,12 @@ namespace LibraryApp.Domain
         public int Pages { get; }
 
         // Constructor chaining example:
-        public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
+        public Book(int id, string title, string author, bool isBorrowed) : this(id, title, author, pages: 0, isBorrowed) 
+        { 
+        }
 
         [JsonConstructor]
-        public Book(int id, string title, string author, int pages) : base(id, title)
+        public Book(int id, string title, string author, int pages, bool isBorrowed) : base(id, title, isBorrowed)
         {
             Author = string.IsNullOrWhiteSpace(author) ? "Unknown" : author.Trim();
             Pages = pages < 0 ? 0 : pages;
