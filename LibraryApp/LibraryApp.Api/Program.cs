@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // register library service as a singleton
 // 3 life-cycles singleton, scoped, transient
 // register as singleton to maintain state across requests
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();
