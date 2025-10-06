@@ -12,6 +12,12 @@ namespace LibraryApp.Infrastructure.Data
             _context = context;
         }
 
+        public void AddLibraryItem(LibraryItem libraryItem)
+        {
+            _context.LibraryItems.Add(libraryItem);
+            _context.SaveChanges();
+        }
+
         public IEnumerable<LibraryItem> GetAllLibraryItems()
         {
             return _context.LibraryItems.ToList();

@@ -41,18 +41,28 @@ namespace LibraryApp.Api.Controllers
         //}
 
         // Mike's Version
-        //[HttpPost("books")]
+        [HttpPost("books")]
         //public IActionResult AddBook([FromBody] Book book)
         //public IActionResult AddBook([FromBody] BookRecord book)
-        //public IActionResult AddBook([FromBody] BookDto book)
-        //{
-        //    if (book == null || string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
-        //    {
-        //        return BadRequest("Invalid book data.");
-        //    }
-        //    var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
-        //    return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
-        //}
+        public IActionResult AddBook([FromBody] BookDto book)
+        {
+            if (book == null || string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
+            {
+                return BadRequest("Invalid book data.");
+            }
+
+            var items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+
+            items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
+
+            return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
+        }
 
         // 4) AddMagazine
         // Add POST to add a new magazine

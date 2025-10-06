@@ -13,10 +13,18 @@ namespace LibraryApp.Application.Services
         }
         public Book AddBook(string title, string author, int pages = 0)
         {
-            //var book = new Book(_nextItemId++, title, author, pages);
-            //_items.Add(book);
-            //return book;
-            throw new NotImplementedException();
+            var bookEntity = new Domain.Entities.LibraryItem 
+            { 
+                Title = title, 
+                Author = author, 
+                Pages = pages, 
+                Type = (int)LibraryItemTypeEnum.Book, 
+                IsBorrowed = false 
+            };
+
+            _repository.AddLibraryItem(bookEntity);
+
+            return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author);
         }
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
