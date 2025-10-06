@@ -52,9 +52,6 @@ namespace LibraryApp.Infrastructure.Data
                 );
         }
 
-        internal void Add(object magazine)
-        {
-            throw new NotImplementedException();
-        }
+        internal void Add(object magazine) => throw new NotImplementedException();
     }
 }

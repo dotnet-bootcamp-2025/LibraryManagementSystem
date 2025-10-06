@@ -31,8 +31,9 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("members")]
         public IActionResult GetMembers()
         {
-            var members = _service.GetAllMembers;
+            var members = _service.GetAllMembersWithBorrowStatus();
             return Ok(members);
+
         }
         #endregion GETs
 

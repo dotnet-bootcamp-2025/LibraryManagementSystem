@@ -23,6 +23,16 @@ namespace LibraryApp.Infrastructure.Data
         {
             return _context.LibraryItems.ToList();
         }
+                public IEnumerable<Member> GetAllMembersWithBorrowStatus()
+        {
+            // Include BorrowedItems so EF knows how many are linked
+            var members = _context.Members
+                .Include(m => m.BorrowedItems)
+                .AsNoTracking()
+                .ToList();
+
+            return members;
+        }
         public LibraryItem? GetLibraryItemById(int id)
         {
             return _context.LibraryItems.Find(id);
@@ -32,10 +42,6 @@ namespace LibraryApp.Infrastructure.Data
         {
             _context.LibraryItems.Update(libraryItem);
             _context.SaveChanges();
-        }
-        public Member? GetMemberById(int id)
-        {
-            return _context.Members.Find(id);
         }
         public void AddBorrowedItem(BorrowedItem borrowedItem)
         {
@@ -47,12 +53,18 @@ namespace LibraryApp.Infrastructure.Data
             _context.Members.Add(member);
             _context.SaveChanges();
         }
+        public Member? GetMemberById(int id)
+        {
+            // return _context.Members.Find(id);
+            return _context.Members
+                 .Include(m => m.BorrowedItems)
+                 .FirstOrDefault(m => m.Id == id);
+        }
         public BorrowedItem? GetBorrowedItem(int memberId, int itemId)
         {
             return _context.BorrowedItems
                 .FirstOrDefault(b => b.MemberId == memberId && b.LibraryItemId == itemId);
         }
-
         public void RemoveBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Remove(borrowedItem);

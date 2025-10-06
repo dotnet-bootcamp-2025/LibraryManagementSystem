@@ -18,6 +18,7 @@ namespace LibraryApp.Application.Abstractions
         IEnumerable<LibraryItem> FindLibraryItems(string? term);
         IEnumerable<Member> GetAllMembers();
         void AddMember(Member member);
+        IEnumerable<Member> GetAllMembersWithBorrowStatus();
 
     }
 }

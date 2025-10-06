@@ -14,5 +14,6 @@ namespace LibraryApp.Application.Abstractions
         bool ReturnItem(int memberId, int itemId, out string message);
         IEnumerable<LibraryItem> GetAllLibraryItems();
         IEnumerable<Member> GetAllMembers { get; }
+        IEnumerable<object> GetAllMembersWithBorrowStatus();
     }
 }

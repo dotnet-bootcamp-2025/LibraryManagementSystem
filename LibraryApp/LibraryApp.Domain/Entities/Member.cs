@@ -9,9 +9,8 @@ namespace LibraryApp.Domain.Entities
     public class Member
     {
         public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public ICollection<BorrowedItem> BorrowedItems { get; set; } = new List<BorrowedItem>();
 
-        public required string Name { get; set; }
-
-        public List<BorrowedItem>? BorrowedItems { get; set; }
     }
 }

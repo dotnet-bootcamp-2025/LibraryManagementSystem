@@ -229,6 +229,17 @@ namespace LibraryApp.Application.Services
             var memberEntities = _repository.GetAllMembers();
             return memberEntities.Select(m => new Domain.Member(m.Id, m.Name));
         }
+        public IEnumerable<object> GetAllMembersWithBorrowStatus()
+        {
+            var members = _repository.GetAllMembersWithBorrowStatus();
+
+            return members.Select(m => new
+            {
+                Id = m.Id,
+                Name = m.Name,
+                HasBorrowedItems = m.BorrowedItems != null && m.BorrowedItems.Any()
+            });
+        }
     }
     
 }
