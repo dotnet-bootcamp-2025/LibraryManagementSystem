@@ -28,10 +28,24 @@ namespace LibraryApp.Application.Services
         }
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
+            //// Old Integration
             //var mag = new Magazine(_nextItemId++, title, issueNumber, publisher);
             //_items.Add(mag);
             //return mag;
-            throw new NotImplementedException();
+
+            // New integration
+            var magEntity = new Domain.Entities.LibraryItem
+            {
+                Title = title,
+                IssueNumber = (int)issueNumber,
+                Publisher = publisher,
+                Type = (int)LibraryItemTypeEnum.Magazine,
+                IsBorrowed = false
+            };
+
+            _repository.AddLibraryItem(magEntity);
+
+            return new Domain.Magazine(magEntity.Id, magEntity.Title, magEntity.IssueNumber ?? 0, magEntity.Publisher);
         }
         public Member RegisterMember(string name)
         {
@@ -127,6 +141,23 @@ namespace LibraryApp.Application.Services
 
         private Domain.LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
+            if (entity.IsBorrowed) {
+                switch ((LibraryItemTypeEnum)entity.Type)
+                {
+                    case LibraryItemTypeEnum.Book:
+                        var book = new Book(entity.Id, entity.Title, entity.Author ?? string.Empty, entity.Pages ?? 0);
+                        book.Borrow();
+                        return book;
+                    case LibraryItemTypeEnum.Magazine:
+                        var mag = new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty);
+                        mag.Borrow();
+                        return mag;
+                    default:
+                        throw new InvalidOperationException("Unknown library item type.");
+
+                }
+            }
+
             return (LibraryItemTypeEnum)entity.Type switch
             {
                 LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? string.Empty, entity.Pages ?? 0),

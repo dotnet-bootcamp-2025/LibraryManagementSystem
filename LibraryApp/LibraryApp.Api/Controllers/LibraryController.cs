@@ -66,16 +66,26 @@ namespace LibraryApp.Api.Controllers
 
         // 4) AddMagazine
         // Add POST to add a new magazine
-        //[HttpPost("magazine")]
-        //public IActionResult addMagazine([FromBody] MagazineDto mag)
-        //{
-        //    if (mag == null || string.IsNullOrEmpty(mag.Title) || string.IsNullOrEmpty(mag.Publisher))
-        //    {
-        //        return BadRequest("Invalid magazine data.");
-        //    }
-        //    var addedMag = _service.AddMagazine(mag.Title, mag.IssueNumber, mag.Publisher);
-        //    return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
-        //}
+        [HttpPost("magazine")]
+        public IActionResult addMagazine([FromBody] MagazineDto mag)
+        {
+            if (mag == null || string.IsNullOrEmpty(mag.Title) || string.IsNullOrEmpty(mag.Publisher))
+            {
+                return BadRequest("Invalid magazine data.");
+            }
+
+            var items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+
+            var addedMag = _service.AddMagazine(mag.Title, mag.IssueNumber, mag.Publisher);
+
+            items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
+
+            return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
+        }
 
         // 5) ListMembers
         // Add GET to list all members
