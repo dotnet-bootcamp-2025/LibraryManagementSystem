@@ -1,8 +1,9 @@
 ﻿
-
-using LibraryApp.Console.Domain;
+//using LibraryApp.Console.Domain;
+//using LibraryApp.Console.Services;
 using LibraryApp.Console.Utils;
-using LibraryApp.Console.Services;
+using LibraryApp.Domain;
+using LibraryApp.Services;
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
@@ -11,7 +12,7 @@ public class Program
     {
         Console.WriteLine("Library App!");
         _service.Seed();
-        
+
         bool exit = false;
         while (!exit)
         {
@@ -97,7 +98,7 @@ public class Program
 
     private static void RegisterMember()
     {
-        var name= InputHelper.ReadText("Member Name");
+        var name = InputHelper.ReadText("Member Name");
         var member = _service.RegisterMember(name);
     }
 
