@@ -25,7 +25,7 @@ namespace LibraryApp.Api.Controllers
 
         // 3)  AddBook
         // Add POST to add a new book
-        [HttpPost("books")]
+        [HttpPost("book")]
         public IActionResult AddBook([FromBody] BookDto book)
         {
             if (book == null || string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
@@ -71,12 +71,13 @@ namespace LibraryApp.Api.Controllers
 
         // 5) ListMembers
         // Add GET to list all members
-        //[HttpGet("members")]
-        //public IActionResult GetMembers()
-        //{
-        //    var members = _service.Members;
-        //    return Ok(members);
-        //}
+        [HttpGet("members")]
+        public IActionResult GetMembers()
+        {
+            var members = _service.GetAllMembers();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Members count: {members.Count()}");
+            return Ok(members);
+        }
 
         // 6) RegisterMember
         // Add POST to register a new member
@@ -113,22 +114,22 @@ namespace LibraryApp.Api.Controllers
 
         // 8) ReturnItem
         // Add POST to return an item
-        //[HttpPost("return")]
-        //public IActionResult returnItem([FromBody] BorrowReturnDto itemId)
-        //{
-        //    if (itemId == null || itemId.MemberId <= 0 || itemId.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid borrow data.");
-        //    }
-        //    var success = _service.ReturnItem(itemId.MemberId, itemId.ItemId, out string message);
-        //    if (success)
-        //    {
-        //        return Ok(message);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(message);
-        //    }
-        //}
+        [HttpPost("return")]
+        public IActionResult returnItem([FromBody] BorrowReturnDto itemId)
+        {
+            if (itemId == null || itemId.MemberId <= 0 || itemId.ItemId <= 0)
+            {
+                return BadRequest("Invalid borrow data.");
+            }
+            var success = _service.ReturnItem(itemId.MemberId, itemId.ItemId, out string message);
+            if (success)
+            {
+                return Ok(message);
+            }
+            else
+            {
+                return BadRequest(message);
+            }
+        }
     }
 }

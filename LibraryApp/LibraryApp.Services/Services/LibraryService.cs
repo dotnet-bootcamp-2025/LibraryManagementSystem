@@ -109,7 +109,45 @@ namespace LibraryApp.Application.Services
             //    message = ex.Message;
             //    return false;
             //}
-            throw new NotImplementedException();
+
+            var member = _repository.GetMemberById(memberId);
+
+            if (member == null)
+            {
+                message = "Member not found";
+                return false;
+            }
+
+            var libraryItemEntity = _repository.GetLibraryItem(itemId);
+
+            if (libraryItemEntity == null)
+            {
+                message = "Item not found";
+                return false;
+            }
+
+            if (!libraryItemEntity.IsBorrowed)
+            {
+                message = $"{libraryItemEntity.Title}' isn't borrowed.";
+                return false;
+            }
+
+            var borrowedItemEntity = _repository.GetBorrowedItem(member.Id, libraryItemEntity.Id);
+
+            if (borrowedItemEntity == null)
+            {
+                message = "Item borrowed by someone else";
+                return false;
+            }
+
+            libraryItemEntity.IsBorrowed = false;
+
+            _repository.UpdateLibraryItem(libraryItemEntity);
+            _repository.ReturnBorrowedItem(borrowedItemEntity.Id);
+
+            message = $"'{libraryItemEntity.Title}' returned by {member.Name}.";
+
+            return true;
         }
 
         public IEnumerable<Domain.LibraryItem> GetAllLibraryItems()
@@ -143,6 +181,24 @@ namespace LibraryApp.Application.Services
                 LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty),
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
+        }
+
+        public IEnumerable<Domain.Member> GetAllMembers()
+        {
+            var membersEntities = _repository.GetAllMembers();
+            return membersEntities.Select(MapToDomainMembersModel);
+        }
+
+        private Domain.Member MapToDomainMembersModel(Domain.Entities.Member entity)
+        {
+            return new Member(entity.Id, entity.Name);
+
+            // Unfinished attemp for returning BorrowedItems
+            var member = new Member(entity.Id, entity.Name);
+            foreach(var itemId in entity.BorrowedItems)
+            {
+
+            }
         }
     }
 }

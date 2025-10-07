@@ -11,5 +11,6 @@ namespace LibraryApp.Application.Abstractions
         Member RegisterMember(string name);
         bool ReturnItem(int memberId, int itemId, out string message);
         IEnumerable<LibraryItem> GetAllLibraryItems();
+        IEnumerable<Member> GetAllMembers();
     }
 }
