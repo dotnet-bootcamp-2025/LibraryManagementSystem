@@ -14,5 +14,6 @@ namespace LibraryApp.Application.Abstraction
         IEnumerable<LibraryItem> GetAllLibraryItems();
 
         IEnumerable<Member> GetAllMembers();
+
     }
 }

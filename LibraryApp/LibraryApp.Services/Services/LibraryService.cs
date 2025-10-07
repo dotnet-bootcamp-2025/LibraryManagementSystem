@@ -24,7 +24,9 @@ namespace LibraryApp.Application.Services
            };
             _repository.AddLibraryItem(bookEntity);
 
-            return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author);
+            _repository.SaveChanges();
+
+            return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author, bookEntity.Pages ?? 0);
         }
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
@@ -37,6 +39,7 @@ namespace LibraryApp.Application.Services
                 IsBorrowed = false
             };
             _repository.AddLibraryItem(magazineEntity);
+            _repository.SaveChanges();
             return new Domain.Magazine(magazineEntity.Id, magazineEntity.Title, magazineEntity.IssueNumber ?? 0, magazineEntity.Publisher ?? string.Empty);
         }
         public Member RegisterMember(string name)
@@ -46,6 +49,7 @@ namespace LibraryApp.Application.Services
                 Name = name
             };
             _repository.AddMember(memberEntity);
+            _repository.SaveChanges();
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
         public IEnumerable<LibraryItem> FindItems(string? term)
@@ -83,6 +87,7 @@ namespace LibraryApp.Application.Services
                 MemberId = memberId,
                 LibraryItemId = itemId
             });
+            _repository.SaveChanges();
 
             message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
             return true;
@@ -102,15 +107,13 @@ namespace LibraryApp.Application.Services
             var borrowedItem = member.BorrowedItems?
                 .FirstOrDefault(bi => bi.LibraryItemId == itemId);
 
-            if (borrowedItem == null)
+            if (borrowedItem is null)
                 return false;
 
             libraryItemEntity.IsBorrowed = false;
 
-            member.BorrowedItems!.Remove(borrowedItem);
-
-            _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.UpdateMember(member);
+            _repository.RemoveBorrowedItem(borrowedItem);
+            _repository.SaveChanges();
 
             return true;
         }
@@ -148,16 +151,7 @@ namespace LibraryApp.Application.Services
         {
             var memberEntities = _repository.GetAllMembers();
 
-            return memberEntities.Select(entity => {
-                var borrowedDomainItems = entity.BorrowedItems
-                    .Where(borrowed => borrowed.LibraryItem != null && borrowed.LibraryItem.IsBorrowed)
-                    .GroupBy(borrowed => borrowed.LibraryItem!.Id)
-                    .Select(group => group.First())
-                    .Select(borrowed => MapToDomainModel(borrowed.LibraryItem!))
-                    .ToList();
-
-                return new Member(entity.Id, entity.Name, borrowedDomainItems);
-            });
+            return memberEntities.Select(entity => new Member(entity.Id, entity.Name));
         }
     }
 }

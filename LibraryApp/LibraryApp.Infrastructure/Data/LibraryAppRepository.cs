@@ -16,13 +16,11 @@ namespace LibraryApp.Infrastructure.Data
         public void AddLibraryItem(LibraryItem item)
         {
             _context.LibraryItems.Add(item);
-            _context.SaveChanges();
         }
 
         public void AddMember(Member member)
         {
             _context.Members.Add(member);
-            _context.SaveChanges();
         }
 
         public IEnumerable<LibraryItem> GetAllLibraryItems()
@@ -33,9 +31,8 @@ namespace LibraryApp.Infrastructure.Data
         public Member? GetMemberById(int id)
         {
             return _context.Members
-                 .Include(member => member.BorrowedItems)
-                 .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
-                 .FirstOrDefault(member => member.Id == id);
+                .Include(member => member.BorrowedItems)
+                .FirstOrDefault(member => member.Id == id);
         }
 
         public LibraryItem? GetLibraryItemById(int id)
@@ -46,34 +43,27 @@ namespace LibraryApp.Infrastructure.Data
 
         public void UpdateLibraryItem(LibraryItem LibraryItem)
         {
-            _context.LibraryItems.Update(LibraryItem);
-            _context.SaveChanges();
         }
 
         public void UpdateMember(Member member)
         {
-            _context.Members.Update(member);
-            _context.SaveChanges();
         }
 
         public void AddBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
         }
 
         public void ReturnItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Update(borrowedItem);
-            _context.SaveChanges();
         }
 
         public IEnumerable<Member> GetAllMembers()
         {
             return _context.Members
-            .Include(member => member.BorrowedItems)
-            .ThenInclude(borrowedItem => borrowedItem.LibraryItem)
-            .ToList();
+                .Include(member => member.BorrowedItems)
+                .ToList();
         }
 
         public IEnumerable<LibraryItem> FindItems(string term)
@@ -85,6 +75,14 @@ namespace LibraryApp.Infrastructure.Data
             return _context.LibraryItems
                 .Where(i => EF.Functions.Like(i.Title, $"%{term}%"))
                 .ToList();
+        }
+        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Remove(borrowedItem);
+        }
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
         }
     }
 }

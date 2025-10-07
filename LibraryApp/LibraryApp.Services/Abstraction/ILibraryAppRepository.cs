@@ -28,6 +28,9 @@ namespace LibraryApp.Application.Abstraction
         void UpdateMember(Member member);
 
         IEnumerable<LibraryItem> FindItems(string searchTerm);
+       void RemoveBorrowedItem(BorrowedItem borrowedItem);
+
+        void SaveChanges();
     }
 
 }
