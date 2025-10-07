@@ -5,7 +5,6 @@ namespace LibraryApp.Api.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        //OLD approach -> private readonly LibraryService _service = new LibraryService();
         private readonly ILibraryService _service;
         public LibraryController(ILibraryService libraryService)
         {
@@ -20,6 +19,20 @@ namespace LibraryApp.Api.Controllers
             System.Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
             return Ok(items);
         }
+
+        [HttpGet("items/{id}")]
+        public IActionResult GetItem(int id)
+        {
+            var item = _service.GetAllLibraryItems().FirstOrDefault(x => x.Id == id);
+            if (item == null)
+                {
+                    System.Console.WriteLine($"GET /items/{id} - Not Found");
+                return NotFound();
+                }
+            System.Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Item: {item.Id}");
+            return Ok(item);
+        }
+        
         // Add Post to add a new book
         [HttpPost("books")]
         public IActionResult AddBook([FromBody] AddBookRequest book)
@@ -44,7 +57,7 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest("Invalid term data.");
             }
             var items = _service.FindItems(term);
-            System.Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
+            System.Console.WriteLine($"GET /items/search - term='{term}' matched: {items.Count()}");
             return Ok(items);
         }
         // Add Post to add a new magazine
@@ -63,7 +76,7 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addedMagazine.Id }, addedMagazine);
         }
         //Post to borrow an item
-       [HttpPost("borrow item")]
+       [HttpPost("borrowItem")]
         public IActionResult BorrowItem([FromBody] BorrowRequest dto)
         {
             if (dto == null) return BadRequest("Missing data.");
@@ -75,7 +88,7 @@ namespace LibraryApp.Api.Controllers
             
         }
         // Post to return an item
-        [HttpPost("return item")]
+        [HttpPost("returnItem")]
         public IActionResult ReturnItem([FromBody] BorrowRequest dto)
         {
             if (dto == null) return BadRequest("Missing data.");
@@ -93,7 +106,7 @@ namespace LibraryApp.Api.Controllers
             return Ok(members);
         }
         // Register a new member
-        [HttpPost("Add member")]
+        [HttpPost("member")]
         public IActionResult RegisterMember([FromBody] RegisterMemberRequest dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Name))
@@ -105,6 +118,18 @@ namespace LibraryApp.Api.Controllers
             var added = _service.RegisterMember(dto.Name);
             System.Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Member added: {dto.Name},members count after: {members.Count()}");
             return CreatedAtAction(nameof(ListMembers), new { id = added.Id }, added);
+        }
+
+        [HttpGet("members/{id}")]
+        public IActionResult GetMember(int id)
+        {
+            var member = _service.GetAllMembers().FirstOrDefault(m => m.Id == id);
+            if (member == null)
+            {
+                System.Console.WriteLine("Member not found.");
+                return NotFound();
+            }
+            return Ok(member);
         }
     }
 }

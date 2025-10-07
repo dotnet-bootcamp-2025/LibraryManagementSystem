@@ -17,9 +17,7 @@ namespace LibraryApp.ConsoleApp
         {
             // 1) Configurar DI (ServiceCollection)
             var services = new ServiceCollection();
-
-            // // Logging console (opcional)
-            // services.AddLogging(cfg => cfg.AddConsole());
+            
 
             // Si usas AppDbContext en el servicio, registra DbContext (ajusta connection string)
             var connectionString = "Data Source=libraryapp.db"; // o lee desde config
