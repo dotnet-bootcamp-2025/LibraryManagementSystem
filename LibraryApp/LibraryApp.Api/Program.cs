@@ -1,4 +1,7 @@
-using LibraryApp.Services;
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
+using LibraryApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+
+// Configure DbContext with SQL Server
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -21,8 +29,8 @@ builder.Services.AddCors(options =>
 });
 // Register LibraryService as singleton
 // 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
-//builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 var app = builder.Build();
 

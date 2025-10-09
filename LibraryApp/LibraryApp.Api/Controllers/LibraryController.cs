@@ -1,5 +1,5 @@
-﻿using LibraryApp.Domain;
-using LibraryApp.Services;
+﻿using LibraryApp.Api.DTOs;
+using LibraryApp.Application.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controllers
@@ -16,40 +16,33 @@ namespace LibraryApp.Api.Controllers
         // 1) ListItems
         // Add GET to list all library items
         [HttpGet("items")]
-        // My Solution
-        //public IReadOnlyList<LibraryItem> Get()
-        //{
-        //    _service.Seed();
-        //    return _service.Items.ToArray();
-        //}
-        // Mike's Solution
         public IActionResult GetItems()
         {
-            var items = _service.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
             return Ok(items);
         }
 
         // 3)  AddBook
         // Add POST to add a new book
-        //[HttpPost("book")]
-        //// My Version
-        //public IActionResult PostBook(string title, string author, int pages = 0)
-        //{
-        //    var book = _service.AddBook(title, author, pages);
-        //    return Ok(book);
-        //}
-
-        // Mike's Version
-        [HttpPost("books")]
-        //public IActionResult AddBook([FromBody] Book book)
-        //public IActionResult AddBook([FromBody] BookRecord book)
+        [HttpPost("book")]
         public IActionResult AddBook([FromBody] BookDto book)
         {
             if (book == null || string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
             {
                 return BadRequest("Invalid book data.");
             }
+
+            var items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+
             var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+
+            items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
+
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
 
@@ -62,7 +55,17 @@ namespace LibraryApp.Api.Controllers
             {
                 return BadRequest("Invalid magazine data.");
             }
+
+            var items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+
             var addedMag = _service.AddMagazine(mag.Title, mag.IssueNumber, mag.Publisher);
+
+            items = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
+
             return CreatedAtAction(nameof(GetItems), new { id = addedMag.Id }, addedMag);
         }
 
@@ -71,7 +74,8 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("members")]
         public IActionResult GetMembers()
         {
-            var members = _service.Members;
+            var members = _service.GetAllMembers();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Members count: {members.Count()}");
             return Ok(members);
         }
 
@@ -126,15 +130,6 @@ namespace LibraryApp.Api.Controllers
             {
                 return BadRequest(message);
             }
-        }
-
-        // 0) Seed
-        // Add POST to initialize the library with seed data
-        [HttpPost("seed")]
-        public IActionResult initSeed()
-        {
-            _service.Seed();
-            return Ok();
         }
     }
 }

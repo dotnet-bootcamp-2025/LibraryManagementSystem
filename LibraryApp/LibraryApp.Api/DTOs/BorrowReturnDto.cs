@@ -1,5 +1,8 @@
-﻿public class BorrowReturnDto
+﻿namespace LibraryApp.Api.DTOs
 {
-    public int MemberId { get; set; }
-    public int ItemId { get; set; }
+    public class BorrowReturnDto
+    {
+        public int MemberId { get; set; }
+        public int ItemId { get; set; }
+    }
 }

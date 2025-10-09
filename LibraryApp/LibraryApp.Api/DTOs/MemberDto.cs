@@ -1,4 +1,7 @@
-﻿public class MemberDto
+﻿namespace LibraryApp.Api.DTOs
 {
-    public required string Name { get; set; }
+    public class MemberDto
+    {
+        public required string Name { get; set; }
+    }
 }

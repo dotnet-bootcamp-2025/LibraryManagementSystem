@@ -1,15 +1,15 @@
-﻿using LibraryApp.Console.Utils;
+﻿using LibraryApp.Application.Services;
+using LibraryApp.Console.Utils;
 using LibraryApp.Domain;
-using LibraryApp.Services;
 
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
-    private static readonly LibraryService _service = new();
+    //private static readonly LibraryService _service = new();
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        _service.Seed();
+        //_service.Seed();
         bool exit = false;
         while (!exit)
         {
@@ -27,19 +27,19 @@ public class Program
                 continue;
             }
             Console.WriteLine();
-            switch (choice)
-            {
-                case 1: ListItems();        break;
-                //case 2: SearchItems();      break;
-                case 3: AddBook();          break;
-                case 4: AddMagazine();      break;
-                case 5: ListMembers();      break;
-                case 6: RegisterMember();   break;
-                case 7: BorrowItem();       break;
-                case 8: ReturnItem();       break;
-                case 0: exit = true;        break;
-                default: Console.WriteLine("Unknown option."); break;
-            }
+            //switch (choice)
+            //{
+            //    case 1: ListItems();        break;
+            //    //case 2: SearchItems();      break;
+            //    case 3: AddBook();          break;
+            //    case 4: AddMagazine();      break;
+            //    case 5: ListMembers();      break;
+            //    case 6: RegisterMember();   break;
+            //    case 7: BorrowItem();       break;
+            //    case 8: ReturnItem();       break;
+            //    case 0: exit = true;        break;
+            //    default: Console.WriteLine("Unknown option."); break;
+            //}
             if (!exit)
             {
                 Console.WriteLine("\nPress any key to continue...");
@@ -65,77 +65,83 @@ public class Program
     }
 
     // 1) ListItems
-    static void ListItems()
-    {
-        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
-        Console.WriteLine("Items:");
-        foreach (var item in _service.Items)
-        {
-            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
-            // Polymorphism: each derived class presents info differently
-            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
-        }
-    }
+    //static void ListItems()
+    //{
+    //    if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
+    //    Console.WriteLine("Items:");
+    //    foreach (var item in _service.Items)
+    //    {
+    //        var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+    //        // Polymorphism: each derived class presents info differently
+    //        Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+    //    }
+    //}
+
     // 3)  AddBook
-    static void AddBook()
-    {
-        var title = InputHelper.ReadText("Title");
-        var author = InputHelper.ReadText("Author");
-        var pages = InputHelper.ReadInt("Pages (0 if unknown)");
+    //static void AddBook()
+    //{
+    //    var title = InputHelper.ReadText("Title");
+    //    var author = InputHelper.ReadText("Author");
+    //    var pages = InputHelper.ReadInt("Pages (0 if unknown)");
 
-        var book = _service.AddBook(title, author, pages);
+    //    var book = _service.AddBook(title, author, pages);
         
-        Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
-    }
+    //    Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
+    //}
+
     // 4) AddMagazine
-    static void AddMagazine()
-    {
-        var title = InputHelper.ReadText("Title");
-        var issue = InputHelper.ReadInt("Issue number");
-        var publisher = InputHelper.ReadText("Publisher");
+    //static void AddMagazine()
+    //{
+    //    var title = InputHelper.ReadText("Title");
+    //    var issue = InputHelper.ReadInt("Issue number");
+    //    var publisher = InputHelper.ReadText("Publisher");
 
-        var mag = _service.AddMagazine(title, issue, publisher);
+    //    var mag = _service.AddMagazine(title, issue, publisher);
         
-        Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
-    }
+    //    Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
+    //}
+
     // 5) ListMembers
-    static void ListMembers()
-    {
-        if(_service.Members.Count() == 0)
-        { Console.WriteLine("No Members Registered"); return; }
-        Console.WriteLine($"Members Registered:");
+    //static void ListMembers()
+    //{
+    //    if(_service.Members.Count() == 0)
+    //    { Console.WriteLine("No Members Registered"); return; }
+    //    Console.WriteLine($"Members Registered:");
 
-        foreach (var member in _service.Members)
-        {
-            Console.WriteLine($"Member: [{member.ToString()}]");
-        }
-    }
+    //    foreach (var member in _service.Members)
+    //    {
+    //        Console.WriteLine($"Member: [{member.ToString()}]");
+    //    }
+    //}
+
     // 6) RegisterMember
-    static void RegisterMember()
-    {
-        var name = InputHelper.ReadText("Member Name");
-        var member = _service.RegisterMember(name);
+    //static void RegisterMember()
+    //{
+    //    var name = InputHelper.ReadText("Member Name");
+    //    var member = _service.RegisterMember(name);
     
-        Console.WriteLine($"Registered: {member}");
-    }
+    //    Console.WriteLine($"Registered: {member}");
+    //}
+
     // 7) BorrowItem
-    static void BorrowItem()
-    {
-        var memberId = Int32.Parse(InputHelper.ReadText("Member Id"));
-        var itemId = Int32.Parse(InputHelper.ReadText("Item Id"));
+    //static void BorrowItem()
+    //{
+    //    var memberId = Int32.Parse(InputHelper.ReadText("Member Id"));
+    //    var itemId = Int32.Parse(InputHelper.ReadText("Item Id"));
 
-        _service.BorrowItem(memberId, itemId, out string message);
+    //    _service.BorrowItem(memberId, itemId, out string message);
 
-        Console.WriteLine(message);
-    }
+    //    Console.WriteLine(message);
+    //}
+
     // 8) ReturnItem
-    static void ReturnItem()
-    {
-        var memberId = Int32.Parse(InputHelper.ReadText("Member Id"));
-        var itemId = Int32.Parse(InputHelper.ReadText("Item Id"));
+    //static void ReturnItem()
+    //{
+    //    var memberId = Int32.Parse(InputHelper.ReadText("Member Id"));
+    //    var itemId = Int32.Parse(InputHelper.ReadText("Item Id"));
 
-        _service.ReturnItem(memberId, itemId, out string message);
+    //    _service.ReturnItem(memberId, itemId, out string message);
 
-        Console.WriteLine(message);
-    }
+    //    Console.WriteLine(message);
+    //}
 }
