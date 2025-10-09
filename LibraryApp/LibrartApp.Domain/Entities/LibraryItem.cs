@@ -6,7 +6,34 @@ using System.Threading.Tasks;
 
 namespace LibrartApp.Domain.Entities
 {
-    internal class LibraryItem
+    public abstract class LibraryItem
     {
+        public int Id { get; }
+        public string Title { get; }
+        public bool IsBorrowed { get; private set; }
+
+        protected LibraryItem(int id, string title)
+        {
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
+            Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required.") : title.Trim();
+
+            Id = id;
+        }
+
+
+        public void Borrow()
+        {
+            if (IsBorrowed) throw new InvalidOperationException("Item is already borrowed.");
+            IsBorrowed = true;
+        }
+
+        public void Return()
+        {
+            if (!IsBorrowed) throw new InvalidOperationException("Item is not borrowed.");
+            IsBorrowed = false;
+        }
+
+        public abstract string GetInfo();
     }
+
 }
