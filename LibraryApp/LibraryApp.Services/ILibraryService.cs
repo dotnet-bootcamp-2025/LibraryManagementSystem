@@ -1,4 +1,4 @@
-﻿using LibrartApp.Domain.Entities;
+﻿using LibrartApp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
