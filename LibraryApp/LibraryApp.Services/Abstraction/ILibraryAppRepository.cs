@@ -30,6 +30,10 @@ namespace LibraryApp.Application.Abstraction
 
         BorrowedItem? GetBorrowedItemByLibraryItemId(int libraryItemId);
 
+        void UpdateBorrowedItem(BorrowedItem borrowedItem);
+
+        IEnumerable<BorrowedItem> GetAllCurrentLoans();
+
         void SaveChanges();
     }
 }

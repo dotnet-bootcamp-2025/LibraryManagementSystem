@@ -74,6 +74,13 @@ namespace LibraryApp.Application.Services
                 return false;
             }
 
+            if (member.BorrowedItems != null && member.BorrowedItems.Count(borrowedItem => borrowedItem.IsActive) >= 3)
+            {
+                message = "Cannot borrow more than 3 items.";
+                returnDate = null;
+                return false;
+            }
+
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
             if (libraryItemEntity is null)
             {
@@ -125,7 +132,8 @@ namespace LibraryApp.Application.Services
                 MemberId = memberId,
                 LibraryItemId = itemId,
                 BorrowedDate = now,
-                ReturnDate = calculatedReturnDate
+                ReturnDate = calculatedReturnDate,
+                IsActive = true
             });
 
             _repository.SaveChanges();
@@ -145,14 +153,15 @@ namespace LibraryApp.Application.Services
                 return false;
 
             var borrowedItem = member.BorrowedItems?
-                .FirstOrDefault(bi => bi.LibraryItemId == itemId);
+                .FirstOrDefault(bi => bi.LibraryItemId == itemId && bi.IsActive);
 
             if (borrowedItem is null)
                 return false;
 
             libraryItemEntity.IsBorrowed = false;
+            borrowedItem.IsActive = false;
 
-            _repository.RemoveBorrowedItem(borrowedItem);
+            _repository.UpdateBorrowedItem(borrowedItem);
             _repository.SaveChanges();
 
             return true;

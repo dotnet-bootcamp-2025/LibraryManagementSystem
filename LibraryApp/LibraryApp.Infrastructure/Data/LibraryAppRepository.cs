@@ -30,9 +30,16 @@ namespace LibraryApp.Infrastructure.Data
 
         public Member? GetMemberById(int id)
         {
-            return _context.Members
-                .Include(member => member.BorrowedItems)
-                .FirstOrDefault(member => member.Id == id);
+            var member = _context.Members.FirstOrDefault(member => member.Id == id);
+            if (member != null)
+            {
+                _context.Entry(member)
+                    .Collection(member => member.BorrowedItems!)
+                    .Query()
+                    .Include(borrowItem => borrowItem.LibraryItem)
+                    .Load();
+            }
+            return member;
         }
 
         public LibraryItem? GetLibraryItemById(int id)
@@ -62,7 +69,7 @@ namespace LibraryApp.Infrastructure.Data
         public IEnumerable<Member> GetAllMembers()
         {
             return _context.Members
-                .Include(member => member.BorrowedItems)
+                .Include(member => member.BorrowedItems!.Where(bi => bi.IsActive))
                 .ToList();
         }
 
@@ -91,6 +98,19 @@ namespace LibraryApp.Infrastructure.Data
         {
             return _context.BorrowedItems
                 .FirstOrDefault(b => b.LibraryItemId == libraryItemId);
+        }
+
+        public void UpdateBorrowedItem(BorrowedItem borrowedItem)
+        {
+           _context.BorrowedItems.Update(borrowedItem);
+        }
+
+        public IEnumerable<BorrowedItem> GetAllCurrentLoans()
+        {
+           return _context.BorrowedItems
+                .Include(b => b.Member)
+                .Where(b => b.IsActive)
+                .ToList();
         }
     }
 }
