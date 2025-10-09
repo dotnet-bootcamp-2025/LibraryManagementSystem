@@ -49,11 +49,11 @@ namespace LibraryApp.Infrastructure.Data
             return _context.Members.ToList();
         }
 
-        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
-        {
-            _context.BorrowedItems.Remove(borrowedItem);
-            _context.SaveChanges();
-        }
+        //public void RemoveBorrowedItem(BorrowedItem borrowedItem)
+        //{
+        //    _context.BorrowedItems.Remove(borrowedItem);
+        //    _context.SaveChanges();
+        //}
 
         public Domain.Entities.Member? GetMemberById(int id)
         {
@@ -64,6 +64,11 @@ namespace LibraryApp.Infrastructure.Data
         {
             _context.Members.Add(member);
             _context.SaveChanges();
+        }
+
+        public void FindLibraryItem(string Name)
+        {
+            _context.LibraryItems.Find(Name);
         }
     }
 }

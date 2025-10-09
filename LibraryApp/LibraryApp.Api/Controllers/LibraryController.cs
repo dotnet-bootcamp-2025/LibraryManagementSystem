@@ -115,8 +115,14 @@ namespace LibraryApp.Api.Controllers
         public IActionResult FindItems(string? term)
         {
             var items = _service.FindItems(term);
-            return Ok(items);
 
+            //here validate if items is empty
+            if (!items.Any())
+            {
+                return NotFound("No items found matching the search term.");
+            }
+            //if we found items return them
+            return Ok(items);
         }
     }
 }

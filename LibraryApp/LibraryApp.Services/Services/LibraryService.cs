@@ -103,7 +103,7 @@ namespace LibraryApp.Application.Services
             }
             libraryItemEntity.IsBorrowed = false;
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.RemoveBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
             message = $"Item '{libraryItemEntity.Title}' returned successfully by member '{member.Name}'.";
             return true;
 
@@ -118,7 +118,10 @@ namespace LibraryApp.Application.Services
 
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
-            throw new NotImplementedException();
+            // aquí buscamos los items por título usando el repositorio
+            var itemsEntities = _repository.GetAllLibraryItems()
+                .Where(item => string.IsNullOrEmpty(term) || (item.Title != null && item.Title.Contains(term, StringComparison.OrdinalIgnoreCase)));
+            return itemsEntities.Select(MapToDomainModel);
         }
 
 

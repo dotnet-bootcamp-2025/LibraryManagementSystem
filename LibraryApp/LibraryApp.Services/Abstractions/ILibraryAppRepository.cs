@@ -19,7 +19,9 @@ namespace LibraryApp.Application.Abstractions
 
         void AddBorrowedItem(BorrowedItem borrowedItem);
 
-        void RemoveBorrowedItem(BorrowedItem borrowedItem);
+        void FindLibraryItem(string Name);
+
+        //void RemoveBorrowedItem(BorrowedItem borrowedItem);
 
     }
 }
