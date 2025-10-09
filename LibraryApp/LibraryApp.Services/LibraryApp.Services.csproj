@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LibrartApp.Domain\LibrartApp.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
