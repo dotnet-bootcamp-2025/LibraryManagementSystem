@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LibraryApp.Services;
 using LibraryApp.Domain;
 using LibraryApp.Api.Dtos;
+using LibraryApp.Application.Abstractions;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -16,58 +16,99 @@ namespace LibraryApp.Api.Controllers
         {
             //_service = (LibraryService)libraryService;
             _service = libraryService;
+            Console.WriteLine($"Controller created with service instance: {_service.GetHashCode()}");
         }
 
+        #region
         // Add GET to list all library items
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            _service.Seed();
-            var items = _service.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
             return Ok(items);
         }
-
-        // List all members
         [HttpGet("members")]
         public IActionResult GetMembers()
         {
-            var members = _service.Members;
+            var members = _service.GetAllMembersWithBorrowStatus();
             return Ok(members);
+
         }
+        #endregion GETs
 
-        //Add POST to add a new book
-
+        #region POSTs
         [HttpPost("book")]
-        public IActionResult AddBook([FromBody] AddBookRequest request)
+        public IActionResult AddBook([FromBody] AddBookRequest book)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Author))
+            if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
                 return BadRequest("Invalid book data.");
             }
-
-            var addedBook = _service.AddBook(request.Title, request.Author, request.Pages);
-
+            var item = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Item count before: {item.Count()}");
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            item = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Item count after: {item.Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
+        #endregion
+        //Add POST to add a new book
+        /*
+                [HttpPost("book")]
+                public IActionResult AddBook([FromBody] AddBookRequest request)
+                {
+                    if (request == null || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Author))
+                    {
+                        return BadRequest("Invalid book data.");
+                    }
+
+                    var addedBook = _service.AddBook(request.Title, request.Author, request.Pages);
+
+                    return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
+                }*/
+
+        /* [HttpPost("books")]
+         public IActionResult AddBook([FromBody] AddBookRequest book)
+         {
+             if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+             {
+                 return BadRequest("Invalid book data.");
+             }
+             var items = _service.GetAllLibraryItems();
+             Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+             var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+             items = _service.GetAllLibraryItems();
+             Console.WriteLine($"POST - Items count after: {items.Count()}");
+             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);}*/
+
 
         // TODO: Borrow an item
         [HttpPost("borrow")]
         public IActionResult BorrowItem([FromBody] BorrowRequest request)
         {
-            if (request == null || request.MemberId <= 0 || request.ItemId <= 0)
-            {
-                return BadRequest("Invalid borrow request.");
-            }
-
-            if (_service.BorrowItem(request.MemberId, request.ItemId, out var message))
-            {
-                return Ok(new { Success = true, Message = message });
-            }
-            else
-            {
-                return BadRequest(new { Success = false, Message = message });
-            }
+            if (request == null) return BadRequest("Missing data.");
+            var ok = _service.BorrowItem(request.MemberId, request.ItemId, out var msg);
+            Console.WriteLine($"POST - Borrow Item successfully. MemberId: {request.MemberId}, ItemId: {request.ItemId}");
+            if (ok) return Ok(new { success = ok, message = msg });
+            return BadRequest(new { success = ok, message = msg });
         }
+
+
+        //   if (request == null || request.MemberId <= 0 || request.ItemId <= 0)
+        //    {
+        //        return BadRequest("Invalid borrow request.");
+        //    }
+
+        //    if (_service.BorrowItem(request.MemberId, request.ItemId, out var message))
+        //    {
+        //        return Ok(new { Success = true, Message = message });
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(new { Success = false, Message = message });
+        //    }
+        //}
 
         // TODO: Return an item
         [HttpPost("return")]
@@ -102,26 +143,26 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addedMagazine.Id }, addedMagazine);
         }
 
-
         // TODO: Find Items
         [HttpPost("find")]
         public IActionResult FindItems([FromBody] FindItemsRequest request)
         {
             var items = _service.FindItems(request.Term);
             return Ok(items);
+
         }
-
-        // TODO: Register a new member
-        [HttpPost("member")]
-        public IActionResult RegisterMember([FromBody] RegisterMemberRequest request)
-        {
-            if (request == null || string.IsNullOrWhiteSpace(request.Name))
+            // TODO: Register a new member
+            [HttpPost("member")]
+            public IActionResult RegisterMember([FromBody] RegisterMemberRequest request)
             {
-                return BadRequest("Invalid member data.");
-            }
+                if (request == null || string.IsNullOrWhiteSpace(request.Name))
+                {
+                    return BadRequest("Invalid member data.");
+                }
 
-            var addedMember = _service.RegisterMember(request.Name);
-            return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
+                var addedMember = _service.RegisterMember(request.Name);
+                return CreatedAtAction(nameof(RegisterMember), new { id = addedMember.Id }, addedMember);
+
+            }
         }
     }
-}
