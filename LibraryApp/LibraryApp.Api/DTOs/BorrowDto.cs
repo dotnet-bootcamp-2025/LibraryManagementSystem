@@ -7,5 +7,5 @@
     //    public string message{ get; set; }
     //}
 
-    public record CreateBorrowRequest(int memberId, int itemId, string message);
+    public record CreateBorrowRequest(int memberId, int itemId);
 }

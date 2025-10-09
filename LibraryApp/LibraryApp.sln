@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{4EA38E09-686A-4B1E-9D18-E66BA74F2F8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{AC4A8381-0F8B-4839-9E78-4A17EDBC2840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "LibraryApp.Services\LibraryApp.Application.csproj", "{AC4A8381-0F8B-4839-9E78-4A17EDBC2840}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Infrastructure", "LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj", "{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AC4A8381-0F8B-4839-9E78-4A17EDBC2840}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC4A8381-0F8B-4839-9E78-4A17EDBC2840}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC4A8381-0F8B-4839-9E78-4A17EDBC2840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,7 @@
-using LibraryApp.Domain;
-using LibraryApp.Services;
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
+using LibraryApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +13,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Configure DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 // Register LibraryService as a singleton
 // 3 life-cycles: Singleton, Scoped, Transient
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 
 var app = builder.Build();
@@ -21,14 +30,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
+//Enable Swagger UI in all environments
+app.UseSwagger();
+app.UseSwaggerUI();
 
+// Redirect root URL to Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
