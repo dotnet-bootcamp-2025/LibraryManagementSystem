@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace LibrartApp.Domain
+{
+    public class Book : LibraryItem
+    {
+        public string Author { get; }
+        public int Pages { get; }
+        // Constructor chaining example:
+        public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
+
+        [JsonConstructor] // Decorador que permite dar soporte a la deserialización
+        public Book(int id, string title, string author, int pages) : base(id, title)
+        {
+            Author = string.IsNullOrEmpty(author) ? "unknown" : author.Trim();
+            Pages = pages < 0 ? 0 : pages;
+        }
+
+        public override string GetInfo()
+            => $"Book [Id={Id}, Title={Title}, Author={Author} Pages={Pages}, IsBorrowed={IsBorrowed}]";
+
+    }
+
+}
