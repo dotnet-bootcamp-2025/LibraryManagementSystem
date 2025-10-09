@@ -54,9 +54,6 @@ namespace LibraryApp.Application.Services
         }
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
-            //if (string.IsNullOrWhiteSpace(term)) return _items;
-            //term = term.Trim().ToLowerInvariant();
-            //return _items.Where(i => i.Title.ToLowerInvariant().Contains(term));
             throw new NotImplementedException();
         }
         public bool BorrowItem(int memberId, int itemId, out string message)
@@ -94,22 +91,6 @@ namespace LibraryApp.Application.Services
         }
         public bool ReturnItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-            //if (member is null) { message = "Member not found."; return false; }
-            //if (item is null) { message = "Item not found."; return false; }
-            //try
-            //{
-            //    member.ReturnItem(item);
-            //    message = $"'{item.Title}' returned by {member.Name}.";
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = ex.Message;
-            //    return false;
-            //}
-
             var member = _repository.GetMemberById(memberId);
 
             if (member == null)
@@ -149,13 +130,11 @@ namespace LibraryApp.Application.Services
 
             return true;
         }
-
         public IEnumerable<Domain.LibraryItem> GetAllLibraryItems()
         {
             var libraryItemsEntities = _repository.GetAllLibraryItems();
             return libraryItemsEntities.Select(MapToDomainModel);
         }
-
         private Domain.LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
             if (entity.IsBorrowed) {
@@ -182,13 +161,11 @@ namespace LibraryApp.Application.Services
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
         }
-
         public IEnumerable<Domain.Member> GetAllMembers()
         {
             var membersEntities = _repository.GetAllMembers();
             return membersEntities.Select(MapToDomainMembersModel);
         }
-
         private Domain.Member MapToDomainMembersModel(Domain.Entities.Member entity)
         {
             return new Member(entity.Id, entity.Name);
