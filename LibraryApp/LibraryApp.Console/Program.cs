@@ -1,5 +1,8 @@
-﻿using LibraryApp.Console.Services;
+﻿
 using LibraryApp.Console.Utils;
+
+using LibrartApp.Domain.Entities;
+using LibraryApp.Services;
 
 public class Program
 {
