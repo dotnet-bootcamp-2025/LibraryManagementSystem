@@ -1,17 +1,17 @@
 ﻿
 using LibraryApp.Console.Utils;
-using LibraryApp.Services;
 using LibrartApp.Domain;
+using LibraryApp.Application.Services;
 
 public class Program
 {
     private static readonly List<LibraryItem> _items = new();
-    private static readonly LibraryService _service = new();
+    //private static readonly LibraryService _service = new();
 
     public static void Main()
     {
         Console.WriteLine("Library App!");
-        _service.Seed();
+        //_service.Seed();
 
         bool exit = false;
         while (!exit)
@@ -31,19 +31,19 @@ public class Program
             }
             Console.WriteLine();
 
-            switch (choice)
-            {
-                case 1: ListItems(); break;
-                case 2: //SearchItems(); break;
-                case 3: AddBook(); break;
-                case 4: AddMagazine(); break;
-                case 5: //ListMembers(); break;
-                case 6: RegisterMember(); break;
-                //case 7: BorrowItem(); break;
-                //case 8: ReturnItem(); break;
-                case 0: exit = true; break;
-                default: Console.WriteLine("Unknown option."); break;
-            }
+            //switch (choice)
+            //{
+            //    case 1: ListItems(); break;
+            //    case 2: //SearchItems(); break;
+            //    case 3: AddBook(); break;
+            //    case 4: AddMagazine(); break;
+            //    case 5: //ListMembers(); break;
+            //    case 6: RegisterMember(); break;
+            //    //case 7: BorrowItem(); break;
+            //    //case 8: ReturnItem(); break;
+            //    case 0: exit = true; break;
+            //    default: Console.WriteLine("Unknown option."); break;
+            //}
 
             if (!exit)
             {
@@ -68,18 +68,18 @@ public class Program
         Console.WriteLine("---------------------------------");
     }
 
-    static void ListItems()
-    {
-        if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
+    //static void ListItems()
+    //{
+    //    if (_service.Items.Count == 0) { Console.WriteLine("No items."); return; }
 
-        Console.WriteLine("Items:");
-        foreach (var item in _service.Items)
-        {
-            var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
-            // Polymorphism: each derived class presents info differently
-            Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
-        }
-    }
+    //    Console.WriteLine("Items:");
+    //    foreach (var item in _service.Items)
+    //    {
+    //        var status = item.IsBorrowed ? "BORROWED" : "AVAILABLE";
+    //        // Polymorphism: each derived class presents info differently
+    //        Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
+    //    }
+    //}
 
     static void AddBook()
     {
@@ -87,9 +87,9 @@ public class Program
         var author = InputHelper.ReadText("Author");
         var pages = InputHelper.ReadInt("Pages (0 if unknown)");
 
-        var book = _service.AddBook(title, author, pages);
+        //var book = _service.AddBook(title, author, pages);
 
-        Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
+        //Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
 
     static void AddMagazine()
@@ -105,10 +105,10 @@ public class Program
         Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 
-    private static void RegisterMember()
-    {
-        var name = InputHelper.ReadText("Member name");
-        var member = _service.RegisterMember(name);
-        Console.WriteLine($"Registered: {member}");
-    }
+    //private static void RegisterMember()
+    //{
+    //    var name = InputHelper.ReadText("Member name");
+    //    var member = _service.RegisterMember(name);
+    //    Console.WriteLine($"Registered: {member}");
+    //}
 }
