@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using LibraryApp.Application.Abstraction;
+﻿using LibraryApp.Application.Abstraction;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Enums;
 
@@ -8,26 +7,29 @@ namespace LibraryApp.Application.Services
     public sealed class LibraryService : ILibraryService
     {
         private readonly ILibraryAppRepository _repository;
+
         public LibraryService(ILibraryAppRepository repository)
         {
             _repository = repository;
         }
+
         public Book AddBook(string title, string author, int pages = 0)
         {
-           var bookEntity = new Domain.Entities.LibraryItem
-           {
-               Title = title,
-               Author = author,
-               Pages = pages,
-               Type = (int)LibraryItemTypeEnum.Book,
-               IsBorrowed = false
-           };
+            var bookEntity = new Domain.Entities.LibraryItem
+            {
+                Title = title,
+                Author = author,
+                Pages = pages,
+                Type = (int)LibraryItemTypeEnum.Book,
+                IsBorrowed = false
+            };
             _repository.AddLibraryItem(bookEntity);
 
             _repository.SaveChanges();
 
             return new Domain.Book(bookEntity.Id, bookEntity.Title, bookEntity.Author, bookEntity.Pages ?? 0);
         }
+
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
         {
             var magazineEntity = new Domain.Entities.LibraryItem
@@ -42,6 +44,7 @@ namespace LibraryApp.Application.Services
             _repository.SaveChanges();
             return new Domain.Magazine(magazineEntity.Id, magazineEntity.Title, magazineEntity.IssueNumber ?? 0, magazineEntity.Publisher ?? string.Empty);
         }
+
         public Member RegisterMember(string name)
         {
             var memberEntity = new Domain.Entities.Member
@@ -52,18 +55,22 @@ namespace LibraryApp.Application.Services
             _repository.SaveChanges();
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
         }
+
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
             var items = _repository.FindItems(term!);
             return items.Select(MapToDomainModel);
         }
 
-        public bool BorrowItem(int memberId, int itemId, out string message)
+        public bool BorrowItem(int memberId, int itemId, out string message, out DateTime? returnDate)
         {
+            var now = DateTime.UtcNow;
+
             var member = _repository.GetMemberById(memberId);
             if (member is null)
             {
                 message = "Member not found.";
+                returnDate = null;
                 return false;
             }
 
@@ -71,28 +78,61 @@ namespace LibraryApp.Application.Services
             if (libraryItemEntity is null)
             {
                 message = "Item not found.";
+                returnDate = null;
+                return false;
+            }
+
+            if (member.BorrowedItems != null && member.BorrowedItems.Any(bi => bi.ReturnDate < now))
+            {
+                message = "Cannot borrow new items. The member has expired items that must be returned first.";
+                returnDate = null;
                 return false;
             }
 
             if (libraryItemEntity.IsBorrowed)
             {
-                message = $"'{libraryItemEntity.Title}' is already borrowed.";
+                var borrowedInfo = _repository.GetBorrowedItemByLibraryItemId(itemId);
+
+                if (borrowedInfo != null)
+                {
+                    if (borrowedInfo.ReturnDate < now)
+                    {
+                        message = $"'{libraryItemEntity.Title}' is already borrowed and its return is overdue.";
+                    }
+                    else
+                    {
+                        TimeSpan timeRemaining = borrowedInfo.ReturnDate - now;
+                        message = $"'{libraryItemEntity.Title}' is currently borrowed, {timeRemaining.Days} days left for its return.";
+                    }
+                }
+                else
+                {
+                    message = $"'{libraryItemEntity.Title}' is already borrowed, Sorry";
+                }
+
+                returnDate = null;
                 return false;
             }
 
             libraryItemEntity.IsBorrowed = true;
             _repository.UpdateLibraryItem(libraryItemEntity);
+
+            var calculatedReturnDate = now.AddDays(3);
+            returnDate = calculatedReturnDate;
+
             _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem
             {
                 MemberId = memberId,
-                LibraryItemId = itemId
+                LibraryItemId = itemId,
+                BorrowedDate = now,
+                ReturnDate = calculatedReturnDate
             });
+
             _repository.SaveChanges();
 
             message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
             return true;
         }
-
 
         public bool ReturnItem(int memberId, int itemId)
         {
@@ -117,7 +157,7 @@ namespace LibraryApp.Application.Services
 
             return true;
         }
-    
+
         public IEnumerable<LibraryItem> GetAllLibraryItems()
         {
             var libraryItemsEntities = _repository.GetAllLibraryItems();
@@ -127,7 +167,6 @@ namespace LibraryApp.Application.Services
 
         private LibraryItem MapToDomainModel(Domain.Entities.LibraryItem entity)
         {
-
             LibraryItem domainItem = (LibraryItemTypeEnum)entity.Type switch
             {
                 LibraryItemTypeEnum.Book => new Book(

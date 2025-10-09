@@ -5,15 +5,19 @@ namespace LibraryApp.Application.Abstraction
     public interface ILibraryService
     {
         Book AddBook(string title, string author, int pages = 0);
+
         Magazine AddMagazine(string title, int issueNumber, string publisher);
-        bool BorrowItem(int memberId, int itemId, out string message);
+
+        bool BorrowItem(int memberId, int itemId, out string message, out DateTime? returnDate);
+
         IEnumerable<LibraryItem> FindItems(string? term);
+
         Member RegisterMember(string name);
+
         bool ReturnItem(int memberId, int itemId);
 
         IEnumerable<LibraryItem> GetAllLibraryItems();
 
         IEnumerable<Member> GetAllMembers();
-
     }
 }

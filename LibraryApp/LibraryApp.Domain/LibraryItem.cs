@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibraryApp.Domain
+﻿namespace LibraryApp.Domain
 {
     public abstract class LibraryItem
     {
@@ -18,16 +12,19 @@ namespace LibraryApp.Domain
             Title = title;
             Id = id;
         }
+
         public void Borrow()
         {
             if (IsBorrowed) throw new InvalidOperationException("Item already borrowed.");
             IsBorrowed = true;
         }
+
         public void Return()
         {
             if (!IsBorrowed) throw new InvalidOperationException("Item is not borrowed.");
             IsBorrowed = false;
         }
+
         public abstract string GetInfo();
     }
 }

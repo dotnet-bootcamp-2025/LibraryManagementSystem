@@ -1,8 +1,6 @@
-﻿using LibraryApp.Domain;
-using LibraryApp.Application.Abstraction;
-using Microsoft.AspNetCore.Mvc;
+﻿using LibraryApp.Application.Abstraction;
 using LibraryApp.WebAPI.DTOs;
-using LibraryApp.Application.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.WebAPI.Controllers
 {
@@ -80,13 +78,24 @@ namespace LibraryApp.WebAPI.Controllers
         }
 
         [HttpPost("borrowItem")]
-        public IActionResult BorrowItem([FromBody] BorrowDto borrowDetails)
+        public IActionResult BorrowItem([FromBody] BorrowDto request)
         {
-            if (borrowDetails == null) return BadRequest("Missing data.");
-            var ok = _service.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId, out var msg);
-            Console.WriteLine($"POST - Borrow Item successfully. MemberId: {borrowDetails.MemberId}, ItemId: {borrowDetails.ItemId}");
-            if (ok) return Ok(new { success = ok, message = msg });
-            return BadRequest(new { success = ok, message = msg });
+            var success = _service.BorrowItem(request.MemberId, request.ItemId, out string message, out DateTime? returnDate);
+
+            if (!success)
+            {
+                return BadRequest(new { success = false, message = message });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = message,
+                data = new
+                {
+                    returnDate = returnDate
+                }
+            });
         }
 
         [HttpPut("returnItem")]

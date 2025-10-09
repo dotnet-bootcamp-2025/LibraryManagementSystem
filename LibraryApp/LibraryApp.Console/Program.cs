@@ -1,10 +1,6 @@
-﻿using LibraryApp.Console.Utils;
-using LibraryApp.Application.Services;
-using LibraryApp.Domain;
-using LibraryApp.Application.Abstraction;
-public class Program
+﻿public class Program
 {
-  //private static readonly ILibraryService libraryService = new LibraryService();
+    //private static readonly ILibraryService libraryService = new LibraryService();
     public static void Main()
     {
         Console.WriteLine("Library App!");
@@ -49,7 +45,8 @@ public class Program
         }
         Console.WriteLine("Goodbye!");
     }
-    static void ShowMenu()
+
+    private static void ShowMenu()
     {
         Console.WriteLine("=== Library Management System ===");
         Console.WriteLine("1) List all items");
@@ -57,13 +54,14 @@ public class Program
         Console.WriteLine("3) Add Book");
         Console.WriteLine("4) Add Magazine");
         Console.WriteLine("5) ListMembers");
-       Console.WriteLine("6) RegisterMember");
+        Console.WriteLine("6) RegisterMember");
         Console.WriteLine("7) Borrow an Item");
         Console.WriteLine("8) Return an Item");
         Console.WriteLine("0) Exit");
         Console.WriteLine("---------------------------------");
     }
-    static void ListItems()
+
+    private static void ListItems()
     {
         //var _items = libraryService.Items;
         //if (_items.Count == 0) { Console.WriteLine("No items."); return; }
@@ -75,7 +73,8 @@ public class Program
         //    Console.WriteLine($"{item.Id}: {item.GetInfo()} [{status}]");
         //}
     }
-    static void AddBook()
+
+    private static void AddBook()
     {
         //var title = InputHelper.ReadText("Title");
         //var author = InputHelper.ReadText("Author");
@@ -84,7 +83,8 @@ public class Program
 
         //Console.WriteLine($"Added: {book.GetInfo()} (Id={book.Id})");
     }
-    static void AddMagazine()
+
+    private static void AddMagazine()
     {
         //var title = InputHelper.ReadText("Title");
         //var issue = InputHelper.ReadInt("Issue number");
@@ -94,7 +94,7 @@ public class Program
         //Console.WriteLine($"Added: {mag.GetInfo()} (Id={mag.Id})");
     }
 
-    static void BorrowItem()
+    private static void BorrowItem()
     {
         //var itemId = InputHelper.ReadInt("Enter the ID of the item to borrow");
         //var memberId = InputHelper.ReadInt("Enter the ID of the member borrowing the item");
@@ -109,8 +109,9 @@ public class Program
         //    Console.WriteLine($"\nError: {ex.Message}");
         //}
     }
-    static void ReturnItem()
-    { 
+
+    private static void ReturnItem()
+    {
         //var itemId = InputHelper.ReadInt("Enter the ID of the item to return");
         //var member = libraryService.Members.FirstOrDefault(m => m.BorrowedItems.Any(i => i.Id == itemId));
 
@@ -130,7 +131,8 @@ public class Program
         //    Console.WriteLine($"\nError: {ex.Message}");
         //}
     }
-    static void ListMembers()
+
+    private static void ListMembers()
     {
         //Console.WriteLine("--- Member List ---");
         //var members = libraryService.Members;
@@ -144,7 +146,8 @@ public class Program
         //    Console.WriteLine($"ID: {member.Id}, Name: {member.Name}, Borrowed Items: {member.BorrowedItems.Count}");
         //}
     }
-    static void RegisterMember()
+
+    private static void RegisterMember()
     {
         //Console.WriteLine("--- Register New Member ---");
         //var name = InputHelper.ReadText("Enter member's name");

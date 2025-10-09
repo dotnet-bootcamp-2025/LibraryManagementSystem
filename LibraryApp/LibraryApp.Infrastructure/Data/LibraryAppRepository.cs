@@ -76,13 +76,21 @@ namespace LibraryApp.Infrastructure.Data
                 .Where(i => EF.Functions.Like(i.Title, $"%{term}%"))
                 .ToList();
         }
+
         public void RemoveBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Remove(borrowedItem);
         }
+
         public void SaveChanges()
         {
             _context.SaveChanges();
+        }
+
+        public BorrowedItem? GetBorrowedItemByLibraryItemId(int libraryItemId)
+        {
+            return _context.BorrowedItems
+                .FirstOrDefault(b => b.LibraryItemId == libraryItemId);
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿
-using System.Text.Json.Serialization;
-
-namespace LibraryApp.Domain.Entities
+﻿namespace LibraryApp.Domain.Entities
 {
     public class Member
     {
