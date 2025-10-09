@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Domain;
-using LibraryApp.Services;
 using LibraryApp.Api.Dtos;
+using LibraryApp.Application.Abstractions;
 
 namespace LibraryApp.Api.Controllers
 {
@@ -13,15 +13,25 @@ namespace LibraryApp.Api.Controllers
         public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
-            _service.Seed(); // Seed data for demonstration
+            Console.WriteLine($"Controller created with server instance: {_service.GetHashCode()}");
+            //_service.Seed();  Seed data for demonstration
         }
 
         // Add GET to list all library items
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            var items = _service.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GetItems called, returning{_service.GetHashCode()}, {items.Count()} items.");
             return Ok(items);
+        }
+
+        //Add GET to list all members, this is an extra endpoint
+        [HttpGet("members")]
+        public IActionResult GetMembers()
+        {
+            var members = _service.GetAllMembers();
+            return Ok(members);
         }
 
         // Homework: Add POST to add a new book
@@ -32,7 +42,14 @@ namespace LibraryApp.Api.Controllers
             {
                 return BadRequest("Invalid book data.");
             }
+            var item = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"AddBook called, current items count: {item.Count()}");
             var book = _service.AddBook(bookDto.Title, bookDto.Author, bookDto.Pages);
+            
+            item= _service.GetAllLibraryItems();
+            
+            Console.WriteLine($"Book added with ID: {book.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);
         }
 
@@ -42,36 +59,48 @@ namespace LibraryApp.Api.Controllers
         [HttpPost("magazines")]
         public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
         {
-            if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
+           if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
             {
                 return BadRequest("Invalid magazine data.");
             }
-            var mag = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
-            return CreatedAtAction(nameof(GetItems), new { id = mag.Id }, mag);
+            
+           var item = _service.GetAllLibraryItems();
+           Console.WriteLine($"AddMagazine called, current items count: {item.Count()}");
+           var magazine = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
+
+           item = _service.GetAllLibraryItems();
+
+           Console.WriteLine($"Magazine added with ID: {magazine.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
+            return CreatedAtAction(nameof(GetItems), new { id = magazine.Id }, magazine);
         }
 
-        // Add POST to register a new member
+        //// Add POST to register a new member
         [HttpPost("members")]
-        public IActionResult RegisterMember([FromBody] MemberDTO memberDto)
+        public IActionResult registermember([FromBody] MemberDTO memberdto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+            return BadRequest(ModelState);
             }
+            var item = _service.RegisterMember;
+            Console.WriteLine($"RegisterMember called, current items count: {item.ToString}");
+            var member = _service.RegisterMember(memberdto.Name);
 
-            var member = _service.RegisterMember(memberDto.Name);
+            item = _service.RegisterMember;
+
+            Console.WriteLine($"Member added with ID: {member.Id}, new items count: {_service.RegisterMember}");
             return CreatedAtAction(nameof(GetItems), new { id = member.Id }, member);
         }
 
-        // Add PATCH to borrow an item
+        //// Add PATCH to borrow an item
         [HttpPatch("borrow")]
         public IActionResult BorrowItem(int memberId, int itemId)
         {
-            if (_service.BorrowItem(memberId, itemId, out string message))
-            {
+           if (_service.BorrowItem(memberId, itemId, out string message))
+           {
                 return Ok(message);
-            }
-            return BadRequest(message);
+           }
+           return BadRequest(message);
         }
 
         // Add PATCH to return an item
@@ -83,6 +112,14 @@ namespace LibraryApp.Api.Controllers
                 return Ok(message);
             }
             return BadRequest(message);
+        }
+
+        //Add GET to search items by term
+        [HttpGet("search")]
+        public IActionResult SearchItems(string bookname)
+        {
+            var items = _service.FindItems(bookname);
+            return Ok(items);
         }
 
     }
