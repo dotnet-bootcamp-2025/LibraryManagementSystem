@@ -4,9 +4,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Console", "Libra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryApp.Api\LibraryApp.Api.csproj", "{BB3A2CA6-6C48-4785-8552-382C95991890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{B63090E6-45F9-454F-9F4A-E0187E4D38B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "LibraryApp.Application\LibraryApp.Application.csproj", "{B63090E6-45F9-454F-9F4A-E0187E4D38B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{9BFC4D25-6434-4AF1-BB0C-7D35F4CBACCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Infrastructure", "LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj", "{3BEA2D5A-45E7-4CA6-8D69-381D395E46A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Tests", "LibraryApp.Tests\LibraryApp.Tests.csproj", "{E50231C9-35FD-4A63-86A1-3034EC9268D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +34,13 @@ Global
 		{9BFC4D25-6434-4AF1-BB0C-7D35F4CBACCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BFC4D25-6434-4AF1-BB0C-7D35F4CBACCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BFC4D25-6434-4AF1-BB0C-7D35F4CBACCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEA2D5A-45E7-4CA6-8D69-381D395E46A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEA2D5A-45E7-4CA6-8D69-381D395E46A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEA2D5A-45E7-4CA6-8D69-381D395E46A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEA2D5A-45E7-4CA6-8D69-381D395E46A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E50231C9-35FD-4A63-86A1-3034EC9268D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E50231C9-35FD-4A63-86A1-3034EC9268D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E50231C9-35FD-4A63-86A1-3034EC9268D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E50231C9-35FD-4A63-86A1-3034EC9268D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
