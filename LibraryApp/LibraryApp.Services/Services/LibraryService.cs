@@ -1,6 +1,7 @@
 ﻿using LibraryApp.Application.Abstraction;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Enums;
+using LibraryApp.Application.DTOs;
 
 namespace LibraryApp.Application.Services
 {
@@ -62,7 +63,7 @@ namespace LibraryApp.Application.Services
             return items.Select(MapToDomainModel);
         }
 
-        public bool BorrowItem(int memberId, int itemId, out string message, out DateTime? returnDate)
+        public bool BorrowItem(int memberId, int itemId, out string message, out string? formattedReturnDate)
         {
             var now = DateTime.UtcNow;
 
@@ -70,14 +71,14 @@ namespace LibraryApp.Application.Services
             if (member is null)
             {
                 message = "Member not found.";
-                returnDate = null;
+                formattedReturnDate = null;
                 return false;
             }
 
             if (member.BorrowedItems != null && member.BorrowedItems.Count(borrowedItem => borrowedItem.IsActive) >= 3)
             {
                 message = "Cannot borrow more than 3 items.";
-                returnDate = null;
+                formattedReturnDate = null;
                 return false;
             }
 
@@ -85,14 +86,14 @@ namespace LibraryApp.Application.Services
             if (libraryItemEntity is null)
             {
                 message = "Item not found.";
-                returnDate = null;
+                formattedReturnDate = null;
                 return false;
             }
 
             if (member.BorrowedItems != null && member.BorrowedItems.Any(bi => bi.ReturnDate < now))
             {
                 message = "Cannot borrow new items. The member has expired items that must be returned first.";
-                returnDate = null;
+                formattedReturnDate = null;
                 return false;
             }
 
@@ -117,7 +118,7 @@ namespace LibraryApp.Application.Services
                     message = $"'{libraryItemEntity.Title}' is already borrowed, Sorry";
                 }
 
-                returnDate = null;
+                formattedReturnDate = null;
                 return false;
             }
 
@@ -125,7 +126,7 @@ namespace LibraryApp.Application.Services
             _repository.UpdateLibraryItem(libraryItemEntity);
 
             var calculatedReturnDate = now.AddDays(3);
-            returnDate = calculatedReturnDate;
+            formattedReturnDate = FormatDateToUS(calculatedReturnDate);
 
             _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem
             {
@@ -200,6 +201,40 @@ namespace LibraryApp.Application.Services
             var memberEntities = _repository.GetAllMembers();
 
             return memberEntities.Select(entity => new Member(entity.Id, entity.Name));
+        }
+
+        public IEnumerable<LoanDetailsDto> GetMemberActiveLoans(int memberId)
+        {
+            var ActiveLoans = _repository.GetActiveLoansByMemberId(memberId);
+
+            return ActiveLoans.Select(loan => new LoanDetailsDto
+            {
+                ItemTitle = loan.LibraryItem!.Title,
+                BorrowedDate = FormatDateToUS(loan.BorrowedDate),
+                ReturnDate = FormatDateToUS(loan.ReturnDate),
+                IsExpired = loan.ReturnDate < DateTime.UtcNow
+            }).ToList();
+        }
+
+        public bool MemberExists(int memberId)
+        {
+            var member = _repository.GetMemberById(memberId);
+            return member != null;
+        }
+
+        private string FormatDateToUS(DateTime utcDate)
+        {
+            try
+            {
+                var destinationTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                DateTime usDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, destinationTimeZone);
+
+                return usDate.ToString("MM/dd/yyyy");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return utcDate.ToString("MM/dd/yyyy");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LibraryApp.Application.Abstraction;
+using LibraryApp.Application.Services;
 using LibraryApp.WebAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,18 @@ namespace LibraryApp.WebAPI.Controllers
         {
             var members = _service.GetAllMembers();
             return Ok(members);
+        }
+
+        [HttpGet("memberById")]
+        public IActionResult GetMemberLoans(int memberId)
+        {
+            if (!_service.MemberExists(memberId))
+            {
+                return NotFound(new { success = false, message = "Member not found." });
+            }
+
+            var loans = _service.GetMemberActiveLoans(memberId);
+            return Ok(loans);
         }
 
         [HttpPost("book")]
@@ -80,7 +93,7 @@ namespace LibraryApp.WebAPI.Controllers
         [HttpPost("borrowItem")]
         public IActionResult BorrowItem([FromBody] BorrowDto request)
         {
-            var success = _service.BorrowItem(request.MemberId, request.ItemId, out string message, out DateTime? returnDate);
+            var success = _service.BorrowItem(request.MemberId, request.ItemId, out string message, out string? formattedReturnDate);
 
             if (!success)
             {
@@ -93,7 +106,7 @@ namespace LibraryApp.WebAPI.Controllers
                 message = message,
                 data = new
                 {
-                    returnDate = returnDate
+                    returnDate = formattedReturnDate
                 }
             });
         }

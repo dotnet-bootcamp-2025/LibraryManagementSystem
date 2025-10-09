@@ -108,8 +108,16 @@ namespace LibraryApp.Infrastructure.Data
         public IEnumerable<BorrowedItem> GetAllCurrentLoans()
         {
            return _context.BorrowedItems
-                .Include(b => b.Member)
-                .Where(b => b.IsActive)
+                .Include(borrowedItem => borrowedItem.Member)
+                .Where(borrowedItem => borrowedItem.IsActive)
+                .ToList();
+        }
+
+        public IEnumerable<BorrowedItem> GetActiveLoansByMemberId(int memberId)
+        {
+            return _context.BorrowedItems
+                .Include(borrowedItem => borrowedItem.LibraryItem)
+                .Where(borrowedItem => borrowedItem.MemberId == memberId && borrowedItem.IsActive)
                 .ToList();
         }
     }

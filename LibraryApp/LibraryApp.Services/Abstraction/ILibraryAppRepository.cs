@@ -34,6 +34,8 @@ namespace LibraryApp.Application.Abstraction
 
         IEnumerable<BorrowedItem> GetAllCurrentLoans();
 
+        IEnumerable<BorrowedItem> GetActiveLoansByMemberId(int memberId);
+
         void SaveChanges();
     }
 }

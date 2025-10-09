@@ -1,4 +1,5 @@
 ﻿using LibraryApp.Domain;
+using LibraryApp.Application.DTOs;
 
 namespace LibraryApp.Application.Abstraction
 {
@@ -8,7 +9,7 @@ namespace LibraryApp.Application.Abstraction
 
         Magazine AddMagazine(string title, int issueNumber, string publisher);
 
-        bool BorrowItem(int memberId, int itemId, out string message, out DateTime? returnDate);
+        bool BorrowItem(int memberId, int itemId, out string message, out string? formattedReturnDate);
 
         IEnumerable<LibraryItem> FindItems(string? term);
 
@@ -19,5 +20,9 @@ namespace LibraryApp.Application.Abstraction
         IEnumerable<LibraryItem> GetAllLibraryItems();
 
         IEnumerable<Member> GetAllMembers();
+
+        IEnumerable<LoanDetailsDto> GetMemberActiveLoans(int memberId);
+
+        bool MemberExists(int memberId);
     }
 }
