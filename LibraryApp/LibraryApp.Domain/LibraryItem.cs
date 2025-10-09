@@ -6,12 +6,13 @@
         public string Title { get; }
         public bool IsBorrowed { get; private set; }
 
-        protected LibraryItem(int id, string title)
+        protected LibraryItem(int id, string title, bool isBorrowed)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
             Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required.") : title.Trim();
 
             Id = id;
+            IsBorrowed = isBorrowed;
         }
 
         public void Borrow()

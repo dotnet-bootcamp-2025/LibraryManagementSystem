@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LibraryApp.Domain\LibraryApp.Domain.csproj" />
+    <ProjectReference Include="..\LibraryApp.Services\LibraryApp.Application.csproj" />
   </ItemGroup>
 
 </Project>

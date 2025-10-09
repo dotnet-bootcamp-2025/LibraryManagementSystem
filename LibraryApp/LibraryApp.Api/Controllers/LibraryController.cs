@@ -1,5 +1,5 @@
-﻿using LibraryApp.Domain;
-using LibraryApp.Services;
+﻿using LibraryApp.Application.Abstractions;
+using LibraryApp.Domain;
 using LibraryApp.Services.Records;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,29 +12,12 @@ namespace LibraryApp.Api.Controllers
         public LibraryController(ILibraryService service)
         {
             _service = service;
-            _service.Seed();
         }
 
         #region GET
 
-        //OPTIONAL EXTRA GET RESPONSES
-
-        //[HttpGet("items")]
-        //public IActionResult GetItems()
-        //{
-        //    var items = _service.Items;
-        //    return Ok(items);
-        //}
-
-        //[HttpGet("items/{term}")]
-        //public IActionResult GetSearchItems(string term)
-        //{
-        //    var items = _service.FindItems(term);
-        //    return Ok(items);
-        //}
-
         [HttpGet("items")]
-        public IActionResult GetItems([FromQuery] string? term)
+        public IActionResult GetItems([FromQuery] string term = "")
         {
             var items = _service.FindItems(term);
             return Ok(items);
@@ -43,7 +26,7 @@ namespace LibraryApp.Api.Controllers
         [HttpGet("members")]
         public IActionResult GetMembers()
         {
-            var items = _service.Members;
+            var items = _service.GetAllMembers();
             return Ok(items);
         }
 
@@ -54,7 +37,7 @@ namespace LibraryApp.Api.Controllers
         [HttpPost("books")]
         public IActionResult AddBook([FromBody] BookRecord bookRecord)
         {
-            if (bookRecord == null || string.IsNullOrWhiteSpace(bookRecord.Title) 
+            if (bookRecord == null || string.IsNullOrWhiteSpace(bookRecord.Title)
                 || string.IsNullOrWhiteSpace(bookRecord.Author))
             {
                 return BadRequest("Invalid book data.");
@@ -90,11 +73,7 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetMembers), new { id = addedMember.Id }, addedMember);
         }
 
-        #endregion POST
-
-        #region PATCH
-
-        [HttpPatch("items/{itemId}/borrow")]
+        [HttpPost("items/borrow")]
         public IActionResult BorrowItem([FromBody] BorrowItemRecord borrowRecord)
         {
             if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
@@ -102,18 +81,17 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest("Invalid [member/item] id data.");
             }
 
-            var message = string.Empty;
-            var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out message);
+            var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out var message);
 
             if (!result)
             {
-                return Conflict(message);
+                return Conflict(new { message });
             }
 
-            return Ok(message);
+            return Ok(new { message });
         }
 
-        [HttpPatch("items/{itemId}/return")]
+        [HttpPost("items/return")]
         public IActionResult ReturnItem([FromBody] ReturnItemRecord returnRecord)
         {
             if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
@@ -121,17 +99,16 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest("Invalid [member/item] id data.");
             }
 
-            var message = string.Empty;
-            var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out message);
+            var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out var message);
 
             if (!result)
             {
-                return Conflict(message);
+                return Conflict(new { message });
             }
 
-            return Ok(message);
+            return Ok(new { message });
         }
 
-        #endregion PATCH
+        #endregion POST
     }
 }

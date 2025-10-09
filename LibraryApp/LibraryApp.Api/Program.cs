@@ -1,4 +1,7 @@
-using LibraryApp.Services;
+using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
+using LibraryApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<ILibraryService, LibraryService>();
+
+builder.Services.AddDbContext<AppDbContext>( options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+    );
+
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();
 
 var app = builder.Build();
 

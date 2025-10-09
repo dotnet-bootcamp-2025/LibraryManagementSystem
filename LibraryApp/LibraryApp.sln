@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Console", "Libra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Api", "LibraryApp.Api\LibraryApp.Api.csproj", "{8BC78F3B-4B29-4E85-B3B1-AA9AA7848C27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{11D33B6A-F41C-4C5F-B6D0-556225DEB83B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "LibraryApp.Services\LibraryApp.Application.csproj", "{11D33B6A-F41C-4C5F-B6D0-556225DEB83B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{76720246-90C6-4A75-98BD-0AE2C87CD4FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Infrastructure", "LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj", "{A87872A7-3DEC-4D18-963A-1DA97A1C8F9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{76720246-90C6-4A75-98BD-0AE2C87CD4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76720246-90C6-4A75-98BD-0AE2C87CD4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76720246-90C6-4A75-98BD-0AE2C87CD4FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A87872A7-3DEC-4D18-963A-1DA97A1C8F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A87872A7-3DEC-4D18-963A-1DA97A1C8F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A87872A7-3DEC-4D18-963A-1DA97A1C8F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A87872A7-3DEC-4D18-963A-1DA97A1C8F9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
