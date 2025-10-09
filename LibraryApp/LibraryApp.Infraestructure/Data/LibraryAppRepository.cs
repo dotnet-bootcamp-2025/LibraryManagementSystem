@@ -62,10 +62,5 @@ namespace LibraryApp.Infraestructure.Data
         {
            return _context.Members.ToList();
         }
-        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
-        {
-            _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
-        }
     }
 }

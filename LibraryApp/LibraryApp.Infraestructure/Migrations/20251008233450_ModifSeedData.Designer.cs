@@ -3,6 +3,7 @@ using System;
 using LibraryApp.Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryApp.Infraestructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251008233450_ModifSeedData")]
+    partial class ModifSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -23,7 +26,7 @@ namespace LibraryApp.Infraestructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("BorrowedDate")
+                    b.Property<DateTime>("BorrowedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LibraryItemId")
@@ -81,7 +84,6 @@ namespace LibraryApp.Infraestructure.Migrations
                         {
                             Id = 1,
                             Author = "F. Scott Fitzgerald",
-                            BorrowedDate = new DateTime(2025, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsBorrowed = false,
                             Pages = 180,
                             Title = "The Great Gatsby",
@@ -91,7 +93,6 @@ namespace LibraryApp.Infraestructure.Migrations
                         {
                             Id = 2,
                             Author = "George Orwell",
-                            BorrowedDate = new DateTime(2025, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsBorrowed = false,
                             Pages = 328,
                             Title = "1984",
@@ -100,7 +101,6 @@ namespace LibraryApp.Infraestructure.Migrations
                         new
                         {
                             Id = 3,
-                            BorrowedDate = new DateTime(2025, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsBorrowed = false,
                             IssueNumber = 7,
                             Pages = 0,
