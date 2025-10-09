@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <!-- Instala solo este paquete, que incluye SwaggerGen y SwaggerUI -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,6 +19,7 @@
 
 <ItemGroup>
   <ProjectReference Include="..\LibraryApp.Console\LibraryApp.Console.csproj" />
+  <ProjectReference Include="..\LibraryApp.Infrastrucutre\LibraryApp.Infrastrucutre.csproj" />
 </ItemGroup>
 
 </Project>
