@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.WebAPI", "Librar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{7DA190D0-663A-41C4-9156-7A03FA10F30E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Services", "LibraryApp.Services\LibraryApp.Services.csproj", "{674AF579-F22D-4AB6-B683-FE2BF55A650D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "LibraryApp.Services\LibraryApp.Application.csproj", "{674AF579-F22D-4AB6-B683-FE2BF55A650D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Infrastructure", "LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj", "{72B952C2-3889-454A-8B40-4809FE917597}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{674AF579-F22D-4AB6-B683-FE2BF55A650D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{674AF579-F22D-4AB6-B683-FE2BF55A650D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{674AF579-F22D-4AB6-B683-FE2BF55A650D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B952C2-3889-454A-8B40-4809FE917597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B952C2-3889-454A-8B40-4809FE917597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B952C2-3889-454A-8B40-4809FE917597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B952C2-3889-454A-8B40-4809FE917597}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

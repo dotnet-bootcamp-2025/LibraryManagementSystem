@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Domain
 {
@@ -10,13 +12,25 @@ namespace LibraryApp.Domain
     {
         public int Id { get; }
         public string Name { get; }
+
         private readonly List<LibraryItem> _borrowed = new();
+        [JsonIgnore]
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
         public Member(int id, string name)
         {
-            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
-            Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name is required.", nameof(name));
+
             Id = id;
+            Name = name.Trim();
+        }
+        public void AddBorrowedItem(LibraryItem item)
+        {
+            if (item is null) throw new ArgumentNullException(nameof(item));
+            _borrowed.Add(item);
         }
         public void BorrowItem(LibraryItem item)
         {

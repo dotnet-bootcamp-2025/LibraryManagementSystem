@@ -1,43 +1,59 @@
 ﻿using LibraryApp.Domain;
-using LibraryApp.Services;
+using LibraryApp.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using LibraryApp.WebAPI.DTOs;
+using LibraryApp.Application.Services;
 
 namespace LibraryApp.WebAPI.Controllers
 {
     public class LibraryController : ControllerBase
     {
-        private readonly ILibraryService _libraryService;
+        private readonly ILibraryService _service;
 
         public LibraryController(ILibraryService libraryService)
         {
-            _libraryService = libraryService;
-           // _libraryService.Seed();
+            _service = libraryService;
+            // _libraryService.Seed();
         }
 
         [HttpGet("items")]
         public IActionResult GetItems()
         {
-            var items = _libraryService.Items;
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - ServiceCollection Instance : {_service.GetHashCode()}, Items Count: {items.Count()}");
+            return Ok(items);
+        }
+
+        [HttpGet("findItems")]
+        public IActionResult FindItems([FromQuery] string? term)
+        {
+            var items = _service.FindItems(term);
+
+            if (!items.Any())
+                return NotFound(new { message = $"No items were found that match '{term}'." });
+
             return Ok(items);
         }
 
         [HttpGet("listMembers")]
         public IActionResult ListMembers()
         {
-            
-            var members = _libraryService.Members;
+            var members = _service.GetAllMembers();
             return Ok(members);
         }
 
         [HttpPost("book")]
         public IActionResult AddBook([FromBody] BookDto book)
         {
-            if (!ModelState.IsValid)
+            if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
-                return BadRequest(ModelState);
+                return BadRequest("Invalid book data.");
             }
-            var addedBook = _libraryService.AddBook(book.Title, book.Author, book.Pages);
+            var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
+            var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
+            items = _service.GetAllLibraryItems();
+            Console.WriteLine($"POST - Items count after: {items.Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
 
@@ -48,7 +64,7 @@ namespace LibraryApp.WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var addedMagazine = _libraryService.AddMagazine(magazine.Title, magazine.IssueNumber, magazine.Publisher);
+            var addedMagazine = _service.AddMagazine(magazine.Title, magazine.IssueNumber, magazine.Publisher);
             return CreatedAtAction(nameof(GetItems), new { id = addedMagazine.Id }, addedMagazine);
         }
 
@@ -59,45 +75,30 @@ namespace LibraryApp.WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var registeredMember = _libraryService.RegisterMember(memberDto.Name);
+            var registeredMember = _service.RegisterMember(memberDto.Name);
             return CreatedAtAction(nameof(GetItems), new { id = registeredMember.Id }, registeredMember);
         }
 
         [HttpPost("borrowItem")]
         public IActionResult BorrowItem([FromBody] BorrowDto borrowDetails)
         {
-            try
-            {
-                _libraryService.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId);
-
-                return Ok(new { message = "Item borrowed successfully." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (borrowDetails == null) return BadRequest("Missing data.");
+            var ok = _service.BorrowItem(borrowDetails.MemberId, borrowDetails.ItemId, out var msg);
+            Console.WriteLine($"POST - Borrow Item successfully. MemberId: {borrowDetails.MemberId}, ItemId: {borrowDetails.ItemId}");
+            if (ok) return Ok(new { success = ok, message = msg });
+            return BadRequest(new { success = ok, message = msg });
         }
 
         [HttpPut("returnItem")]
         public IActionResult ReturnItem([FromBody] ReturnDto returnDetails)
         {
-            try
-            {
-                _libraryService.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
-                return Ok(new { message = "Item returned successfully." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (returnDetails == null) return BadRequest("Missing data.");
+
+            var ok = _service.ReturnItem(returnDetails.MemberId, returnDetails.ItemId);
+
+            if (ok) return Ok(new { success = ok, message = "Item returned successfully." });
+
+            return BadRequest(new { success = ok, message = "Failed to return item. Check member ID and item ID." });
         }
     }
 }
