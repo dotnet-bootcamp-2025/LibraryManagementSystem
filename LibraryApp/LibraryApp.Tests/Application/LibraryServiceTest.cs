@@ -45,9 +45,7 @@ namespace LibraryApp.Tests.Application
                 blueDaemonBook.Pages);
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(1, result.Id);
-
-            //Add Unit test for GetAllLibraryItems            
+            Assert.Equal(1, result.Id);          
         }
         [Fact]
         public void WhenFindItemsIsCalledWithNull_ThenItShouldReturnAllItems()
