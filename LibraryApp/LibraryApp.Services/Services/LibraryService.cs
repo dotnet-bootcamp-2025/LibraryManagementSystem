@@ -126,7 +126,7 @@ namespace LibraryApp.Application.Services
             _repository.UpdateLibraryItem(libraryItemEntity);
 
             var calculatedReturnDate = now.AddDays(3);
-            formattedReturnDate = FormatDateToUS(calculatedReturnDate);
+            formattedReturnDate = calculatedReturnDate.ToString("MM/dd/yyyy");
 
             _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem
             {
@@ -210,8 +210,8 @@ namespace LibraryApp.Application.Services
             return ActiveLoans.Select(loan => new LoanDetailsDto
             {
                 ItemTitle = loan.LibraryItem!.Title,
-                BorrowedDate = FormatDateToUS(loan.BorrowedDate),
-                ReturnDate = FormatDateToUS(loan.ReturnDate),
+                BorrowedDate = loan.BorrowedDate,
+                ReturnDate = loan.ReturnDate,
                 IsExpired = loan.ReturnDate < DateTime.UtcNow
             }).ToList();
         }
@@ -220,21 +220,6 @@ namespace LibraryApp.Application.Services
         {
             var member = _repository.GetMemberById(memberId);
             return member != null;
-        }
-
-        private string FormatDateToUS(DateTime utcDate)
-        {
-            try
-            {
-                var destinationTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-                DateTime usDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, destinationTimeZone);
-
-                return usDate.ToString("MM/dd/yyyy");
-            }
-            catch (TimeZoneNotFoundException)
-            {
-                return utcDate.ToString("MM/dd/yyyy");
-            }
         }
     }
 }
