@@ -48,9 +48,13 @@ namespace LibraryApp.Application.Services
         }
         public Member RegisterMember(string name)
         {
+            var startDate = DateTime.Now;
+            var endDate = startDate.AddYears(1);
             var memberEntity = new Domain.Entities.Member
             {
-                Name = name
+                Name = name,
+                MembershipStartDate = startDate,
+                MembershipEndDate = endDate
             };
             _repository.RegisterMember(memberEntity);
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
@@ -61,7 +65,6 @@ namespace LibraryApp.Application.Services
             var itemsEntities = _repository.FindItems(term);
             return itemsEntities.Select(MapToDomainModel);
         }
-        // TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _repository.GetMemberById(memberId);
@@ -81,17 +84,46 @@ namespace LibraryApp.Application.Services
                 message = $"'{libraryItemEntity.Title}' is already borrowed.";
                 return false;
             }
-            //if borrowed item is already in table, remove it first to prevent duplicates (refuerzo)
 
-            var borrowedItems = _repository.GetBorrowedItem(memberId, itemId).ToList();
-            foreach (var bi in borrowedItems)
+            // Check 3 items max limit per member 
+            var activeBorrowedItems = _repository.GetActiveBorrowedItemsByMember(memberId).Count();
+            if (activeBorrowedItems >= 3)
             {
-                _repository.RemoveBorrowedItem(bi);
+                message = $"Member {member.Name} has reached the maximum limit of 3 borrowed items.";
+                return false;
             }
+
+            //Check if member has an expired borrow item
+            var allMemberBorrowedItems = _repository.GetActiveBorrowedItemsByMember(memberId);
+            var expiredItems = allMemberBorrowedItems.Where(bi => bi.DueDate < DateTime.Now).ToList();
+            if (expiredItems.Any())
+            {
+                message = $"Member {member.Name} has {expiredItems.Count} expired borrowed items and cannot borrow new items.";
+                return false;
+            }
+
+            // Check is membership is expired
+            if (member.MembershipEndDate < DateTime.Now)
+            {
+                message = $"Member {member.Name}'s membership has expired on {member.MembershipEndDate:MM/dd/yyyy}  and cannot borrow items.";
+                return false;
+            }
+
 
             libraryItemEntity.IsBorrowed = true;
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+
+            // Set due date to 3 days from now
+            var borrowedDate = DateTime.Now;
+            var dueDate = borrowedDate.AddDays(3);
+
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem
+            {
+                MemberId = memberId,
+                LibraryItemId = itemId,
+                BorrowedDate = borrowedDate,
+                DueDate = dueDate
+            });
             message = $"'{libraryItemEntity.Title}' borrowed by {member.Name}.";
             return true;
         }
@@ -125,10 +157,13 @@ namespace LibraryApp.Application.Services
             libraryItemEntity.IsBorrowed = false;
             _repository.UpdateLibraryItem(libraryItemEntity);
 
-            //(refuerzo)cleanup historical duplicates if any to prevent overpopulation of BorrowedItems table to have the current state of borrowed items only
             foreach (var bi in borrowedItems)
             {
-                _repository.RemoveBorrowedItem(bi);
+                if (bi.IsActive)
+                {
+                    bi.IsActive = false;
+                    _repository.UpdateBorrowedItem(bi);
+                }
             }
 
             message = $"'{libraryItemEntity.Title}' returned by {member.Name}.";
@@ -186,14 +221,16 @@ namespace LibraryApp.Application.Services
             }
             return member;
         }
+
         public Domain.Entities.BorrowedItem? GetBorrowedItem(int memberId, int itemId) =>
         _repository.GetBorrowedItem(memberId, itemId).FirstOrDefault();
 
-        public Domain.Entities.BorrowedItem? RemoveBorrowedItem(int memberId, int itemId)
+        public IEnumerable<Domain.Entities.BorrowedItem> GetMemberBorrowedItems(int memberId, bool activeOnly)
         {
-            var borrowed = _repository.GetBorrowedItem(memberId, itemId).FirstOrDefault();
-            if (borrowed != null) _repository.RemoveBorrowedItem(borrowed);
-            return borrowed;
+            return activeOnly
+                ? _repository.GetActiveBorrowedItemsByMember(memberId)
+                : _repository.GetAllBorrowedItemsByMember(memberId);
         }
+
     }
- }
+}

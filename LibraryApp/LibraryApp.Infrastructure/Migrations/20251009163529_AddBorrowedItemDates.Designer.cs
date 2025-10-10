@@ -3,6 +3,7 @@ using System;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251009163529_AddBorrowedItemDates")]
+    partial class AddBorrowedItemDates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -28,9 +31,6 @@ namespace LibraryApp.Infrastructure.Migrations
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("LibraryItemId")
                         .HasColumnType("INTEGER");
@@ -115,12 +115,6 @@ namespace LibraryApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("MembershipEndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("MembershipStartDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -133,19 +127,16 @@ namespace LibraryApp.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            MembershipStartDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Alice Johnson"
                         },
                         new
                         {
                             Id = 2,
-                            MembershipStartDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Bob Smith"
                         },
                         new
                         {
                             Id = 3,
-                            MembershipStartDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Charlie Brown"
                         });
                 });

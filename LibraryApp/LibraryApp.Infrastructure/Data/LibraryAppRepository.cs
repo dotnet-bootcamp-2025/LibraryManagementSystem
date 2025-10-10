@@ -24,8 +24,10 @@ namespace LibraryApp.Infrastructure.Data
         }
         public IEnumerable<Member> GetAllMembers()
         {
-            return _context.Members.Include(m => m.BorrowedItems).ThenInclude(b => b.LibraryItem).ToList();
-
+            return _context.Members
+                .Include(m => m.BorrowedItems.Where(bi => bi.IsActive))
+                    .ThenInclude(b => b.LibraryItem)
+                .ToList();
         }
         public void RegisterMember(Member member)
         {
@@ -55,11 +57,21 @@ namespace LibraryApp.Infrastructure.Data
             return _context.BorrowedItems.Where(b => b.MemberId == memberId && b.LibraryItemId == itemId).ToList();
         }
 
-        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
+        public IEnumerable<BorrowedItem> GetAllBorrowedItemsByMember(int memberId)
         {
-            _context.BorrowedItems.Remove(borrowedItem);
+            return _context.BorrowedItems.AsNoTracking().Where(b => b.MemberId == memberId).Include(b => b.LibraryItem).ToList();
+        }
+        public IEnumerable<BorrowedItem> GetActiveBorrowedItemsByMember(int memberId)
+        {
+            return _context.BorrowedItems.AsNoTracking().Where(b => b.MemberId == memberId && b.IsActive).Include(b => b.LibraryItem).ToList();
+        }
+        
+        public void UpdateBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Update(borrowedItem);
             _context.SaveChanges();
         }
+
         public IEnumerable<LibraryItem> FindItems(string? term)
         {
             if (string.IsNullOrWhiteSpace(term))
@@ -68,9 +80,9 @@ namespace LibraryApp.Infrastructure.Data
             }
             term = term.Trim().ToLower();
             return _context.LibraryItems.Where(i => i.Title.ToLower().Contains(term)
-                                                || (i.Type == (int)Domain.Enums.LibraryItemTypeEnum.Book && i.Author != null && i.Author.ToLower().Contains(term))
-                                                || (i.Type == (int)Domain.Enums.LibraryItemTypeEnum.Magazine && i.Publisher != null && i.Publisher.ToLower().Contains(term))
-                                                ).ToList();
+                    || (i.Type == (int)Domain.Enums.LibraryItemTypeEnum.Book && i.Author != null && i.Author.ToLower().Contains(term))
+                    || (i.Type == (int)Domain.Enums.LibraryItemTypeEnum.Magazine && i.Publisher != null && i.Publisher.ToLower().Contains(term))
+                      ).ToList();
         }
     }
 }

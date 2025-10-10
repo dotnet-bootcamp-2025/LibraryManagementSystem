@@ -14,6 +14,14 @@ namespace LibraryApp.Application.Abstraction
         void AddBorrowedItem(BorrowedItem borrowedItem);
         void UpdateLibraryItem(LibraryItem libraryItem);
         IEnumerable<BorrowedItem> GetBorrowedItem(int memberId, int itemId);
-        void RemoveBorrowedItem(BorrowedItem borrowedItem);
+        //void RemoveBorrowedItem(BorrowedItem borrowedItem);
+
+        IEnumerable<BorrowedItem> GetAllBorrowedItemsByMember(int memberId);
+
+        IEnumerable<BorrowedItem> GetActiveBorrowedItemsByMember(int memberId);
+
+        void UpdateBorrowedItem(BorrowedItem borrowedItem);
+
+
     }
 }
