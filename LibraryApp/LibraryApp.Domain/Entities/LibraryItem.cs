@@ -20,5 +20,6 @@ namespace LibraryApp.Domain.Entities
         public List<BorrowedItem>? BorrowedItems { get; set; }
         public DateTime? BorrowedDate { get; set; }
         public int? BorrowedByMemberId { get; set; }
+        public bool Active { get; set; }
     }
 }

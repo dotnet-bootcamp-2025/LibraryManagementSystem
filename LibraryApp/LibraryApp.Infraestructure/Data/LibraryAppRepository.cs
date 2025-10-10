@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infraestructure.Data
 {
@@ -61,6 +62,10 @@ namespace LibraryApp.Infraestructure.Data
         public IEnumerable<Member> GetAllMembers()
         {
            return _context.Members.ToList();
+        }
+        public LibraryItem? GetLibraryItemByIdIgnoringFilters(int id)
+        {
+            return _context.LibraryItems.IgnoreQueryFilters().FirstOrDefault(x => x.Id == id);
         }
     }
 }

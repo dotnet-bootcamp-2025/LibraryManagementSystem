@@ -121,5 +121,23 @@ namespace LibraryApp.Api.Controllers
             var items = _service.FindItems(bookname);
             return Ok(items);
         }
+
+        [HttpGet("ItemsByMember")]
+        public IActionResult GetMembersWithItemsBorrowed()
+        {
+            var members = _service.GetAllMembers();
+
+            var result = members.Select(m => new MemberWithBorrowItemDTO
+            {
+                MemberId = m.Id,
+                Name = m.Name,
+                BorrowedTitles = _service.GetAllLibraryItems()
+                .Where(li => li.BorrowedByMemberId == m.Id && li.IsBorrowed)
+                .Select(li => li.Title ?? string.Empty)
+                .ToList()
+            }).ToList();
+            return Ok(result);
+        }
+
     }
 }

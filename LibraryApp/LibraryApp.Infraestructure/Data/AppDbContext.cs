@@ -17,12 +17,11 @@ namespace LibraryApp.Infraestructure.Data
 
         public DbSet<BorrowedItem> BorrowedItems { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)     
-        {
-            
-        }
+        {       }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<LibraryItem>().HasQueryFilter(li => li.Active);
             base.OnModelCreating(modelBuilder); //Adding functionality of the base class
 
             modelBuilder.Entity<Member>().HasData(

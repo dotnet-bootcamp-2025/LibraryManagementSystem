@@ -24,5 +24,7 @@ namespace LibraryApp.Application.Abstractions
         void AddMember(Member member);
 
         IEnumerable<Member> GetAllMembers();
+
+        LibraryItem? GetLibraryItemByIdIgnoringFilters(int id);
     }
 }

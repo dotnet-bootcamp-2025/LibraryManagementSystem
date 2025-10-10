@@ -10,6 +10,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace LibraryApp.Application.Services
 {
     public sealed class LibraryService : ILibraryService
@@ -27,7 +28,8 @@ namespace LibraryApp.Application.Services
                 Author = author,
                 Pages = pages,
                 Type = (int)LibraryItemTypeEnum.Book,
-                IsBorrowed = false
+                IsBorrowed = false,
+                Active = true
             };
 
             _repository.AddLibraryItem(bookEntity);
@@ -41,7 +43,8 @@ namespace LibraryApp.Application.Services
                 IssueNumber = issueNumber,
                 Publisher = publisher,
                 Type = (int)LibraryItemTypeEnum.Magazine,
-                IsBorrowed = false
+                IsBorrowed = false,
+                Active=true
             };
 
             _repository.AddLibraryItem(magazineEntity);
@@ -115,6 +118,9 @@ namespace LibraryApp.Application.Services
 
             libraryItemEntity.IsBorrowed = true;
             libraryItemEntity.BorrowedDate = Borrowdate;
+            libraryItemEntity.BorrowedByMemberId = memberId;
+
+            libraryItemEntity.Active = false;
 
             _repository.UpdateLibraryItem(libraryItemEntity);
             _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.Now });
@@ -132,7 +138,7 @@ namespace LibraryApp.Application.Services
                 return false;
             }
 
-            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
+            var libraryItemEntity = _repository.GetLibraryItemByIdIgnoringFilters(memberId);
 
             if (libraryItemEntity is null)
             {
@@ -146,10 +152,10 @@ namespace LibraryApp.Application.Services
                 return false;
             }
             libraryItemEntity.IsBorrowed = false;
+            libraryItemEntity.Active = true;
 
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.Now });
-
+            
             message = $"'{libraryItemEntity.Title}' returned by {memberEntity.Name}.";
             return true;
         }
