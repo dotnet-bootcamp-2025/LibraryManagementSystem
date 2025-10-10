@@ -52,13 +52,18 @@ namespace LibraryApp.Application.Services
         }
         public Domain.Member RegisterMember(string name)
         {
-            var memberEntity = new Domain.Entities.Member
+            var now = DateTime.Now;
+            var expiration = now.AddYears(1); //Expire in 1 year
+
+            var memberEntity = new Domain.Entities.Member // Mofiy with atributes for Expiration and Creation Date
             {
-                Name = name
+                Name = name,
+                CreatedAt = now,
+                ExpiresAt = expiration
             };
 
             _repository.AddMember(memberEntity);
-            return new Domain.Member(memberEntity.Id, memberEntity.Name);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name, memberEntity.CreatedAt, memberEntity.ExpiresAt);
         }
         public IEnumerable<Domain.LibraryItem> FindItems(string? bookname)
         {
@@ -86,6 +91,12 @@ namespace LibraryApp.Application.Services
                 return false;
             }
 
+            if (memberEntity.ExpiresAt < DateTime.Now) //Verify the user if is expired
+            {
+                message = "El usuario esta expirado";
+                return false;
+            }
+
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
 
             if (libraryItemEntity is null)
@@ -94,7 +105,7 @@ namespace LibraryApp.Application.Services
                 return false;
             }
 
-            // Saber si un miembro tiene algun item prestado mas de 3 días
+            // Check if a member has any item borrowed for more than 3 days.
             var Borrowdate = DateTime.Now;
 
             if (libraryItemEntity.BorrowedDate.HasValue)
@@ -107,7 +118,7 @@ namespace LibraryApp.Application.Services
                 }
             }
 
-            // Saber si un miembro tiene mas de 3 items prestados
+            // Check if a member has more than 3 items borrowed.
             var prestamoActivo = _repository.GetAllLibraryItems().Count(x => x.IsBorrowed && x.BorrowedByMemberId == memberId);
 
             if (prestamoActivo > 3)
@@ -120,7 +131,7 @@ namespace LibraryApp.Application.Services
             libraryItemEntity.BorrowedDate = Borrowdate;
             libraryItemEntity.BorrowedByMemberId = memberId;
 
-            libraryItemEntity.Active = false;
+            libraryItemEntity.Active = false;// Soft Delete
 
             _repository.UpdateLibraryItem(libraryItemEntity);
             _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.Now });
@@ -184,7 +195,7 @@ namespace LibraryApp.Application.Services
 
         private Domain.Member MapToDomainModelMember(Domain.Entities.Member entity2)
         {
-            return new Domain.Member(entity2.Id, entity2.Name);
+            return new Domain.Member(entity2.Id, entity2.Name, entity2.CreatedAt, entity2.ExpiresAt);
         }
     }
 }
