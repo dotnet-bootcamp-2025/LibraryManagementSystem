@@ -9,7 +9,7 @@ namespace LibraryApp.Api.Controllers
     {
         //OLD approach -> private readonly LibraryService _service = new();
         private readonly ILibraryService _service;
-        
+
         public LibraryController(ILibraryService libraryService)
         {
             _service = libraryService;
@@ -46,9 +46,9 @@ namespace LibraryApp.Api.Controllers
 
             Console.WriteLine($"AddBook called, current items count: {item.Count()}");
             var book = _service.AddBook(bookDto.Title, bookDto.Author, bookDto.Pages);
-            
-            item= _service.GetAllLibraryItems();
-            
+
+            item = _service.GetAllLibraryItems();
+
             Console.WriteLine($"Book added with ID: {book.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = book.Id }, book);
         }
@@ -59,18 +59,18 @@ namespace LibraryApp.Api.Controllers
         [HttpPost("magazines")]
         public IActionResult AddMagazine([FromBody] MagazineDTO magDto)
         {
-           if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
+            if (magDto == null || string.IsNullOrWhiteSpace(magDto.Title) || string.IsNullOrWhiteSpace(magDto.Publisher) || magDto.IssueNumber <= 0)
             {
                 return BadRequest("Invalid magazine data.");
             }
-            
-           var item = _service.GetAllLibraryItems();
-           Console.WriteLine($"AddMagazine called, current items count: {item.Count()}");
-           var magazine = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
 
-           item = _service.GetAllLibraryItems();
+            var item = _service.GetAllLibraryItems();
+            Console.WriteLine($"AddMagazine called, current items count: {item.Count()}");
+            var magazine = _service.AddMagazine(magDto.Title, magDto.IssueNumber, magDto.Publisher);
 
-           Console.WriteLine($"Magazine added with ID: {magazine.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
+            item = _service.GetAllLibraryItems();
+
+            Console.WriteLine($"Magazine added with ID: {magazine.Id}, new items count: {_service.GetAllLibraryItems().Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = magazine.Id }, magazine);
         }
 
@@ -80,7 +80,7 @@ namespace LibraryApp.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             var item = _service.RegisterMember;
             Console.WriteLine($"RegisterMember called, current items count: {item.ToString}");
@@ -96,11 +96,11 @@ namespace LibraryApp.Api.Controllers
         [HttpPatch("borrow")]
         public IActionResult BorrowItem(int memberId, int itemId)
         {
-           if (_service.BorrowItem(memberId, itemId, out string message))
-           {
+            if (_service.BorrowItem(memberId, itemId, out string message))
+            {
                 return Ok(message);
-           }
-           return BadRequest(message);
+            }
+            return BadRequest(message);
         }
 
         // Add PATCH to return an item
@@ -120,6 +120,23 @@ namespace LibraryApp.Api.Controllers
         {
             var items = _service.FindItems(bookname);
             return Ok(items);
+        }
+
+        [HttpGet("ItemsByMember")]
+        public IActionResult GetMembersWithItemsBorrowed()
+        {
+            var members = _service.GetAllMembers();
+
+            var result = members.Select(m => new MemberWithBorrowItemDTO
+            {
+                MemberId = m.Id,
+                Name = m.Name,
+                BorrowedTitles = _service.GetAllLibraryItems()
+                .Where(li => li.BorrowedByMemberId == m.Id && li.IsBorrowed)
+                .Select(li => li.Title ?? string.Empty)
+                .ToList()
+            }).ToList();
+            return Ok(result);
         }
 
     }

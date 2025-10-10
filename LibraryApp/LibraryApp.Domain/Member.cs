@@ -10,13 +10,18 @@ namespace LibraryApp.Domain
     {
         public int Id { get; }
         public string Name { get; }
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime ExpiresAt { get; set; }
         private readonly List<LibraryItem> _borrowed = new();
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
-        public Member(int id, string name)
+        public Member(int id, string name, DateTime created, DateTime expire)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
             Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
             Id = id;
+            CreatedAt = created;
+            ExpiresAt = expire;
         }
         public void BorrowItem(LibraryItem item)
         {

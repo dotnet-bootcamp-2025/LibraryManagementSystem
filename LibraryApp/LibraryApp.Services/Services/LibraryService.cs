@@ -4,10 +4,12 @@ using LibraryApp.Domain.Entities;
 using LibraryApp.Domain.Entities.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace LibraryApp.Application.Services
 {
@@ -26,7 +28,8 @@ namespace LibraryApp.Application.Services
                 Author = author,
                 Pages = pages,
                 Type = (int)LibraryItemTypeEnum.Book,
-                IsBorrowed = false
+                IsBorrowed = false,
+                Active = true
             };
 
             _repository.AddLibraryItem(bookEntity);
@@ -40,7 +43,8 @@ namespace LibraryApp.Application.Services
                 IssueNumber = issueNumber,
                 Publisher = publisher,
                 Type = (int)LibraryItemTypeEnum.Magazine,
-                IsBorrowed = false
+                IsBorrowed = false,
+                Active=true
             };
 
             _repository.AddLibraryItem(magazineEntity);
@@ -48,18 +52,23 @@ namespace LibraryApp.Application.Services
         }
         public Domain.Member RegisterMember(string name)
         {
-            var memberEntity = new Domain.Entities.Member
+            var now = DateTime.Now;
+            var expiration = now.AddYears(1); //Expire in 1 year
+
+            var memberEntity = new Domain.Entities.Member // Mofiy with atributes for Expiration and Creation Date
             {
-                Name = name
+                Name = name,
+                CreatedAt = now,
+                ExpiresAt = expiration
             };
 
             _repository.AddMember(memberEntity);
-            return new Domain.Member(memberEntity.Id, memberEntity.Name);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name, memberEntity.CreatedAt, memberEntity.ExpiresAt);
         }
         public IEnumerable<Domain.LibraryItem> FindItems(string? bookname)
         {
             Console.WriteLine("FindItems called with the bookname: " + bookname);
-            if (string.IsNullOrWhiteSpace(bookname)) 
+            if (string.IsNullOrWhiteSpace(bookname))
             {
                 var allItems = _repository.GetAllLibraryItems();
                 Console.WriteLine($"Returning all items, count: {allItems.Count()}");
@@ -72,34 +81,62 @@ namespace LibraryApp.Application.Services
                 .ToList();
             return filteredItems.Select(MapToDomainModel);
         }
-        // TODO: Is it a GET or a POST?
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
-            //var member = _members.FirstOrDefault(m => m.Id == memberId);
-            //var item = _items.FirstOrDefault(i => i.Id == itemId);
-
             var memberEntity = _repository.GetMemberById(memberId);
 
-            if (memberEntity is null) 
-            { 
-                message = "Member not found."; 
+            if (memberEntity is null)
+            {
+                message = "Member not found.";
+                return false;
+            }
+
+            if (memberEntity.ExpiresAt < DateTime.Now) //Verify the user if is expired
+            {
+                message = "El usuario esta expirado";
                 return false;
             }
 
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
 
-            if (libraryItemEntity is null) 
-            { 
-                message = "Item not found."; 
+            if (libraryItemEntity is null)
+            {
+                message = "Item not found.";
                 return false;
             }
-            
+
+            // Check if a member has any item borrowed for more than 3 days.
+            var Borrowdate = DateTime.Now;
+
+            if (libraryItemEntity.BorrowedDate.HasValue)
+            {
+                var diasPrestado = (DateTime.Now - libraryItemEntity.BorrowedDate.Value).TotalDays;
+                if (diasPrestado > 3)
+                {
+                    message = "La persona tiene el libro prestado mas de 3 días";
+                    return false;
+                }
+            }
+
+            // Check if a member has more than 3 items borrowed.
+            var prestamoActivo = _repository.GetAllLibraryItems().Count(x => x.IsBorrowed && x.BorrowedByMemberId == memberId);
+
+            if (prestamoActivo > 3)
+            {
+                message = "El miembro tiene mas de 3 libros/revistas prestados";
+                return false;
+            }
+
             libraryItemEntity.IsBorrowed = true;
+            libraryItemEntity.BorrowedDate = Borrowdate;
+            libraryItemEntity.BorrowedByMemberId = memberId;
+
+            libraryItemEntity.Active = false;// Soft Delete
 
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.Now });
 
-            message = $"'{libraryItemEntity.Title}' borrowed by {memberEntity.Name}.";
+            message = $"'{libraryItemEntity.Title}' borrowed by {memberEntity.Name}' at the date: {Borrowdate:MM//dd/yyyy}'.";
             return true;
         }
         public bool ReturnItem(int memberId, int itemId, out string message)
@@ -112,8 +149,8 @@ namespace LibraryApp.Application.Services
                 return false;
             }
 
-            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
-            
+            var libraryItemEntity = _repository.GetLibraryItemByIdIgnoringFilters(memberId);
+
             if (libraryItemEntity is null)
             {
                 message = "Item not found.";
@@ -126,10 +163,10 @@ namespace LibraryApp.Application.Services
                 return false;
             }
             libraryItemEntity.IsBorrowed = false;
+            libraryItemEntity.Active = true;
 
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
-
+            
             message = $"'{libraryItemEntity.Title}' returned by {memberEntity.Name}.";
             return true;
         }
@@ -144,7 +181,7 @@ namespace LibraryApp.Application.Services
         {
             return (LibraryItemTypeEnum)entity.Type switch
             {
-                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author!, entity.Pages ?? 0),
+                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author!, entity.Pages),
                 LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher!),
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
@@ -158,8 +195,7 @@ namespace LibraryApp.Application.Services
 
         private Domain.Member MapToDomainModelMember(Domain.Entities.Member entity2)
         {
-            return new Domain.Member(entity2.Id, entity2.Name);
+            return new Domain.Member(entity2.Id, entity2.Name, entity2.CreatedAt, entity2.ExpiresAt);
         }
-
     }
 }

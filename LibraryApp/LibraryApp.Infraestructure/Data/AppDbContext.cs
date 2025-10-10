@@ -17,12 +17,11 @@ namespace LibraryApp.Infraestructure.Data
 
         public DbSet<BorrowedItem> BorrowedItems { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)     
-        {
-            
-        }
+        {       }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<LibraryItem>().HasQueryFilter(li => li.Active);
             base.OnModelCreating(modelBuilder); //Adding functionality of the base class
 
             modelBuilder.Entity<Member>().HasData(
@@ -37,6 +36,7 @@ namespace LibraryApp.Infraestructure.Data
                    Id = 1,
                    Title = "The Great Gatsby",
                    IsBorrowed = false,
+                   BorrowedDate = new DateTime(2025,10,08),
                    Type = (int)LibraryItemTypeEnum.Book,
                    Author = "F. Scott Fitzgerald",
                    Pages = 180
@@ -46,6 +46,7 @@ namespace LibraryApp.Infraestructure.Data
             Id = 2,
             Title = "1984",
             IsBorrowed = false,
+            BorrowedDate = new DateTime(2025, 10, 08),
             Type = (int)LibraryItemTypeEnum.Book,
             Author = "George Orwell",
             Pages = 328
@@ -55,6 +56,7 @@ namespace LibraryApp.Infraestructure.Data
             Id = 3,
             Title = "Time Magazine - July 2023",
             IsBorrowed = false,
+            BorrowedDate = new DateTime(2025, 10, 08),
             IssueNumber = 7,
             Publisher = "Time USA LLC",
             Type = (int)LibraryItemTypeEnum.Magazine

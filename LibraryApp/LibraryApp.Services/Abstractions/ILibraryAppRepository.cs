@@ -25,6 +25,6 @@ namespace LibraryApp.Application.Abstractions
 
         IEnumerable<Member> GetAllMembers();
 
-        void RemoveBorrowedItem(BorrowedItem borrowedItem);
+        LibraryItem? GetLibraryItemByIdIgnoringFilters(int id);
     }
 }
