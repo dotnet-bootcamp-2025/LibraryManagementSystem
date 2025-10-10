@@ -1,5 +1,7 @@
 ﻿//POCO entity class for BorrowedItem
 
+using System.Data;
+
 namespace LibraryApp.Domain.Entities
 {
     public class BorrowedItem
@@ -8,8 +10,14 @@ namespace LibraryApp.Domain.Entities
         public int MemberId { get; set; }
         public int LibraryItemId { get; set; }
 
+        // modifications for final excersise
+        public DateTime BorrowedDate { get; set; }
+        public bool Active { get; set; }
+
         public Member? Member { get; set; }
         public LibraryItems? LibraryItem { get; set; }
+
+
 
     }
 }

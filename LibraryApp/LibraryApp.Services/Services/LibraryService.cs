@@ -35,7 +35,7 @@ namespace LibraryApp.Application.Services
             _repository.AddLibraryItems(bookEntity);
 
             // Map the entity to the domain model Book and return it
-            return new Book(bookEntity.Id, bookEntity.Title, bookEntity.Author ?? "Unknown", bookEntity.Pages ?? 0);
+            return new Book(bookEntity.Id, bookEntity.Title, bookEntity.Author ?? "Unknown", bookEntity.Pages ?? 0, bookEntity.IsBorrowed);
         }
 
         public Magazine AddMagazine(string title, int issueNumber, string publisher)
@@ -50,18 +50,47 @@ namespace LibraryApp.Application.Services
             };
 
             _repository.AddLibraryItems(magazineEntity);
-            return new Magazine(magazineEntity.Id, magazineEntity.Title, magazineEntity.IssueNumber ?? 0, magazineEntity.Publisher ?? "Unknown");
+            return new Magazine(magazineEntity.Id, magazineEntity.Title, magazineEntity.IssueNumber ?? 0, magazineEntity.Publisher ?? "Unknown", magazineEntity.IsBorrowed);
         }
 
         public bool BorrowItem(int memberId, int itemId, out string message)
         {
             var member = _repository.GetMemberById(memberId);
+            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
             if (member is null)
             {
                 message = "Member not found.";
                 return false;
             }
-            var libraryItemEntity = _repository.GetLibraryItemById(itemId);
+
+            //here we are going to validate if the member has an active membership, if not he cannot borrow an item
+            if ((DateTime.UtcNow - member.MembershipStartDate).TotalDays > 10)
+            {
+                message = "Member's membership has expired and cannot borrow items.";
+                return false;
+            }
+            //validate if the member has an expired item, 3 days or more is expired, if he has an expired item he cannot borrow another one
+            else
+            {
+                var borrowedItems = _repository.GetAllBorrowedItems().Where(bi => bi.MemberId == memberId && bi.Active).ToList();
+                foreach (var borrowedItem in borrowedItems)
+                {
+                    if ((DateTime.UtcNow - borrowedItem.BorrowedDate).TotalDays > 3)
+                    {
+                        message = "Member has expired borrowed items and cannot borrow new ones.";
+                        return false;
+                    }
+                }
+            }
+
+            //validate if this member has 3 or more active borrowed items, if so he cannot borrow another one
+            var activeBorrowedItemsCount = _repository.GetAllBorrowedItems().Count(bi => bi.MemberId == memberId && bi.Active);
+            if (activeBorrowedItemsCount >= 3)
+            {
+                message = "Member has reached the maximum limit of 3 borrowed items.";
+                return false;
+            }
+
             if (libraryItemEntity is null)
             {
                 message = "Item not found.";
@@ -76,15 +105,15 @@ namespace LibraryApp.Application.Services
 
             libraryItemEntity.IsBorrowed = true;
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem {MemberId = memberId, LibraryItemId = itemId});
-            message = $"Item '{libraryItemEntity.Title}' borrowed successfully by member '{member.Name}'.";
+            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.UtcNow, Active = true });
+            message = $"Item '{libraryItemEntity.Title}' borrowed successfully by member '{member.Name}' at ' {DateTime.UtcNow}.";
             return true;
         }
 
         public bool ReturnItem(int memberId, int itemId, out string message)
         {
             var member = _repository.GetMemberById(memberId);
-            if ( member is null)
+            if (member is null)
             {
                 message = "Member not found.";
                 return false;
@@ -102,18 +131,32 @@ namespace LibraryApp.Application.Services
                 return false;
             }
             libraryItemEntity.IsBorrowed = false;
+
+            // set the borrowed item as inactive, but first we validate if the member has borrowed the item
+            var borrowedItem = _repository.GetAllBorrowedItems()
+                .FirstOrDefault(bi => bi.MemberId == memberId && bi.LibraryItemId == itemId && bi.Active);
+            if (borrowedItem is null)
+            {
+                message = "This member did not borrow this item.";
+                return false;
+            }
+            borrowedItem.Active = false;
+
+            //var borrowedItem = _repository.GetAllBorrowedItems()
+            //    .FirstOrDefault(bi => bi.MemberId == memberId && bi.LibraryItemId == itemId && bi.Active);
+
             _repository.UpdateLibraryItem(libraryItemEntity);
-            _repository.AddBorrowedItem(new Domain.Entities.BorrowedItem { MemberId = memberId, LibraryItemId = itemId });
             message = $"Item '{libraryItemEntity.Title}' returned successfully by member '{member.Name}'.";
             return true;
 
 
         }
 
-        public IEnumerable<Domain.Member> GetAllMembers()
+        public IEnumerable<Domain.Entities.Member> GetAllMembers()
         {
+
             var membersEntities = _repository.GetAllMembers();
-            return membersEntities.Select(m => new Domain.Member(m.Id, m.Name));
+            return membersEntities;
         }
 
         public IEnumerable<LibraryItem> FindItems(string? term)
@@ -130,8 +173,8 @@ namespace LibraryApp.Application.Services
         {
             return (LibraryItemTypeEnum)entity.Type switch
             {
-                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? "Unknown", entity.Pages ?? 0),
-                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? "Unknown"),
+                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title, entity.Author ?? "Unknown", entity.Pages ?? 0, entity.IsBorrowed),
+                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title, entity.IssueNumber ?? 0, entity.Publisher ?? "Unknown", entity.IsBorrowed),
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
         }
@@ -145,11 +188,52 @@ namespace LibraryApp.Application.Services
             };
             _repository.AddMember(memberEntity);
             return new Domain.Member(memberEntity.Id, memberEntity.Name);
-            
+
         }
 
+        public IEnumerable<BorrowedItem> GetAllBorrowedItemsByMember(int memberId)
+        {
+            // we call all borrowed items and filter by member id active borrowed items
+            var borrowedItemsByMember = _repository.GetAllBorrowedItems()
+                .Where(bi => bi.MemberId == memberId && bi.Active)
+                .ToList();
+            return borrowedItemsByMember;
+        }
 
+        public IEnumerable<BorrowedItem> GetAllBorrowedItems()
+        {
+            //here we will get all active borrowed items
+            var borrowedItems = _repository.GetAllBorrowedItems();
+            //here we will return active borrowed items only, based only if borrowed item is active, and we will include the library item details
+            return borrowedItems.Where(bi => bi.Active).ToList();
+        }
 
+        //here we will return all borrowed items of a member, and set their Active status as falsed, and mark the libraryItems as not borrowed. filtered by member id
+        public bool ReturnAllItemsByMember(int memberId, out string message)
+        {
+            var member = _repository.GetMemberById(memberId);
+            if (member is null)
+            {
+                message = "Member not found.";
+                return false;
+            }
+            var borrowedItems = _repository.GetAllBorrowedItems()
+                .Where(bi => bi.MemberId == memberId && bi.Active)
+                .ToList();
+            foreach (var borrowedItem in borrowedItems)
+            {
+                var libraryItem = _repository.GetLibraryItemById(borrowedItem.LibraryItemId);
+                if (libraryItem != null)
+                {
+                    libraryItem.IsBorrowed = false;
+                    _repository.UpdateLibraryItem(libraryItem);
+                    borrowedItem.Active = false;
+                    _repository.UpdateBorrowedItem(borrowedItem);
+                }
+            }
 
+            message = $"All items returned successfully for member '{member.Name}'.";
+            return true;
+        }
     }
 }

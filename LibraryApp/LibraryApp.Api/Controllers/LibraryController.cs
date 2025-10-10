@@ -22,7 +22,7 @@ namespace LibraryApp.Api.Controllers
         public IActionResult GetItems()
         {
             var items = _service.GetAllLibraryItems();
-            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}"); 
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
 
             return Ok(items);
         }
@@ -70,7 +70,7 @@ namespace LibraryApp.Api.Controllers
             var ok = _service.BorrowItem(borrowRequest.memberId, borrowRequest.itemId, out string message);
             if (ok)
             {
-                return Ok(new { success = ok, message = message});
+                return Ok(new { success = ok, message = message });
             }
             return BadRequest(new { success = ok, message = message });
         }
@@ -124,39 +124,31 @@ namespace LibraryApp.Api.Controllers
             //if we found items return them
             return Ok(items);
         }
+
+        [HttpGet("All Borrowed Items")]
+        public IActionResult GetAllBorrowedItems()
+        {
+            var items = _service.GetAllBorrowedItems();
+            if (!items.Any())
+            {
+                return NotFound("There are no borrowed items.");
+            }
+            return Ok(items);
+        }
+
+        // add a PATCH to return all active borrowed items of a member, given the member id
+        [HttpGet("Return all active borrowed items by Member")]
+        public IActionResult ReturnItemsByMember(int memberId)
+        {
+
+            string message;
+            var result = _service.ReturnAllItemsByMember(memberId, out message);
+            if (!result)
+            {
+                return NotFound(message);
+            }
+            return Ok(new { success = result, message = message });
+        }
     }
+
 }
-
-
-//        }
-
-//        [HttpPost("Return")]
-//        public IActionResult ReturnItem(int memberId, int itemId)
-//        {
-//            if (memberId <= 0 || itemId <= 0)
-//            {
-//                return BadRequest("Invalid member or item ID.");
-//            }
-//            if (_service.ReturnItem(memberId, itemId, out string message))
-//            {
-//                return Ok("Item returned successfully.");
-//            }
-//            else
-//            {
-//                return BadRequest(message);
-//            }
-//        }
-
-//        [HttpGet("Find Item")]
-//        public IActionResult FindItems(string? term)
-//        {
-
-//            var items = _service.FindItems(term);
-//            return Ok(items);
-//        }
-
-//        //TODO: add POST to add a new magazine, members, borrowing, and returning items
-
-
-//    }
-//}

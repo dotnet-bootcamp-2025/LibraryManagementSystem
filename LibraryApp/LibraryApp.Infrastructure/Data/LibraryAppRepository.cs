@@ -25,6 +25,7 @@ namespace LibraryApp.Infrastructure.Data
 
         public void UpdateLibraryItem(LibraryItems libraryItem)
         {
+
             _context.LibraryItems.Update(libraryItem);
             _context.SaveChanges();
         }
@@ -49,12 +50,6 @@ namespace LibraryApp.Infrastructure.Data
             return _context.Members.ToList();
         }
 
-        //public void RemoveBorrowedItem(BorrowedItem borrowedItem)
-        //{
-        //    _context.BorrowedItems.Remove(borrowedItem);
-        //    _context.SaveChanges();
-        //}
-
         public Domain.Entities.Member? GetMemberById(int id)
         {
             return _context.Members.Find(id);
@@ -69,6 +64,18 @@ namespace LibraryApp.Infrastructure.Data
         public void FindLibraryItem(string Name)
         {
             _context.LibraryItems.Find(Name);
+        }
+
+        public IEnumerable<BorrowedItem> GetAllBorrowedItems()
+        {
+            //here we are going to get all borrowed items
+            return _context.BorrowedItems.ToList();
+        }
+
+        public void UpdateBorrowedItem(BorrowedItem borrowedItem)
+        {
+            _context.BorrowedItems.Update(borrowedItem);
+            _context.SaveChanges();
         }
     }
 }

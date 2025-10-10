@@ -12,6 +12,7 @@ namespace LibraryApp.Application.Abstractions
         IEnumerable<LibraryItems> GetAllLibraryItems();
         void AddLibraryItems(LibraryItems libraryItem);
         void UpdateLibraryItem(LibraryItems libraryItem);
+        void UpdateBorrowedItem (BorrowedItem borrowedItem);
         IEnumerable<Member> GetAllMembers();
         LibraryItems? GetLibraryItemById(int id);
         Member? GetMemberById(int id);
@@ -21,7 +22,9 @@ namespace LibraryApp.Application.Abstractions
 
         void FindLibraryItem(string Name);
 
-        //void RemoveBorrowedItem(BorrowedItem borrowedItem);
+        //here we are going to get all borrowed items
+        IEnumerable<BorrowedItem> GetAllBorrowedItems();
+
 
     }
 }

@@ -9,6 +9,7 @@ namespace LibraryApp.Domain.Entities
 
         public string? Author { get; set; }
         public int? Pages { get; set; }
+        //public bool isBorrowed { get; set; }
         public int? IssueNumber { get; set; }
         public string? Publisher { get; set; }
 

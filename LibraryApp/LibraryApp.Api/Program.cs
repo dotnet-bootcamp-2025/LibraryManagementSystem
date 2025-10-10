@@ -1,14 +1,23 @@
 //program.scs library.app.api
+using LibraryApp.Api;
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+{
+    
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+     {
+         // Aquí registras tu convertidor personalizado
+         options.JsonSerializerOptions.Converters.Add(new DateConverter());
+     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
