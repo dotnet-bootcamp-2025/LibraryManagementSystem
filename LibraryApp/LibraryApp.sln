@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Application", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Infrastructure", "LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj", "{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Tests", "LibraryApp.Tests\LibraryApp.Tests.csproj", "{EE2CDB36-84DD-4221-B686-644FFA69080B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C513EC0-C24C-43A4-98C6-CE7B07976ECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE2CDB36-84DD-4221-B686-644FFA69080B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE2CDB36-84DD-4221-B686-644FFA69080B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE2CDB36-84DD-4221-B686-644FFA69080B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE2CDB36-84DD-4221-B686-644FFA69080B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

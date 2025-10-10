@@ -70,7 +70,21 @@ namespace LibraryApp.Application.Services
                 message = "Item not found.";
                 return false;
             }
-            if(libraryItemEntity.IsBorrowed)
+            var borrowedItems = _repository.GetBorrowedItemsFromMember(memberId);
+            if(borrowedItems.Count() >= 3)
+            {
+                message = $"{member.Name} has already borrowed 3 items. Return some items before borrowing more.";
+                return false;
+            }
+            foreach(var borrowed in borrowedItems)
+            {
+                if(borrowed.BorrowDate <= DateTime.UtcNow)
+                {
+                    message = $"{member.Name} cannot borrow because '{libraryItemEntity.Title}' is expired. Return it before borrowing again.";
+                    return false;
+                }
+            }
+            if (libraryItemEntity.IsBorrowed)
             {
                 message = $"'{libraryItemEntity.Title}' is already borrowed.";
                 return false;
@@ -121,6 +135,11 @@ namespace LibraryApp.Application.Services
             var memberEntities = _repository.GetAllMembers();
             return memberEntities.Select(MapToDomainModelMember);
         }
+        public IEnumerable<Domain.BorrowedItem> GetBorrowedItemsFromMember(int memberId)
+        {
+            var borrowedEntities = _repository.GetBorrowedItemsFromMember(memberId);
+            return borrowedEntities.Select(MapToDomainModelBorrowed);
+        }
 
         private Domain.LibraryItem MapToDomainModelItem(Domain.Entities.LibraryItem entity)
         {
@@ -135,6 +154,10 @@ namespace LibraryApp.Application.Services
         private Domain.Member MapToDomainModelMember(Domain.Entities.Member entity)
         {
             return new Domain.Member(entity.Id, entity.Name);
+        }
+        private Domain.BorrowedItem MapToDomainModelBorrowed(Domain.Entities.BorrowedItem entity)
+        {
+            return new Domain.BorrowedItem(entity.Id, entity.MemberId, entity.LibraryItemId, entity.BorrowDate, entity.Active);
         }
     }
 }
