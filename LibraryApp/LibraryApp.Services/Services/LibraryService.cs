@@ -203,7 +203,7 @@ namespace LibraryApp.Application.Services
             return domainItem;
         }
 
-        IEnumerable<Member> ILibraryService.GetAllMembers()
+        public IEnumerable<Member> GetAllMembers()
         {
             var memberEntities = _repository.GetAllMembers();
 
