@@ -7,6 +7,8 @@
         public int LibraryItemId { get; set; }
         public bool? IsReturned { get; set; }
 
+        public DateOnly BorrowedDate { get; set; }
+
         public Member? Member { get; set; }
         public LibraryItem? LibraryItem { get; set; }
     }

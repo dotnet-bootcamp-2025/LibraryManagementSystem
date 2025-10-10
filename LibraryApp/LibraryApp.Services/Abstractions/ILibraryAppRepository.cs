@@ -7,6 +7,7 @@ namespace LibraryApp.Application.Abstractions
         IEnumerable<LibraryItem> GetAllLibraryItems();
         IEnumerable<Member> GetAllMembers();
         IEnumerable<LibraryItem> FindItems(string term);
+        IEnumerable<BorrowedItem> GetMemberBorrowedItems(int memberId);
 
         Member? GetMemberById(int memberId);
         LibraryItem? GetItemById (int itemId);

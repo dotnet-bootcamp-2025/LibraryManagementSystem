@@ -1,5 +1,4 @@
 ﻿using LibraryApp.Application.Abstractions;
-using LibraryApp.Domain;
 using LibraryApp.Services.Records;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +29,44 @@ namespace LibraryApp.Api.Controllers
             return Ok(items);
         }
 
+        [HttpGet("members/{memberId}")]
+        public IActionResult GetMemberById(int memberId)
+        {
+            if (memberId <= 0)
+            {
+                var error = "Invalid member ID data";
+                return BadRequest(new { error });
+            }
+
+            var (success, member) = _service.GetMemberById(memberId, out var message);
+
+            if (!success)
+            {
+                return NotFound(new { message });
+            }
+
+            return Ok(new { message, member });
+        }
+
+        [HttpGet("members/{memberId}/borrowed-items")]
+        public IActionResult GetMemberBorrowedItems(int memberId)
+        {
+            if (memberId <= 0)
+            {
+                var error = "Invalid member ID data.";
+                return BadRequest(new { error });
+            }
+
+            var (success, items) = _service.GetMemberBorrowedItems(memberId, out var message);
+
+            if (!success)
+            {
+                return NotFound(new { message });
+            }
+
+            return Ok(new { message, items });
+        }
+
         #endregion GET
 
         #region POST
@@ -40,7 +77,8 @@ namespace LibraryApp.Api.Controllers
             if (bookRecord == null || string.IsNullOrWhiteSpace(bookRecord.Title)
                 || string.IsNullOrWhiteSpace(bookRecord.Author))
             {
-                return BadRequest("Invalid book data.");
+                var error = "Invalid book data.";
+                return BadRequest(new { error });
             }
 
             var addedBook = _service.AddBook(bookRecord.Title, bookRecord.Author, bookRecord.Pages);
@@ -54,7 +92,8 @@ namespace LibraryApp.Api.Controllers
                 || int.IsNegative(magRecord.IssueNumber)
                 || string.IsNullOrWhiteSpace(magRecord.Publisher))
             {
-                return BadRequest("Invalid magazine data.");
+                var error = "Invalid magazine data.";
+                return BadRequest(new { error });
             }
 
             var addedMag = _service.AddMagazine(magRecord.Title, magRecord.IssueNumber, magRecord.Publisher);
@@ -66,7 +105,8 @@ namespace LibraryApp.Api.Controllers
         {
             if (memberRecord == null || string.IsNullOrWhiteSpace(memberRecord.Name))
             {
-                return BadRequest("Invalid member data.");
+                var error = "Invalid member data.";
+                return BadRequest(new { error });
             }
 
             var addedMember = _service.RegisterMember(memberRecord.Name);
@@ -78,7 +118,8 @@ namespace LibraryApp.Api.Controllers
         {
             if (borrowRecord.MemberId <= 0 || borrowRecord.ItemId <= 0)
             {
-                return BadRequest("Invalid [member/item] id data.");
+                var error = "Invalid [member/item] ID data.";
+                return BadRequest(new { error });
             }
 
             var result = _service.BorrowItem(borrowRecord.MemberId, borrowRecord.ItemId, out var message);
@@ -96,7 +137,8 @@ namespace LibraryApp.Api.Controllers
         {
             if (returnRecord.MemberId <= 0 || returnRecord.ItemId <= 0)
             {
-                return BadRequest("Invalid [member/item] id data.");
+                var error = "Invalid [member/item] ID data.";
+                return BadRequest(new { error });
             }
 
             var result = _service.ReturnItem(returnRecord.MemberId, returnRecord.ItemId, out var message);
