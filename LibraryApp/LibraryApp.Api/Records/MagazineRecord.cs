@@ -2,7 +2,7 @@
 {
     public class MagazineRecord
     {
-        public record CreateMagazineRequest(string Title, int IssueNumber, string Publisher) { }
+        public record CreateMagazineRecord(string Title, int IssueNumber, string Publisher) { }
 
     }
 }

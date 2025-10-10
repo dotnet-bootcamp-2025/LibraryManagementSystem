@@ -18,10 +18,10 @@ namespace LibraryApp.Domain
         // 2. mantenimiento: change validation rules once, affects all constructors
         // 3. consistency: all constructors follow the same validation path
 
-        public Book(int id, string title, string author) : this(id, title, author, pages: 0) { }
+        public Book(int id, string title, string author, bool isBorrowed) : this(id, title, author, pages: 0, isBorrowed) { }
 
         
-        public Book(int id, string title, string author, int pages) : base(id, title)
+        public Book(int id, string title, string author, int pages, bool isBorrowed) : base(id, title, isBorrowed)
         {
             Author = string.IsNullOrWhiteSpace(author) ? "Unknown" : author.Trim();
             Pages = Pages < 0 ? 0 : Pages;
