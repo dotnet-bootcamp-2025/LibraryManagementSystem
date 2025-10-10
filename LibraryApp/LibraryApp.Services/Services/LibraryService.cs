@@ -41,6 +41,33 @@ namespace LibraryApp.Application.Services
             return memberEntities.Select(MapToDomainMember);
         }
 
+        public (bool Success, IEnumerable<BorrowedItem> Items) GetMemberBorrowedItems(int memberId, out string message)
+        {
+            var entityMember = _repository.GetMemberById(memberId);
+
+            if (entityMember is null)
+            {
+                message = "No member was found.";
+                return (false, Enumerable.Empty<BorrowedItem>());
+            }
+
+            var entityItems = _repository.GetMemberBorrowedItems(memberId);
+            message = entityItems.Any() ? $"Items borrowed by {entityMember.Name}"
+                : $"{entityMember.Name} has not borrowed items as of now.";
+
+            return (true, entityItems.Select(MapToDomainBorrowed));
+        }
+
+        public (bool Success, Member? Member) GetMemberById(int id, out string message)
+        {
+            var entityMember = _repository.GetMemberById(id);
+
+            if (entityMember is null) { message = "No member was found."; return (false, null); }
+
+            message = "Member found successfully.";
+            return (true, MapToDomainMember(entityMember));
+        }
+
         #endregion GET
 
         #region ADD
@@ -83,13 +110,15 @@ namespace LibraryApp.Application.Services
         {
             var memberEntity = new Domain.Entities.Member
             {
-                Name = name
+                Name = name,
+                StartDate = DateOnly.FromDateTime(DateTime.Today),
+                EndDate = DateOnly.FromDateTime(DateTime.Today).AddDays(7)
             };
 
             _repository.AddMember(memberEntity);
             _repository.SaveChanges();
 
-            return new Domain.Member(memberEntity.Id, memberEntity.Name);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name, memberEntity.StartDate.ToString("MM/dd/yyyy"));
         }
 
         #endregion ADD
@@ -104,6 +133,18 @@ namespace LibraryApp.Application.Services
             if (entityMember is null) { message = "Member not found."; return false; }
             if (entityItem is null) { message = "Item not found."; return false; }
 
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            if (today > entityMember.EndDate) { message = "This member's suscription is no longer active."; return false; }
+
+            var borrowedItems = _repository.GetMemberBorrowedItems(entityMember.Id);
+            if (borrowedItems.Count() >= 3) { message = "Members can not borrow more than 3 items."; return false; }
+
+            var expiredItems = borrowedItems.
+                Where(b => today > b.BorrowedDate.AddDays(3)
+                && b.IsReturned == false)
+                .ToList();
+            if (expiredItems.Count > 0) { message = "Members that have overdue items to return can not borrow items."; return false; }
+
             if (entityItem.IsBorrowed) { message = "Item is already borrowed."; return false; }
 
             entityItem.IsBorrowed = true;
@@ -114,12 +155,13 @@ namespace LibraryApp.Application.Services
                 MemberId = entityMember.Id,
                 LibraryItemId = entityItem.Id,
                 IsReturned = false,
+                BorrowedDate = DateOnly.FromDateTime(DateTime.Today)
             };
             _repository.AddBorrowedItem(borrowedItem);
 
             _repository.SaveChanges();
 
-            message = $"Item borrowed successfully by {entityMember.Name}.";
+            message = $"Item borrowed successfully by {entityMember.Name}.\n Record Id= {borrowedItem.Id}";
             return true;
         }
 
@@ -163,7 +205,12 @@ namespace LibraryApp.Application.Services
 
         private Member MapToDomainMember(Domain.Entities.Member entity)
         {
-            return new Member(entity.Id, entity.Name);
+            return new Member(entity.Id, entity.Name, entity.StartDate.ToString("MM/dd/yyyy"));
+        }
+
+        private BorrowedItem MapToDomainBorrowed(Domain.Entities.BorrowedItem entity)
+        {
+            return new BorrowedItem(entity.Id, entity.MemberId, entity.LibraryItemId, entity.IsReturned!.Value, entity.BorrowedDate.ToString("MM/dd/yyyy"));
         }
 
         #endregion MAPPING
