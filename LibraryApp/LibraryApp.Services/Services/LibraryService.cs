@@ -41,11 +41,13 @@ namespace LibraryApp.Application.Services
         {
             var memberEntity = new Domain.Entities.Member
             {
-                Name = name
+                Name = name,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(30)
                 //BorrowedItems = null
             };
             _repository.AddMember(memberEntity);
-            return new Domain.Member(memberEntity.Id, memberEntity.Name);
+            return new Domain.Member(memberEntity.Id, memberEntity.Name, memberEntity.StartDate, memberEntity.EndDate);
         }
         public IEnumerable<Domain.LibraryItem> FindItems(string? term)
         {
@@ -62,6 +64,11 @@ namespace LibraryApp.Application.Services
             if(member is null)
             {
                 message = "Member not found.";
+                return false;
+            }
+            if (member.EndDate <= DateTime.UtcNow)
+            {
+                message = $"{member.Name} membership expired. Renew the membership to borrow items";
                 return false;
             }
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
@@ -153,7 +160,7 @@ namespace LibraryApp.Application.Services
 
         private Domain.Member MapToDomainModelMember(Domain.Entities.Member entity)
         {
-            return new Domain.Member(entity.Id, entity.Name);
+            return new Domain.Member(entity.Id, entity.Name, entity.StartDate, entity.EndDate);
         }
         private Domain.BorrowedItem MapToDomainModelBorrowed(Domain.Entities.BorrowedItem entity)
         {

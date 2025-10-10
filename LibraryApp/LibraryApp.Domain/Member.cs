@@ -4,15 +4,20 @@
     {
         public int Id { get; }
         public string Name { get; }
+        public DateTime StartDate { get; }
+        public DateTime EndDate { get; }
+
         private readonly List<LibraryItem> _borrowed = new();
 
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
 
-        public Member(int id, string name)
+        public Member(int id, string name, DateTime startDate, DateTime endDate)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
             Name = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("Name is required.") : name.Trim();
             Id = id;
+            StartDate = startDate;
+            EndDate = endDate;
         }
 
         public void BorrowItem(LibraryItem item)

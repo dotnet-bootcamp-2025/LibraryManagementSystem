@@ -50,9 +50,17 @@ namespace LibraryApp.Tests.Application
             Assert.Equal(1, result.Id);
 
         }
-        public void WhenABookIsAdded_ThenItShouldThrowAnException()
+        public void WhenAMemberIsRegistered_ThenItShouldBeRegistered()
         {
-
+        }
+        public void WhenAMemberIsRegistered_ThenItShouldThrowAnException()
+        {
+        }
+        public void WhenAnItemisBorrowed_ThenItShouldBeBorrowed()
+        {
+        }
+        public void WhenAnItemisBorrowed_ThenItShouldThrowAnException()
+        {
         }
     }
 }

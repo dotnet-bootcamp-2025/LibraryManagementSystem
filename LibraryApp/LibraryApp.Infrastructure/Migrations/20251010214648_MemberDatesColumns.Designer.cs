@@ -3,6 +3,7 @@ using System;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251010214648_MemberDatesColumns")]
+    partial class MemberDatesColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -135,23 +138,23 @@ namespace LibraryApp.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            EndDate = new DateTime(2025, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 10, 20, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6817),
                             Name = "Alice Johnson",
-                            StartDate = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2025, 9, 20, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6545)
                         },
                         new
                         {
                             Id = 2,
-                            EndDate = new DateTime(2025, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 10, 8, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6945),
                             Name = "Bob Smith",
-                            StartDate = new DateTime(2025, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2025, 9, 8, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6944)
                         },
                         new
                         {
                             Id = 3,
-                            EndDate = new DateTime(2025, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 10, 20, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6946),
                             Name = "Charlie Brown",
-                            StartDate = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2025, 9, 20, 21, 46, 47, 892, DateTimeKind.Utc).AddTicks(6946)
                         });
                 });
 
