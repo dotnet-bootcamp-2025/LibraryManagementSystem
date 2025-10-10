@@ -18,9 +18,9 @@ namespace LibraryApp.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 1, Name = "Alice Johnson" },
-                new Member { Id = 2, Name = "Bob Smith" },
-                new Member { Id = 3, Name = "Charlie Brown" }
+                new Member { Id = 1, Name = "Alice Johnson", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) },
+                new Member { Id = 2, Name = "Bob Smith", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) },
+                new Member { Id = 3, Name = "Charlie Brown", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) }
             );
             modelBuilder.Entity<LibraryItem>().HasData(
                 new LibraryItem

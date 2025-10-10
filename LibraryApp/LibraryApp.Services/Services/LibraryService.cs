@@ -1,7 +1,7 @@
 ﻿using LibraryApp.Application.Abstraction;
+using LibraryApp.Application.DTOs;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Enums;
-using LibraryApp.Application.DTOs;
 
 namespace LibraryApp.Application.Services
 {
@@ -71,6 +71,13 @@ namespace LibraryApp.Application.Services
             if (member is null)
             {
                 message = "Member not found.";
+                formattedReturnDate = null;
+                return false;
+            }
+
+            if (member.MembershipEndDate < DateTime.UtcNow)
+            {
+                message = "Member's membership has expired. Cannot borrow new items.";
                 formattedReturnDate = null;
                 return false;
             }
