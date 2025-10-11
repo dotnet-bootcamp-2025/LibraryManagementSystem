@@ -139,9 +139,6 @@ namespace LibraryApp.Tests.Application
                 .Callback<Domain.Entities.BorrowedItem>(bItem =>
                 {
                     bItem.Id = 1;
-                    bItem.LibraryItemId = losJuegosMuertosHambreLibraryItem.Id;
-                    bItem.MemberId = willDafoeMmber.Id;
-                    bItem.Active = true;
                 });
 
             // 2. ACT
