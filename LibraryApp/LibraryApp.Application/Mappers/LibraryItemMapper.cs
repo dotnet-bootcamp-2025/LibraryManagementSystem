@@ -14,8 +14,8 @@ namespace LibraryApp.Application.Mappers
 
             return (LibraryItemTypeEnum)entity.Type switch
             {
-                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title ?? string.Empty, entity.Author ?? string.Empty, entity.Pages ?? 0),
-                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title ?? string.Empty, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty),
+                LibraryItemTypeEnum.Book => new Book(entity.Id, entity.Title ?? string.Empty, entity.Author ?? string.Empty, entity.Pages ?? 0, entity.IsBorrowed, entity.Active),
+                LibraryItemTypeEnum.Magazine => new Magazine(entity.Id, entity.Title ?? string.Empty, entity.IssueNumber ?? 0, entity.Publisher ?? string.Empty, entity.IsBorrowed, entity.Active),
                 _ => throw new InvalidOperationException("Unknown library item type.")
             };
         }

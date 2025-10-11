@@ -18,6 +18,7 @@ namespace LibraryApp.Application.Abstractions
         BorrowedItem? GetBorrowedItem(int memberId, int itemId);
         void RemoveBorrowedItem(BorrowedItem borrowedItem);
         IEnumerable<Member> GetAllMembers();
+        IEnumerable<BorrowedItem> GetAllBorrowedItems();
 
     }
 }

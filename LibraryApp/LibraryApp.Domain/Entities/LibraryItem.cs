@@ -13,6 +13,6 @@ namespace LibraryApp.Domain.Entities
         
         public int Type { get; set; }
         public List<BorrowedItem>? BorrowedItems { get; set; }
-
+        public bool Active { get; set; } = true;
     }
 }

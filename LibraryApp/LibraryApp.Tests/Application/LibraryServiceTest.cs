@@ -1,5 +1,6 @@
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Application.Services;
+using LibraryApp.Domain.Entities;
 using LibraryApp.Domain.Enums;
 using Moq;
 
@@ -80,4 +81,52 @@ public class LibraryServiceTest
         Assert.Equal(2, result.Count());
         
     }
+    //-----------------------------------------------------------------
+    //Create a Unit Test to Register a Member
+    [Fact]
+    public void WhenAMemberIsRegistered_ThenItShouldBeCreated()
+    {
+        //Arrange
+        var member = new Domain.Entities.Member
+        {
+            Name = "Max Doe"
+        };
+        
+        _mockRepository
+            .Setup(r => r.AddMember(It.IsAny<Domain.Entities.Member>()))
+            .Callback <Domain.Entities.Member>(item =>
+            {
+                item.Id = 1;
+            });
+        //Act
+        var result = _libraryService.RegisterMember(member.Name);
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+    }
+    [Fact]
+    public void BorrowItem_ShouldSetActiveTrue_WhenNewBorrowedItemIsCreated()
+    {
+        // Arrange
+        var mockRepo = new Mock<ILibraryAppRepository>();
+        mockRepo.Setup(r => r.GetMemberById(It.IsAny<int>())).Returns(new Member { Id = 1, Name = "Test Member" });
+        mockRepo.Setup(r => r.GetLibraryItemById(It.IsAny<int>())).Returns(new LibraryItem { Id = 1, Title = "Test Book", IsBorrowed = false });
+
+        BorrowedItem capturedBorrowedItem = null;
+        mockRepo.Setup(r => r.AddBorrowedItem(It.IsAny<BorrowedItem>()))
+            .Callback<BorrowedItem>(b => capturedBorrowedItem = b);
+
+        var service = new LibraryService(mockRepo.Object);
+
+        // Act
+        var result = service.BorrowItem(1, 1, out string msg);
+
+        // Assert
+        Assert.True(result);
+        Assert.NotNull(capturedBorrowedItem);
+        Assert.True(capturedBorrowedItem.Active); // ✅ Verify Active is true
+        Assert.Equal(1, capturedBorrowedItem.MemberId);
+        Assert.Equal(1, capturedBorrowedItem.LibraryItemId);
+    }
+
 }
