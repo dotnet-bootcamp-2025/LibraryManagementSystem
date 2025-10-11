@@ -74,7 +74,7 @@ namespace LibraryApp.Api.Controllers
         // 4) AddMagazine
         // Add POST to add a new magazine
         [HttpPost("magazine")]
-        public IActionResult addMagazine([FromBody] MagazineDto mag)
+        public IActionResult AddMagazine([FromBody] MagazineDto mag)
         {
             if (mag == null || string.IsNullOrEmpty(mag.Title) || string.IsNullOrEmpty(mag.Publisher))
             {
