@@ -75,9 +75,9 @@ namespace LibraryApp.Application.Services
             if (borrowedItemsByMember.Count() > 0)
             {
                 // CHeck for Overdue Items
-                foreach(BorrowedItem bi  in borrowedItemsByMember)
+                foreach (BorrowedItem bi in borrowedItemsByMember)
                 {
-                    if(bi.ReturnDeadLine < DateTime.Now)
+                    if (bi.ReturnDeadLine < DateTime.Now)
                     {
                         var overdueItem = _repository.GetLibraryItem(bi.LibraryItemId);
                         message = $"Not allowed to borrow more Items for {member.Name} until {overdueItem.Title} is returned. Deadline was {bi.ReturnDeadLine.ToString("d", new CultureInfo("en-us"))}";

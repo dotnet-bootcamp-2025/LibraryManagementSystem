@@ -36,17 +36,6 @@ namespace LibraryApp.Api.Controllers
             Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
             return Ok(items);
         }
-        //[HttpPost("itemsByMemberId")]
-        //public IActionResult GetItemsByMemberId([FromBody] MemberIdDto member)
-        //{
-        //    if (member == null || member.Id <= 0)
-        //    {
-        //        return BadRequest("Invalid member data.");
-        //    }
-        //    var items = _service.GetAllLibraryItemsByMemberId(member.Id);
-        //    Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
-        //    return Ok(items);
-        //}
 
         // 3)  AddBook
         // Add POST to add a new book

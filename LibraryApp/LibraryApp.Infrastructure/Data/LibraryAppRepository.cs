@@ -1,5 +1,6 @@
 ﻿using LibraryApp.Application.Abstractions;
 using LibraryApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infrastructure.Data
 {
@@ -45,16 +46,25 @@ namespace LibraryApp.Infrastructure.Data
         public IEnumerable<LibraryItem> GetAllLibraryItemsByMemberId(int memberId)
         {
             // TODO: Change logic to navigation properties
-            var bi = GetBorrowedItemsByMember(memberId);
-            List<int> itemIds = new List<int>();
-            foreach(var item in bi)
-            {
-                itemIds.Add(item.LibraryItemId);
-            }
-            
-            return _context.LibraryItems
-                .Where(li => itemIds.Contains(li.Id))
-                .ToList();
+            //var bi = GetBorrowedItemsByMember(memberId);
+            //List<int> itemIds = new List<int>();
+            //foreach(var item in bi)
+            //{
+            //    itemIds.Add(item.LibraryItemId);
+            //}
+
+            //return _context.LibraryItems
+            //    .Where(li => itemIds.Contains(li.Id))
+            //    .ToList();
+
+            var ownedItems = (
+                from bi in _context.BorrowedItems
+                join li in _context.LibraryItems on bi.LibraryItemId equals li.Id
+                where bi.MemberId == memberId && bi.Active == true
+                select li
+            ).ToList();
+
+            return ownedItems;
         }
         public IEnumerable<Member> GetAllMembers()
         {
