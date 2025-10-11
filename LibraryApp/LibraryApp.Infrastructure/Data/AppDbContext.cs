@@ -6,21 +6,21 @@ namespace LibraryApp.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
-       public DbSet<Member> Members { get; set; }
-       public DbSet<LibraryItem> LibraryItems { get; set; }
-       public DbSet<BorrowedItem> BorrowedItems { get; set; }
+        public DbSet<Member> Members { get; set; }
+        public DbSet<LibraryItem> LibraryItems { get; set; }
+        public DbSet<BorrowedItem> BorrowedItems { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = 1, Name = "Alice Johnson" },
-                new Member { Id = 2, Name = "Bob Smith" },
-                new Member { Id = 3, Name = "Charlie Brown" }
+                new Member { Id = 1, Name = "Alice Johnson", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) },
+                new Member { Id = 2, Name = "Bob Smith", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) },
+                new Member { Id = 3, Name = "Charlie Brown", MembershipStartDate = DateTime.UtcNow, MembershipEndDate = DateTime.UtcNow.AddYears(1) }
             );
             modelBuilder.Entity<LibraryItem>().HasData(
                 new LibraryItem

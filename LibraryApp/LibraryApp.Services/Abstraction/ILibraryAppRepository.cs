@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LibraryApp.Domain.Entities;
+﻿using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Application.Abstraction
 {
     public interface ILibraryAppRepository
     {
         IEnumerable<LibraryItem> GetAllLibraryItems();
+
         void AddLibraryItem(LibraryItem item);
 
         void AddMember(Member member);
@@ -25,12 +21,21 @@ namespace LibraryApp.Application.Abstraction
         void ReturnItem(BorrowedItem borrowedItem);
 
         IEnumerable<Member> GetAllMembers();
+
         void UpdateMember(Member member);
 
         IEnumerable<LibraryItem> FindItems(string searchTerm);
-       void RemoveBorrowedItem(BorrowedItem borrowedItem);
+
+        void RemoveBorrowedItem(BorrowedItem borrowedItem);
+
+        BorrowedItem? GetBorrowedItemByLibraryItemId(int libraryItemId);
+
+        void UpdateBorrowedItem(BorrowedItem borrowedItem);
+
+        IEnumerable<BorrowedItem> GetAllCurrentLoans();
+
+        IEnumerable<BorrowedItem> GetActiveLoansByMemberId(int memberId);
 
         void SaveChanges();
     }
-
 }
