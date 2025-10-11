@@ -92,8 +92,6 @@ namespace LibraryApp.Application.Services
                 }
             }
 
-
-
             // TODO: Set ReturnDeadLine by today + 3 days
             DateTime today = DateTime.Now;
             DateTime deadLine = new DateTime(

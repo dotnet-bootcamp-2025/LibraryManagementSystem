@@ -1,5 +1,7 @@
 ﻿using LibraryApp.Application.Abstractions;
 using LibraryApp.Application.Services;
+using LibraryApp.Domain;
+using LibraryApp.Domain.Entities;
 using Moq;
 
 namespace LibraryApp.Tests.Application
@@ -98,62 +100,59 @@ namespace LibraryApp.Tests.Application
         [Fact]
         public void WhenAnItemIsBorrowed_ThenARegisterWithItsIdShouldBeCreated()
         {
-            // Arrange
-            var WillDafoeMember = new Domain.Entities.Member
+            // 1. ARRANGE
+            var willDafoeMmber = new Domain.Entities.Member
             {
                 Id = 1,
                 Name = "Willem Dafoe",
+                BorrowedItems = [],
+                StartDate = new DateTime(2025, 6, 24, 0, 0, 0),
+                EndDate = new DateTime(2025, 9, 24, 0, 0, 0)
             };
 
-            var libraryItemEntity = new Domain.Entities.LibraryItem
+            var losJuegosMuertosHambreLibraryItem = new Domain.Entities.LibraryItem
             {
-                Id = 6,
-                Title = "Los Muertos del Hambre",
+                Id = 1,
+                Title = "Los Muertos del Hambre: Sin Ajo Parte 1",
+                IsBorrowed = false,
                 Author = "Susana Distancia",
-                Pages = 123,
-                Type = (int)LibraryApp.Domain.Enums.LibraryItemTypeEnum.Book,
-                IsBorrowed = false
+                Pages = 87,
+                Type = (int)Domain.Enums.LibraryItemTypeEnum.Book
             };
 
-            //var emptyList = new List<Domain.Entities.BorrowedItem>();
+            var willDafoeBorrowedItems = new List<Domain.Entities.BorrowedItem>();
 
             _mockRepository
-                .Setup(r => r.GetMemberById(It.IsAny<int>()))
-                .Callback<Domain.Entities.Member>(member =>
-                {
-                    member.Id = 1; // DB - ID asignation simulation
-                });
+                .Setup(r => r.GetMemberById(willDafoeMmber.Id))
+                .Returns(willDafoeMmber);
 
             _mockRepository
-                .Setup(r => r.GetLibraryItem(It.IsAny<int>()))
-                .Callback<Domain.Entities.LibraryItem>(item =>
-                {
-                    item.Id = 6;
-                });
+                .Setup(r => r.GetLibraryItem(losJuegosMuertosHambreLibraryItem.Id))
+                .Returns(losJuegosMuertosHambreLibraryItem);
 
             _mockRepository
-                .Setup(r => r.GetBorrowedItemsByMember(It.IsAny<int>()))
-                .Callback<Domain.Entities.LibraryItem>(item =>
-                {
-                    item.Id = 6;
-                });
+                .Setup(r => r.GetBorrowedItemsByMember(willDafoeMmber.Id))
+                .Returns(willDafoeBorrowedItems);
 
             _mockRepository
                 .Setup(r => r.AddBorrowedItem(It.IsAny<Domain.Entities.BorrowedItem>()))
-                .Callback<List<Domain.Entities.BorrowedItem>>(emptyList =>
+                .Callback<Domain.Entities.BorrowedItem>(bItem =>
                 {
-                    emptyList = new List<Domain.Entities.BorrowedItem>();
+                    bItem.Id = 1;
+                    bItem.LibraryItemId = losJuegosMuertosHambreLibraryItem.Id;
+                    bItem.MemberId = willDafoeMmber.Id;
+                    bItem.Active = true;
                 });
 
-            // Act
-            var result = _libraryService.BorrowItem(
-                WillDafoeMember.Id,
-                libraryItemEntity.Id,
-                out string message
+            // 2. ACT
+
+            var answer = _libraryService.BorrowItem(
+                willDafoeMmber.Id, losJuegosMuertosHambreLibraryItem.Id, out string message
                 );
 
-            // Assert
-            Assert.True(result);
+            // 3. ASSERT
+
+            Assert.True( answer );
         }
 
         private static List<Domain.Entities.LibraryItem> GetItems()
