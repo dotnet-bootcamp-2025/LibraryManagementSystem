@@ -115,7 +115,7 @@ namespace LibraryApp.Api.Controllers
             }
             var members = _service.GetAllMembers();
             System.Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Adding a Member: {dto.Name},members count before: {members.Count()}");
-            var added = _service.RegisterMember(dto.Name);
+            var added = _service.RegisterMember(dto.Name,dto.Start,dto.End);
             System.Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Member added: {dto.Name},members count after: {members.Count()}");
             return CreatedAtAction(nameof(ListMembers), new { id = added.Id }, added);
         }

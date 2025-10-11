@@ -58,10 +58,37 @@ namespace LibraryApp.Application.Services
             var entities = _repository.GetAllBorrowedItems() ?? Enumerable.Empty<BorrowedItem>();
             return entities;
         }
-        
-        public Domain.Member RegisterMember(string name)
+
+        public bool MembershipStatus(int memberId,  out string message)
         {
-            var memberEntity = new Member { Name = name };
+            var member = _repository.GetMemberById(memberId);
+            if (member is null)
+            {
+                message = "Member not found.";
+                return false;
+            }
+
+            if (!member.EndDate.HasValue)
+            {
+                message = "Your membership is active";
+                return true;
+            }
+            var currentDate = DateTime.Now;
+            if (currentDate >= member.EndDate)
+            {
+                message = "Your membership is over";
+                System.Console.WriteLine("Your membership is over");
+                return false;
+            }
+            message = "Your membership is active";
+            return true;
+        }
+
+        public Domain.Member RegisterMember(string name, DateTime? StartDate, DateTime? EndDate)
+        {
+            var membershipStart = StartDate?.Date ?? DateTime.Today;
+            var membershipEnd = EndDate?.Date ?? membershipStart.AddYears(1);
+            var memberEntity = new Member { Name = name , StartDate = membershipStart, EndDate = membershipEnd };
             _repository.AddMember(memberEntity);
 
             return new Domain.Member(memberEntity.Id, memberEntity.Name ?? string.Empty);
@@ -88,6 +115,12 @@ namespace LibraryApp.Application.Services
                 message = "Member not found.";
                 return false;
             }
+            
+            if (member.EndDate.HasValue && DateTime.UtcNow > member.EndDate.Value)
+            {
+                message = $"{member.Name}'s membership has expired and cannot borrow items.";
+                return false;
+            }
 
             var libraryItemEntity = _repository.GetLibraryItemById(itemId);
             if (libraryItemEntity is null)
@@ -103,10 +136,10 @@ namespace LibraryApp.Application.Services
             }
 
             var borrowItems = _repository.GetAllBorrowedItems() 
-                .Where(b => b.MemberId == memberId && b.LibraryItem.IsBorrowed);
-            var Expired = borrowItems.Any(b => b.BorrowedDate.HasValue && DateTime.UtcNow > b.BorrowedDate.Value.AddDays(3));
+                .Where(b => b.MemberId == memberId && b.LibraryItem != null && b.LibraryItem.IsBorrowed);
+            var expired = borrowItems.Any(b => b.BorrowedDate.HasValue && DateTime.Now > b.BorrowedDate.Value.AddDays(3));
     
-            if (Expired)
+            if (expired)
             {
                 message = $"{member.Name} cannot borrow more items until returning expired borrowed items";
                 return false;
@@ -122,20 +155,23 @@ namespace LibraryApp.Application.Services
             libraryItemEntity.Active = true;
             _repository.UpdateLibraryItem(libraryItemEntity);
 
-            var borrowed = new BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.UtcNow, Active = true};
+            var borrowed = new BorrowedItem { MemberId = memberId, LibraryItemId = itemId, BorrowedDate = DateTime.Now, Active = true};
             _repository.AddBorrowedItem(borrowed);
             
             var borrowedItem = _repository.GetBorrowedItem(memberId, itemId); 
             if (borrowedItem != null)
             {
-                var expirationDate = borrowedItem.BorrowedDate.Value.AddDays(3);
-                if (DateTime.UtcNow > expirationDate)
+                if (borrowedItem.BorrowedDate != null)
                 {
-                    System.Console.WriteLine("Expired borrowed item");
-                }
-                else
-                {
-                    System.Console.WriteLine("This borrowed item isn't expired yet");
+                    var expirationDate = borrowedItem.BorrowedDate.Value.AddDays(3);
+                    if (DateTime.UtcNow > expirationDate)
+                    {
+                        System.Console.WriteLine("Expired borrowed item");
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("This borrowed item isn't expired yet");
+                    }
                 }
             }
 

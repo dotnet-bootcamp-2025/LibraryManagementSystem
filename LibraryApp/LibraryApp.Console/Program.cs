@@ -117,9 +117,9 @@ namespace LibraryApp.ConsoleApp
             service.AddMagazine("DotNET Weekly", 120, "DevPub");
             service.AddMagazine("Tech Monthly", 58, "TechPress");
 
-            // Members
-            service.RegisterMember("Anna");
-            service.RegisterMember("James");
+            // // Members
+            // service.RegisterMember("Anna", );
+            // service.RegisterMember("James");
         }
 
         static void SearchItems(ILibraryService service)
@@ -172,7 +172,7 @@ namespace LibraryApp.ConsoleApp
         static void RegisterMember(ILibraryService service)
         {
             var name = InputHelper.ReadText("Name");
-            var member = service.RegisterMember(name);
+            var member = service.RegisterMember(name, DateTime.Now, DateTime.Now.AddMonths(3));
             System.Console.WriteLine($"Added: {member.Name} (Id={member.Id})");
         }
 
