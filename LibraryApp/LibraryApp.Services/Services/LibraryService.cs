@@ -1,4 +1,5 @@
-﻿using LibraryApp.Application.Abstraction;
+﻿using System.Xml.Linq;
+using LibraryApp.Application.Abstraction;
 using LibraryApp.Application.DTOs;
 using LibraryApp.Domain;
 using LibraryApp.Domain.Enums;
@@ -48,13 +49,17 @@ namespace LibraryApp.Application.Services
 
         public Member RegisterMember(string name)
         {
-            var memberEntity = new Domain.Entities.Member
+            var memberEntity = new LibraryApp.Domain.Entities.Member
             {
-                Name = name
+                Name = name,
+                MembershipStartDate = DateTime.UtcNow,
+                MembershipEndDate = DateTime.UtcNow.AddYears(1)
             };
+
             _repository.AddMember(memberEntity);
             _repository.SaveChanges();
-            return new Domain.Member(memberEntity.Id, memberEntity.Name);
+
+            return new LibraryApp.Domain.Member(memberEntity.Id, memberEntity.Name);
         }
 
         public IEnumerable<LibraryItem> FindItems(string? term)
