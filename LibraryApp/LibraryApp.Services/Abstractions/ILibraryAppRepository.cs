@@ -4,8 +4,6 @@ namespace LibraryApp.Application.Abstractions
 {
     public interface ILibraryAppRepository
     {
-        IEnumerable<LibraryItem> GetAllLibraryItems();
-        void AddLibraryItem(LibraryItem libraryItem);
         void UpdateLibraryItem(LibraryItem libraryItem);
         LibraryItem? GetLibraryItemById(int id);
 
@@ -19,6 +17,13 @@ namespace LibraryApp.Application.Abstractions
         IEnumerable<Member> GetAllMembers();
         void AddMember(Member member);
         IEnumerable<Member> GetAllMembersWithBorrowStatus();
+        void UpdateMember(Member member);
+
+        void AddLibraryItem(LibraryItem item);
+        IEnumerable<LibraryItem> GetAllLibraryItems();
+
+        // New method for registering a member
+        void RegisterMember(Member member);
 
     }
 }

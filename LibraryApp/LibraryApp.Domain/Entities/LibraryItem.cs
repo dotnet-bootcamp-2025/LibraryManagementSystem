@@ -18,5 +18,8 @@ namespace LibraryApp.Domain.Entities
         public int Type { get; set; }
         public List<BorrowedItem>? BorrowedItems { get; set; }
 
+        // Soft delete flag
+        public bool Active { get; set; } = true;
+
     }
 }
