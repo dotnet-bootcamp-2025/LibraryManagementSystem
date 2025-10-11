@@ -1,4 +1,5 @@
 using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Converters;
 using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => // Configure DateTime format with a custom format Converter (AI Assist)
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new UsaDateTimeConverter()
+         );
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer(); 
