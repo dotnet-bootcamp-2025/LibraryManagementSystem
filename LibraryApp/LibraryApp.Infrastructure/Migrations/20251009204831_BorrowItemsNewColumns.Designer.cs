@@ -3,6 +3,7 @@ using System;
 using LibraryApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251009204831_BorrowItemsNewColumns")]
+    partial class BorrowItemsNewColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -117,14 +120,8 @@ namespace LibraryApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -135,23 +132,17 @@ namespace LibraryApp.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            EndDate = new DateTime(2025, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Alice Johnson",
-                            StartDate = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Name = "Alice Johnson"
                         },
                         new
                         {
                             Id = 2,
-                            EndDate = new DateTime(2025, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Bob Smith",
-                            StartDate = new DateTime(2025, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Name = "Bob Smith"
                         },
                         new
                         {
                             Id = 3,
-                            EndDate = new DateTime(2025, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Charlie Brown",
-                            StartDate = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Name = "Charlie Brown"
                         });
                 });
 
