@@ -21,7 +21,8 @@ namespace LibraryApp.Infrastructure.Data
         public void ReturnBorrowedItem(int borrowedItemId)
         {
             var bi = _context.BorrowedItems.Find(borrowedItemId);
-            _context.BorrowedItems.Remove(bi);
+            bi.Active = false;
+            _context.BorrowedItems.Update(bi);
             _context.SaveChanges();
         }
 
@@ -41,7 +42,20 @@ namespace LibraryApp.Infrastructure.Data
         {
             return _context.LibraryItems.ToList();
         }
-
+        public IEnumerable<LibraryItem> GetAllLibraryItemsByMemberId(int memberId)
+        {
+            // TODO: Change logic to navigation properties
+            var bi = GetBorrowedItemsByMember(memberId);
+            List<int> itemIds = new List<int>();
+            foreach(var item in bi)
+            {
+                itemIds.Add(item.LibraryItemId);
+            }
+            
+            return _context.LibraryItems
+                .Where(li => itemIds.Contains(li.Id))
+                .ToList();
+        }
         public IEnumerable<Member> GetAllMembers()
         {
             return _context.Members.ToList();
@@ -68,6 +82,13 @@ namespace LibraryApp.Infrastructure.Data
             var members = (IEnumerable<Member>)query.ToList();
             return members;
         }
+        public IEnumerable<BorrowedItem> GetBorrowedItemsByMember(int id)
+        {
+            return _context.BorrowedItems
+                .Where(bi => bi.MemberId == id && bi.Active)
+                .ToList()
+                ;
+        }
 
         public LibraryItem? GetLibraryItem(int id)
         {
@@ -86,7 +107,7 @@ namespace LibraryApp.Infrastructure.Data
 
         public BorrowedItem? GetBorrowedItem(int memberId, int libraryItemId)
         {
-            var bi = _context.BorrowedItems.Where(bi => bi.MemberId == memberId && bi.LibraryItemId == libraryItemId).FirstOrDefault();
+            var bi = _context.BorrowedItems.Where(bi => bi.MemberId == memberId && bi.LibraryItemId == libraryItemId && bi.Active).FirstOrDefault();
             return bi;
         }
 

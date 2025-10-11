@@ -5,7 +5,9 @@ namespace LibraryApp.Application.Abstractions
     public interface ILibraryAppRepository
     {
         IEnumerable<LibraryItem> GetAllLibraryItems();
+        IEnumerable<LibraryItem> GetAllLibraryItemsByMemberId(int memberId);
         IEnumerable<Member> GetAllMembers();
+        IEnumerable<BorrowedItem> GetBorrowedItemsByMember(int id);
         void AddLibraryItem(LibraryItem libraryItem);
         void UpdateLibraryItem(LibraryItem libraryItem);
         LibraryItem? GetLibraryItem(int id);
