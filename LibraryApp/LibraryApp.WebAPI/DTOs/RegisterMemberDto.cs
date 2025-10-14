@@ -6,6 +6,5 @@ namespace LibraryApp.WebAPI.DTOs
     {
         [Required(ErrorMessage = "Name is required.")]
         public required string Name { get; init; }
-
     }
 }

@@ -2,9 +2,7 @@
 {
     public enum LibraryItemTypeEnum
     {
-
         Book = 1,
         Magazine = 2
     }
-
 }

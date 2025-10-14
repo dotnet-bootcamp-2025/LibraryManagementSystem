@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using LibraryApp.Domain.Entities;
+﻿using System.Text.Json.Serialization;
 
 namespace LibraryApp.Domain
 {
@@ -14,8 +8,10 @@ namespace LibraryApp.Domain
         public string Name { get; }
 
         private readonly List<LibraryItem> _borrowed = new();
+
         [JsonIgnore]
         public IReadOnlyList<LibraryItem> BorrowedItems => _borrowed;
+
         public Member(int id, string name)
         {
             if (id <= 0)
@@ -27,23 +23,27 @@ namespace LibraryApp.Domain
             Id = id;
             Name = name.Trim();
         }
+
         public void AddBorrowedItem(LibraryItem item)
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
             _borrowed.Add(item);
         }
+
         public void BorrowItem(LibraryItem item)
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
             item.Borrow();
             _borrowed.Add(item);
         }
+
         public void ReturnItem(LibraryItem item)
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
             if (!_borrowed.Remove(item)) throw new InvalidOperationException("This member didn't borrow the item.");
             item.Return();
         }
+
         public override string ToString() => $"{Id} - {Name} (Borrowed: {_borrowed.Count})";
     }
 }
