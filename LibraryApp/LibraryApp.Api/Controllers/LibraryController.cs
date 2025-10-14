@@ -1,5 +1,7 @@
 ﻿using LibraryApp.Api.DTOs;
 using LibraryApp.Application.Abstractions;
+using LibraryApp.Domain;
+using LibraryApp.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controllers
@@ -19,6 +21,18 @@ namespace LibraryApp.Api.Controllers
         public IActionResult GetItems()
         {
             var items = _service.GetAllLibraryItems();
+            Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
+            return Ok(items);
+        }
+
+        [HttpGet("itemsByMemberId/{memberId}")]
+        public IActionResult GetItemsByMemberId([FromRoute] int memberId)
+        {
+            if (memberId <= 0)
+            {
+                return BadRequest("Invalid member data.");
+            }
+            var items = _service.GetAllLibraryItemsByMemberId(memberId);
             Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Items count: {items.Count()}");
             return Ok(items);
         }
@@ -49,7 +63,7 @@ namespace LibraryApp.Api.Controllers
         // 4) AddMagazine
         // Add POST to add a new magazine
         [HttpPost("magazine")]
-        public IActionResult addMagazine([FromBody] MagazineDto mag)
+        public IActionResult AddMagazine([FromBody] MagazineDto mag)
         {
             if (mag == null || string.IsNullOrEmpty(mag.Title) || string.IsNullOrEmpty(mag.Publisher))
             {
