@@ -16,10 +16,36 @@ namespace LibraryApp.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<BorrowedItem>()
+                .Property(b => b.BorrowDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            modelBuilder.Entity<BorrowedItem>()
+                .Property(b => b.ExpirationDate)
+                .HasDefaultValueSql("DATE(CURRENT_TIMESTAMP, '+3 days')");
+
             modelBuilder.Entity<Member>().HasData(
-        new Member { Id = 1, Name = "Alice Johnson" },
-        new Member { Id = 2, Name = "Bob Smith" },
-        new Member { Id = 3, Name = "Charlie Brown" }
+        new Member
+        {
+        Id = 1,
+        Name = "Alice Johnson",
+        StartDate = new DateTime(2025, 1, 1),
+        EndDate = new DateTime(2025, 12, 31)
+        },
+        new Member
+        {
+        Id = 2,
+        Name = "Bob Smith",
+        StartDate = new DateTime(2025, 1, 1),
+        EndDate = new DateTime(2026, 1, 1)
+        },
+        new Member
+        {
+        Id = 3,
+        Name = "Charlie Brown",
+        StartDate = new DateTime(2024, 10, 1),
+        EndDate = new DateTime(2025, 4, 1)
+        }
     );
             modelBuilder.Entity<LibraryItem>().HasData(
                 new LibraryItem
@@ -51,7 +77,5 @@ namespace LibraryApp.Infrastructure.Data
                 }
                 );
         }
-
-        internal void Add(object magazine) => throw new NotImplementedException();
     }
 }

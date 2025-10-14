@@ -21,18 +21,12 @@ namespace LibraryApp.Infrastructure.Data
         }
         public IEnumerable<LibraryItem> GetAllLibraryItems()
         {
-            return _context.LibraryItems.ToList();
-        }
-                public IEnumerable<Member> GetAllMembersWithBorrowStatus()
-        {
-            // Include BorrowedItems so EF knows how many are linked
-            var members = _context.Members
-                .Include(m => m.BorrowedItems)
+            return _context.LibraryItems
                 .AsNoTracking()
+                .Where(i => i.Active) // only active items
                 .ToList();
-
-            return members;
         }
+
         public LibraryItem? GetLibraryItemById(int id)
         {
             return _context.LibraryItems.Find(id);
@@ -43,40 +37,93 @@ namespace LibraryApp.Infrastructure.Data
             _context.LibraryItems.Update(libraryItem);
             _context.SaveChanges();
         }
-        public void AddBorrowedItem(BorrowedItem borrowedItem)
+
+        public IEnumerable<LibraryItem> FindLibraryItems(string? term)
         {
-            _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
+            var query = _context.LibraryItems
+            .AsNoTracking()
+            .Where(i => i.Active); // exclude soft-deleted items
+
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                term = term.Trim().ToLowerInvariant();
+                query = query.Where(i =>
+                    i.Title.ToLower().Contains(term) ||
+                    (i.Author != null && i.Author.ToLower().Contains(term)) ||
+                    (i.Publisher != null && i.Publisher.ToLower().Contains(term))
+                );
+            }
+
+            return query.ToList();
+
         }
+
+        // ===== Members =====
         public void AddMember(Member member)
         {
             _context.Members.Add(member);
             _context.SaveChanges();
         }
+        public IEnumerable<Member> GetAllMembers()
+        {
+            return _context.Members.AsNoTracking().ToList();
+        }
         public Member? GetMemberById(int id)
         {
-            // return _context.Members.Find(id);
             return _context.Members
-                 .Include(m => m.BorrowedItems)
-                 .FirstOrDefault(m => m.Id == id);
+                .Include(m => m.BorrowedItems)
+                    .ThenInclude(b => b.LibraryItem)
+                .AsNoTracking()
+                .FirstOrDefault(m => m.Id == id);
         }
+        public IEnumerable<Member> GetAllMembersWithBorrowStatus()
+        {
+            var members = _context.Members
+                            .Include(m => m.BorrowedItems)
+                            .AsNoTracking()
+                            .ToList();
+
+            return members;
+
+        }
+
+        // ===== Borrowed Items =====
+
+        public void AddBorrowedItem(BorrowedItem borrowedItem)
+        {
+            if (borrowedItem.BorrowDate == default)
+                borrowedItem.BorrowDate = DateTime.Now;
+
+            if (borrowedItem.ExpirationDate == default)
+                borrowedItem.ExpirationDate = borrowedItem.BorrowDate.AddDays(3);
+
+            _context.BorrowedItems.Add(borrowedItem);
+            _context.SaveChanges();
+        }
+      
         public BorrowedItem? GetBorrowedItem(int memberId, int itemId)
         {
             return _context.BorrowedItems
+                .Include(b => b.LibraryItem)
                 .FirstOrDefault(b => b.MemberId == memberId && b.LibraryItemId == itemId);
         }
+
         public void RemoveBorrowedItem(BorrowedItem borrowedItem)
         {
             _context.BorrowedItems.Remove(borrowedItem);
             _context.SaveChanges();
         }
 
+        // --- Interface overloads for backward compatibility ---
         object ILibraryAppRepository.GetBorrowedItem(int memberId, int itemId)
         {
             var borrowedItem = GetBorrowedItem(memberId, itemId);
             if (borrowedItem is null)
             {
-                throw new InvalidOperationException($"No borrowed item found for memberId {memberId} and itemId {itemId}.");
+                throw new InvalidOperationException(
+                    $"No borrowed item found for memberId {memberId} and itemId {itemId}."
+                );
             }
             return borrowedItem;
         }
@@ -93,29 +140,14 @@ namespace LibraryApp.Infrastructure.Data
             }
         }
 
-        public IEnumerable<LibraryItem> FindLibraryItems(string? term)
+        public void UpdateMember(Member member)
         {
-            if (string.IsNullOrWhiteSpace(term))
-                return _context.LibraryItems.AsNoTracking().ToList();
-
-            term = term.Trim().ToLowerInvariant();
-
-            return _context.LibraryItems
-                .AsNoTracking()
-                .Where(i => i.Title.ToLower().Contains(term) ||
-                            (i.Author != null && i.Author.ToLower().Contains(term)) ||
-                            (i.Publisher != null && i.Publisher.ToLower().Contains(term)))
-                .ToList();
+            throw new NotImplementedException();
         }
 
-        //public void AddMember(Member member)
-        //{
-        //    _context.Members.Add(member);
-        //    _context.SaveChanges();
-        //}
-        public IEnumerable<Member> GetAllMembers()
+        public void RegisterMember(Member member)
         {
-            return _context.Members.AsNoTracking().ToList();
+            throw new NotImplementedException();
         }
     }
 }

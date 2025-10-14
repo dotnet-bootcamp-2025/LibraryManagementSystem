@@ -53,35 +53,7 @@ namespace LibraryApp.Api.Controllers
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
         #endregion
-        //Add POST to add a new book
-        /*
-                [HttpPost("book")]
-                public IActionResult AddBook([FromBody] AddBookRequest request)
-                {
-                    if (request == null || string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Author))
-                    {
-                        return BadRequest("Invalid book data.");
-                    }
-
-                    var addedBook = _service.AddBook(request.Title, request.Author, request.Pages);
-
-                    return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
-                }*/
-
-        /* [HttpPost("books")]
-         public IActionResult AddBook([FromBody] AddBookRequest book)
-         {
-             if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
-             {
-                 return BadRequest("Invalid book data.");
-             }
-             var items = _service.GetAllLibraryItems();
-             Console.WriteLine($"POST - Service instance: {_service.GetHashCode()}, Items count before: {items.Count()}");
-             var addedBook = _service.AddBook(book.Title, book.Author, book.Pages);
-             items = _service.GetAllLibraryItems();
-             Console.WriteLine($"POST - Items count after: {items.Count()}");
-             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);}*/
-
+        
 
         // TODO: Borrow an item
         [HttpPost("borrow")]
@@ -93,22 +65,6 @@ namespace LibraryApp.Api.Controllers
             if (ok) return Ok(new { success = ok, message = msg });
             return BadRequest(new { success = ok, message = msg });
         }
-
-
-        //   if (request == null || request.MemberId <= 0 || request.ItemId <= 0)
-        //    {
-        //        return BadRequest("Invalid borrow request.");
-        //    }
-
-        //    if (_service.BorrowItem(request.MemberId, request.ItemId, out var message))
-        //    {
-        //        return Ok(new { Success = true, Message = message });
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(new { Success = false, Message = message });
-        //    }
-        //}
 
         // TODO: Return an item
         [HttpPost("return")]
@@ -164,5 +120,40 @@ namespace LibraryApp.Api.Controllers
                 return CreatedAtAction(nameof(RegisterMember), new { id = addedMember.Id }, addedMember);
 
             }
+
+        [HttpGet("memberbyid/{memberId}")]
+        public IActionResult GetBorrowedItemsByMemberId(int memberId)
+        {
+            try
+            {
+                var borrowedItems = _service.GetBorrowedItemsByMemberId(memberId);
+
+                if (borrowedItems == null || !borrowedItems.Any())
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = $"No borrowed items found for memberId {memberId}."
+                    });
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    memberId,
+                    borrowedItems
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
         }
+
+
     }
+}

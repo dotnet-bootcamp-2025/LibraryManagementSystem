@@ -13,5 +13,9 @@ namespace LibraryApp.Domain.Entities
         public int LibraryItemId { get; set; }
         public Member? Member { get; set; }
         public LibraryItem? LibraryItem { get; set; }
+
+        public DateTime BorrowDate { get; set; } = DateTime.Now;
+        public DateTime ExpirationDate { get; set; } = DateTime.Now.AddDays(3);
+        public bool IsExpired => DateTime.Now.Date > ExpirationDate.Date;
     }
 }
