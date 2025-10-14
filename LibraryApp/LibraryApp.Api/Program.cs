@@ -1,4 +1,5 @@
 
+using System.Text.Json.Serialization;
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Application.Services;
 using LibraryApp.Infrastructure.Data;
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);   
 // Register LibraryService as a singleton
 // Pregunta Entrevista: cuales son los 3 life-cycles con los que puedes inyectar instancias (Singleton, Scoped(se crea instancia a traves de request de contexto), Transient(se crea una instancia y se tira, es la más volatil de los 3))
 builder.Services.AddScoped<ILibraryAppRepository, LibraryAppRepository>();

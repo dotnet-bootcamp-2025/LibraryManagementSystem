@@ -4,13 +4,16 @@ public abstract class LibraryItem
 {
     public int Id { get; }
     public string Title { get; }
-    public bool IsBorrowed { get; private set; }
+    public bool IsBorrowed { get; set; }
+    public bool Active { get; set; } = true;
 // Parameterized constructor (required fields)
-    protected LibraryItem(int id, string title)
+    protected LibraryItem(int id, string title, bool isBorrowed,  bool active)
     {
         if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id), "Id must be positive.");
         Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required.") : title.Trim();
         Id = id;
+        IsBorrowed = isBorrowed;
+        Active = active;
     }
     public void Borrow()
     {

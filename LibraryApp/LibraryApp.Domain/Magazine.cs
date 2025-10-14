@@ -5,14 +5,16 @@ public sealed class Magazine : LibraryItem //sealed es que no puedo heredar una 
     public int IssueNumber { get; }
     public string Publisher { get; }
 
-    public Magazine(int id, string title, int issueNumber, string publisher) : base(id, title)
+    public Magazine(int id, string title, int issueNumber, string publisher, bool isBorrowed, bool active) : base(id, title, isBorrowed, active)
     {
         IssueNumber = issueNumber;
         Publisher = publisher;
+        IsBorrowed =  isBorrowed;
+        Active = active;
     }
 
     
     public override string GetInfo()
-        => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher})";
+        => $"[Magazine] {Title} - Issue #{IssueNumber} ({Publisher}, isBorrowed={IsBorrowed}, Active={Active})";
     
 }

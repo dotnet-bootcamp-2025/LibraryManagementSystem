@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices.JavaScript;
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Application.Services;
+using LibraryApp.Domain.Entities;
 using LibraryApp.Domain.Enums;
 using Moq;
 
@@ -80,4 +82,30 @@ public class LibraryServiceTest
         Assert.Equal(2, result.Count());
         
     }
+    //-----------------------------------------------------------------
+    //Create a Unit Test to Register a Member
+    [Fact]
+    public void WhenAMemberIsRegistered_ThenItShouldBeCreated()
+    {
+        //Arrange
+        var member = new Domain.Entities.Member
+        {
+            Name = "Max Doe",
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddYears(1)
+        };
+        
+        _mockRepository
+            .Setup(r => r.AddMember(It.IsAny<Domain.Entities.Member>()))
+            .Callback <Domain.Entities.Member>(item =>
+            {
+                item.Id = 1;
+            });
+        //Act
+        var result = _libraryService.RegisterMember(member.Name, member.StartDate, member.EndDate);
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
+    }
+
 }

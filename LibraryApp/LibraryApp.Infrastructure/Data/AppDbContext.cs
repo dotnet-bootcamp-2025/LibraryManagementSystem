@@ -51,5 +51,8 @@ public class AppDbContext : DbContext
                 Type = (int)LibraryItemTypeEnum.Magazine
             }
         );
+        modelBuilder.Entity<LibraryItem>().Property(b => b.Active).HasColumnName("Active");
+        modelBuilder.Entity<BorrowedItem>().Property(b => b.Active).HasColumnName("Active");
+
     }
 }                           
