@@ -8,5 +8,7 @@
         //entities relationships
         public List<BorrowedItem>? BorrowedItems { get; set; }
 
+        public DateTime ExpirationDate { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }

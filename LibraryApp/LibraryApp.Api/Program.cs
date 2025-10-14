@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen();
 
 //Configure DbContext 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"),
+    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))); 
    
 
 //Register LibraryService as a singleton

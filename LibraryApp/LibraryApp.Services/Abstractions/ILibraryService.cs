@@ -1,4 +1,5 @@
 ﻿using LibraryApp.Domain;
+using LibraryApp.Domain.Entities;
 
 namespace LibraryApp.Application.Abstractions
 {
@@ -7,11 +8,16 @@ namespace LibraryApp.Application.Abstractions
         Book AddBook(string title, string author, int pages = 0);
         Magazine AddMagazine(string title, int issueNumber, string publisher);
         bool BorrowItem(int memberId, int itemId, out string message);
-        IEnumerable<LibraryItem> FindItems(string? term);
-        Member RegisterMember(string name);
+        IEnumerable<Domain.Entities.LibraryItem> FindItems(string? term);
+        Domain.Entities.Member RegisterMember(string name);
         IEnumerable<Domain.Member> Members { get; }
         bool ReturnItem(int memberId, int itemId, out string message);
-        IEnumerable<LibraryItem> GetAllLibraryItems();
+        //IEnumerable<Domain.LibraryItem> GetAllLibraryItems();
+
+        IEnumerable<Domain.Entities.LibraryItem> GetAllLibraryItems();
+        bool ReturnItem(int itemId, out string message);
+
+        List<BorrowedItem> GetBorrowedItemsByMemberId(int memberId);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LibraryApp.Api.Dtos;
 using LibraryApp.Application.Abstractions;
+using LibraryApp.Application.Services;
 using LibraryApp.Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -157,13 +158,11 @@ namespace LibraryApp.Api.Controllers
         [HttpPost("return")]
         public IActionResult ReturnItem([FromBody] BorrowItemRequest request)
         {
-            // 1. Validar si el cuerpo de la solicitud (request) es nulo.
             if (request is null)
             {
                 return BadRequest("Both MemberId and ItemId are required.");
             }
 
-            // 2. Validar que los IDs existan y sean positivos.
             if (request.MemberId is null ||
                 request.ItemId is null ||
                 request.MemberId <= 0 ||
@@ -172,9 +171,8 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest("Both MemberId and ItemId must be positive integers.");
             }
 
-            // 3. Llamar al servicio para devolver el artículo.
             string message;
-            // Usamos .Value para convertir de int? a int (seguro después de la validación)
+            // Llama al servicio, que ahora usa la lógica de Soft Delete
             var success = _service.ReturnItem(request.MemberId.Value, request.ItemId.Value, out message);
 
             // 4. Devolver la respuesta.
@@ -189,6 +187,20 @@ namespace LibraryApp.Api.Controllers
                 return BadRequest(new { Error = message });
             }
         }
+
+        [HttpGet("borrowed-items/member/{memberId}")]
+        public IActionResult GetBorrowedItemsByMember(int memberId)
+        {
+            var borrowedItems = _service.GetBorrowedItemsByMemberId(memberId);
+
+            if (borrowedItems == null || borrowedItems.Count == 0)
+            {
+                return NotFound($"No borrowed items found for member ID {memberId}.");
+            }
+
+            return Ok(borrowedItems);
+        }
+
 
         //TODO: Add more endpoints for other operations (e.g., add magazine, register member, borrow item, return item).
     }

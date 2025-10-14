@@ -4,7 +4,7 @@ namespace LibraryApp.Application.Abstractions
 {
     public interface ILibraryAppRepository
     {
-        IEnumerable<LibraryItem> GetAlLibraryItems();
+        IEnumerable<LibraryItem> GetAllLibraryItems();
 
         IEnumerable<Domain.Entities.Member> GetAllMembers();
         
@@ -22,8 +22,17 @@ namespace LibraryApp.Application.Abstractions
                 
         Domain.Entities.BorrowedItem? GetBorrowedItem(int memberId, int libraryItemId);
                 
-        void RemoveBorrowedItem(Domain.Entities.BorrowedItem borrowedItem);
-               
+                     
         void UpdateLibraryItem(LibraryItem libraryItem);
+        Domain.Entities.BorrowedItem? GetBorrowedItemByItemId(int libraryItemId);
+        void DeactivateBorrowedItem(int itemId);
+
+        void InsertBorrowedItemWithCustomDate(int libraryItemId, int memberId, string dateString);
+        string GetDatabasePath();
+
+        List<BorrowedItem> GetBorrowedItemsByMemberId(int memberId);
+
+        int GetActiveBorrowedItemCountByMemberId(int memberId);
+
     }
 }
