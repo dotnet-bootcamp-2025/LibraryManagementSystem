@@ -28,6 +28,14 @@ namespace LibraryApp.Infrastructure.Data
         {
             return _context.Members.ToList();
         }
+        public IEnumerable<BorrowedItem> GetBorrowedItemsFromMember(int memberId)
+        {
+            var borrowedItems = _context.BorrowedItems
+                .Where(b => b.MemberId == memberId && b.Active)
+                .ToList();
+
+            return borrowedItems;
+        }
         public LibraryItem? GetLibraryItemById(int id)
         {
             return _context.LibraryItems.Find(id);
@@ -54,7 +62,7 @@ namespace LibraryApp.Infrastructure.Data
 
             if (borrow != null)
             {
-                _context.BorrowedItems.Remove(borrow);
+                borrow.Active = false; 
                 _context.SaveChanges();
             }
         }

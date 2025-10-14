@@ -31,6 +31,13 @@ namespace LibraryApp.Api.Controllers
             Console.WriteLine($"GET - Service instance: {_service.GetHashCode()}, Members count: {members.Count()}");
             return Ok(members);
         }
+        [HttpGet("borrowItems")]
+        public IActionResult GetBorrowedItems([FromQuery] int memberId)
+        {
+            var borrowedItems = _service.GetBorrowedItemsFromMember(memberId);
+            Console.WriteLine($"GET - MemberId: {memberId}, BorrowedItems count: {borrowedItems.Count()}");
+            return Ok(borrowedItems);
+        }
         #endregion GETs
 
         #region POSTs
@@ -83,7 +90,7 @@ namespace LibraryApp.Api.Controllers
             if (borrow == null) return BadRequest("Missing data.");
 
             var ok = _service.BorrowItem(borrow.memberId, borrow.itemId, out var msg);
-            Console.WriteLine($"POST - Borrow Item successfully. MemberId = {borrow.memberId}, ItemId = {borrow.itemId}");
+            //Console.WriteLine($"POST - Borrow Item successfully. MemberId = {borrow.memberId}, ItemId = {borrow.itemId}");
 
             if (ok) return Ok(new {success = ok, message = msg});
             return BadRequest(new {success = ok, message = msg});
@@ -95,7 +102,7 @@ namespace LibraryApp.Api.Controllers
             if (borrow == null) return BadRequest("Missing data.");
 
             var ok = _service.ReturnItem(borrow.memberId, borrow.itemId, out var msg);
-            Console.WriteLine($"POST - Return Item successfully. MemberId = {borrow.memberId}, ItemId = {borrow.itemId}");
+            //Console.WriteLine($"POST - Return Item successfully. MemberId = {borrow.memberId}, ItemId = {borrow.itemId}");
 
             if (ok) return Ok(new { success = ok, message = msg });
             return BadRequest(new { success = ok, message = msg });
