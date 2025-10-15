@@ -1,7 +1,6 @@
 ﻿namespace LibraryApp.Api.Records
 {
-    public class MemberRecord
-    {
-        public record CreateMemberRequest(string Name) { }
-    }
+
+        public record AddMemberRecord(string Name) { }
+    
 }

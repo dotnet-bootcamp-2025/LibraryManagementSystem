@@ -10,8 +10,8 @@ namespace LibraryApp.Domain
     {
         public int IssueNumber { get; }
         public string Publisher { get; }
-        public Magazine(int id, string title, int issueNumber, string publisher)
-            : base(id, title)
+        public Magazine(int id, string title, int issueNumber, string publisher, bool isBorrowed)
+            : base(id, title, isBorrowed)
         {
             IssueNumber = issueNumber < 0 ? 0 : issueNumber;
             Publisher = string.IsNullOrWhiteSpace(publisher) ? "Unknown" : publisher.Trim();

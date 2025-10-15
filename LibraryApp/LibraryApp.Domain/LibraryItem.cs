@@ -12,12 +12,13 @@ namespace LibraryApp.Domain
         public string Title { get; }
         public bool IsBorrowed { get; private set; }
 
-        // Paraneteruzed cibstryctir (required fields)
-        protected LibraryItem(int id, string title)
+        // Parameterized constructor (required fields)
+        protected LibraryItem(int id, string title, bool isBorrowed)
         {
             if (id == 0) throw new ArgumentOutOfRangeException(nameof(id), "It must be positive.");
             Title = string.IsNullOrWhiteSpace(title) ? throw new ArgumentException("Title is required") : title.Trim();
             Id = id;
+            IsBorrowed = isBorrowed;
         }
         public void Borrow()
         {
