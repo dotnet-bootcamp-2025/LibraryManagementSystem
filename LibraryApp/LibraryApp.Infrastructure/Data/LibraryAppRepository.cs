@@ -50,6 +50,12 @@ namespace LibraryApp.Infrastructure.Data
             return _context.Members.
                 Find(memberId);
         }
+        public IEnumerable<BorrowedItem> GetMemberBorrowedItems(int memberId)
+        {
+            return _context.BorrowedItems.
+                Where(b => b.MemberId == memberId && b.IsReturned == false)
+                .ToList();
+        }
 
         #endregion GET DATA
 
