@@ -14,7 +14,9 @@ namespace LibraryApp.Application.Abstraction
         IEnumerable<Domain.LibraryItem> GetAllLibraryItems();
         IEnumerable<Domain.Member> GetAllMembers();
         BorrowedItem? GetBorrowedItem(int memberId, int itemId);
-        BorrowedItem? RemoveBorrowedItem (int memberId, int itemId);
+        //BorrowedItem? RemoveBorrowedItem (int memberId, int itemId);
+        IEnumerable<Domain.Entities.BorrowedItem> GetMemberBorrowedItems(int memberId, bool activeOnly);
+
 
     }
 }

@@ -12,10 +12,9 @@ namespace LibraryApp.Api.Controllers
         {
             _service = LibraryService;
             Console.WriteLine("LibraryController instantiated.");
-            { _service.GetHashCode(); } // Just to use _service and avoid warnings
+            { _service.GetHashCode(); } 
         }
 
-        //Add GET to list all library items
         [HttpGet("items")]
         public IActionResult GetItems()
         {
@@ -23,8 +22,7 @@ namespace LibraryApp.Api.Controllers
             Console.WriteLine($"GET - ServiceCollection INSTANCE : {_service.GetHashCode()}, Items Count: {items.Count()}");
             return Ok(items);
         }
-        //// Homework:
-        //// Add Post to add a new book
+
         [HttpPost("books")]
         public IActionResult AddBook([FromBody] AddBookDTO book)
         {
@@ -39,8 +37,6 @@ namespace LibraryApp.Api.Controllers
             Console.WriteLine($"POST - Items count after: {items.Count()}");
             return CreatedAtAction(nameof(GetItems), new { id = addedBook.Id }, addedBook);
         }
-
-        ////TODO : Add more endpoints for magazines, members, borrowing, and returning items.
 
         [HttpPost("magazines")]
         public IActionResult AddMagazine([FromBody] AddMagazineDTO magazine)
@@ -100,5 +96,25 @@ namespace LibraryApp.Api.Controllers
             var results = _service.FindItems(term);
             return Ok(results);
         }
+
+        //Get all borrowed items for a member
+        [HttpGet("MemberbyId")]
+        public IActionResult GetBorrowedItems(int memberId, [FromQuery] bool activeOnly = true)
+        {
+            if (memberId <= 0) return BadRequest("Invalid memberId.");
+            var borrowedItems = _service.GetMemberBorrowedItems(memberId, activeOnly);
+            var dto = borrowedItems.Select(bi => new BorrowedItemDTO
+            {
+                Id = bi.Id,
+                MemberId = bi.MemberId,
+                LibraryItemId = bi.LibraryItemId,
+                Title = bi.LibraryItem?.Title ?? "Unknown",
+                BorrowedDate = bi.BorrowedDate.ToString("MM/dd/yyyy"),
+                DueDate = bi.DueDate.ToString("MM/dd/yyyy"),
+                IsActive = bi.IsActive
+            });
+            return Ok(dto);
+        }
+
     }
 }
