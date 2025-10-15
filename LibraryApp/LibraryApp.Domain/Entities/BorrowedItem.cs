@@ -14,5 +14,7 @@ namespace LibraryApp.Domain.Entities
 
         public Member? Member { get; set; }
         public LibraryItem? LibraryItem { get; set; }
+
+        public DateTime? BorrowedDate { get; set; }
     }
 }

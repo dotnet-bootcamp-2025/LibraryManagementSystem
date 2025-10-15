@@ -13,13 +13,13 @@ namespace LibraryApp.Domain.Entities
         public bool IsBorrowed { get; set; }
 
         public string? Author { get; set; }
-        public int? Pages { get; set; }
+        public int Pages { get; set; }
         public int? IssueNumber { get; set; }
         public string? Publisher { get; set; }
-
         public int Type { get; set; }
-
         public List<BorrowedItem>? BorrowedItems { get; set; }
-
+        public DateTime? BorrowedDate { get; set; }
+        public int? BorrowedByMemberId { get; set; }
+        public bool Active { get; set; }
     }
 }

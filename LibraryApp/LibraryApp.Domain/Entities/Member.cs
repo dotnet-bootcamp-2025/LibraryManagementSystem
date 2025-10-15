@@ -13,5 +13,9 @@ namespace LibraryApp.Domain.Entities
         public required string Name { get; set; }
 
         public List<BorrowedItem>? BorrowedItems { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime ExpiresAt { get; set; }
     }
 }

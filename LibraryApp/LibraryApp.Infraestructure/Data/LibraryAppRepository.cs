@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LibraryApp.Application.Abstractions;
 using LibraryApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infraestructure.Data
 {
@@ -62,10 +63,9 @@ namespace LibraryApp.Infraestructure.Data
         {
            return _context.Members.ToList();
         }
-        public void RemoveBorrowedItem(BorrowedItem borrowedItem)
+        public LibraryItem? GetLibraryItemByIdIgnoringFilters(int id)
         {
-            _context.BorrowedItems.Add(borrowedItem);
-            _context.SaveChanges();
+            return _context.LibraryItems.IgnoreQueryFilters().FirstOrDefault(x => x.Id == id);
         }
     }
 }

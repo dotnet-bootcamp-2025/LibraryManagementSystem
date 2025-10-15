@@ -12,6 +12,8 @@ namespace LibraryApp.Domain
         public string Title { get; }
         public bool IsBorrowed { get; private set; }
 
+        public int? BorrowedByMemberId { get; set; }
+
         //Parameterized constructor (requiered fields)
         protected LibraryItem(int id, string title)
         {
